@@ -62,6 +62,7 @@ const HomeScreenList = () => {
     <View style={[styles.container, { width: Window.width - 10}]}>
       <SectionList
         ListHeaderComponent={()=> <FlavorText name="James"/>}
+        stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}
         sections={DATA}
         keyExtractor={(item, index) => index.toString()}

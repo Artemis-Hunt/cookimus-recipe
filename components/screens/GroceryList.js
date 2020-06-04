@@ -7,7 +7,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  ImageBackground
+  ImageBackground,
 } from "react-native";
 import Constants from "expo-constants";
 
@@ -100,7 +100,7 @@ export default class GroceryList extends Component {
             close={this._handleCloseClick}
             name={this.state.name}
             quantity={this.state.quantity}
-            unit={this.state.units} 
+            unit={this.state.units}
             handlename={this.handleName}
             handlequantity={this.handleQuantity}
             handleunits={this.handleUnits}
@@ -110,6 +110,7 @@ export default class GroceryList extends Component {
         ) : null}
 
         <SectionList
+          stickySectionHeadersEnabled={true}
           sections={RecipeList}
           keyExtractor={(item, index) => item + index}
           renderItem={({ item }) => (
