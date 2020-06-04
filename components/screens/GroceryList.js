@@ -10,12 +10,6 @@ import {
   ImageBackground
 } from "react-native";
 import Constants from "expo-constants";
-import {
-  Ionicons,
-  Entypo,
-  FontAwesome,
-  FontAwesome5,
-} from "@expo/vector-icons";
 
 import DropMenu from "../screen-components/grocery-list/DropMenu.js";
 import MenuBar from "../screen-components/grocery-list/MenuBar.js";
