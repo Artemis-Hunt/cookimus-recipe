@@ -29,6 +29,7 @@ export default class GroceryList extends Component {
       quantity: "",
       units: "",
       incompleteField: "",
+      refresh: false
     };
     this._handleButtonClick = this._handleButtonClick.bind(this);
     this._handleCloseClick = this._handleCloseClick.bind(this);
@@ -61,6 +62,18 @@ export default class GroceryList extends Component {
     this.setState({ units: item });
   };
 
+  //Possibly use filter method
+  deleteItem = (id) => {
+    alert(id);
+    for(let i=0; i<RecipeList.length; i++) {
+      for(let j=0; j<RecipeList[i].data.length; j++) {
+        if(id === RecipeList[i].data[j].key) {
+          RecipeList[i].data.splice(j, 1);
+        }
+      }
+    }
+  };
+
   //Check if entered is valid
   _verifyInfo = (name, quantity, units) => {
     if (name && quantity) {
@@ -70,9 +83,15 @@ export default class GroceryList extends Component {
       newObject.amount = this.state.quantity;
       newObject.unit = this.state.units;
 
+      RecipeList[RecipeList.length - 1].data.push(newObject);
+
+      //Set key value for the new added item
+      newObject.key = this.state.name + (RecipeList.length - 1) + (RecipeList[RecipeList.length - 1].data.length - 1);
+      alert(newObject.key);
+
+      //Clear fields
       this.setState({ name: "", quantity: "", units: "", incompleteField: "" });
 
-      RecipeList[RecipeList.length - 1].data.push(newObject);
     } else this.setState({ incompleteField: "Please fill in all fields" });
   };
 
@@ -114,7 +133,13 @@ export default class GroceryList extends Component {
           sections={RecipeList}
           keyExtractor={(item, index) => item + index}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {this.deleteItem(item.key)
+                this.setState({
+                  refresh: !this.state.refresh
+                })
+              }}
+            >
               <Item title={item.name} amounts={item.amount} units={item.unit} />
             </TouchableOpacity>
           )}

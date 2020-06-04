@@ -7,10 +7,19 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
+import {
+  Ionicons,
+  Entypo,
+  FontAwesome,
+  FontAwesome5,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import Card from "../screen-components/homescreen-list/Card.js";
 import FlavorText from "../screen-components/homescreen-list/FlavorText.js"
 
 const containerMarginHorizontal = 5;
+
+const breakfast = <FontAwesome5 name="bread-slice" size={29} color="black" />;
 
 const DATA = [
   {
@@ -20,6 +29,7 @@ const DATA = [
         name: "American Breakfast",
         image:
           "https://sethlui.com/wp-content/uploads/2016/04/chengs-9747-1280x720.jpg",
+        icon: {breakfast}
       },
       {
         name: "Ground Beef Tacos, Mexican-style",
@@ -67,8 +77,8 @@ const HomeScreenList = () => {
         sections={DATA}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <Card {...item} Window={Window} />}
-        renderSectionHeader={({ section: { heading } }) => (
-          <Text style={styles.heading}>{heading}</Text>
+        renderSectionHeader={({ section }) => (
+        <Text style={styles.heading}>{section.heading}</Text>
         )}
         ItemSeparatorComponent={ItemSeparator}
       />
