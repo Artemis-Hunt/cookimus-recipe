@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     paddingTop: 80,
-    width: 500,
+    width: null,
     height: 85,
   },
   //Recipe Names
