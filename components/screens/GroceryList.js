@@ -7,8 +7,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  ImageBackground,
-  Button,
+  ImageBackground
 } from "react-native";
 import Constants from "expo-constants";
 import {
