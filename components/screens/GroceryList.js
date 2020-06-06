@@ -29,10 +29,12 @@ export default class GroceryList extends Component {
       quantity: "",
       units: "",
       incompleteField: "",
-      refresh: false
+      refresh: false,
+      combinedList: false
     };
     this._handleButtonClick = this._handleButtonClick.bind(this);
     this._handleCloseClick = this._handleCloseClick.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
@@ -50,6 +52,12 @@ export default class GroceryList extends Component {
     });
   }
 
+  toggleMenu() {
+    this.setState({
+      combinedList: !this.state.combinedList
+    })
+  }
+
   handleName = (text) => {
     this.setState({ name: text });
   };
@@ -62,7 +70,7 @@ export default class GroceryList extends Component {
     this.setState({ units: item });
   };
 
-  //Possibly use filter method
+  //DELETE FUNCTION FOR LIST (Possibly use filter method)
   deleteItem = (id) => {
     alert(id);
     RecipeList.map(
@@ -112,7 +120,7 @@ export default class GroceryList extends Component {
         </View>
 
         {/* Menu Bar */}
-        <MenuBar buttonClick={this._handleButtonClick} />
+        <MenuBar buttonClick={this._handleButtonClick} togglemenu={this.toggleMenu} />
 
         {/* Toggle menu for add item */}
         {this.state.showComponent ? (
@@ -129,26 +137,30 @@ export default class GroceryList extends Component {
           />
         ) : null}
 
-        <SectionList
-          stickySectionHeadersEnabled={true}
-          sections={RecipeList}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => {this.deleteItem(item.key)
-                this.setState({
-                  refresh: !this.state.refresh
-                })
-              }}
-            >
-              <Item title={item.name} amounts={item.amount} units={item.unit} />
-            </TouchableOpacity>
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={[styles.header, styles.text]}>{title}</Text>
-          )}
-          ItemSeparatorComponent={ItemSeparator}
-        />
+        {/* Determine whether to render combined list or individual list */}
+        {this.state.combinedList ? null :
+          <SectionList
+            stickySectionHeadersEnabled={true}
+            sections={RecipeList}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  this.deleteItem(item.key)
+                  this.setState({
+                    refresh: !this.state.refresh
+                  })
+                }}
+              >
+                <Item title={item.name} amounts={item.amount} units={item.unit} />
+              </TouchableOpacity>
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={[styles.header, styles.text]}>{title}</Text>
+            )}
+            ItemSeparatorComponent={ItemSeparator}
+          />
+        }
       </View>
     );
   }
