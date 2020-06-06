@@ -45,17 +45,36 @@ export default class combineList extends Component {
                 return;
             }
             collision++;
-            if(collision === 100)
+            if (collision === 100)
                 alert("Error, array full");
         }
     }
 
     //This function adds all the items in the hashtable into the combinedlist
     addToCombined = (CombinedList) => {
-        for(let i = 0; i < ArraySize; i++) {
-            if(this.hashTable[i] !== NULL) {
+        for (let i = 0; i < ArraySize; i++) {
+            if (this.hashTable[i] !== NULL) {
                 CombinedList[0].data.push(this.hashTable[i]);
             }
+        }
+    }
+
+    //This function will add to combined list single items - No need to loop entire list
+    handleSingleItem = (newItem) => {
+        this.splitArray = newItem.split(" ");
+        this.capitaliseString();
+        this.key = this.hashFunction(this.combinedItem);
+        this.handleNewItem();
+        this.addToCombined();
+    }
+
+    //Function to capitalise first letter of all leading words in string
+    capitaliseString = () => {
+        for (let k = 0; k < this.splitArray.length; k++) {
+            this.splitArray[k] = this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
+
+            //Combine back
+            this.combinedItem = this.splitArray.join(" ");
         }
     }
 
@@ -67,12 +86,7 @@ export default class combineList extends Component {
             for (let j = 0; j < RecipeList[i].data.length; j++) {
                 //Split ingriedient into different parts if more than 1 word and capitalise all starting
                 this.splitArray = RecipeList[i].data[j].split(" ");
-                for (let k = 0; k < this.splitArray.length; k++) {
-                    this.splitArray[k] = this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
-                }
-
-                //Combine back
-                this.combinedItem = this.splitArray.join(" ");
+                this.capitaliseString();
 
                 //Hash combinedItem
                 this.key = this.hashFunction(this.combinedItem);
