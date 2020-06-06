@@ -76,7 +76,7 @@ const HomeScreenList = () => {
         showsVerticalScrollIndicator={false}
         sections={DATA}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Card {...item} Window={Window} />}
+        renderItem={({ item }) => <Card name={item.name} image={item.image} Window={Window} />}
         renderSectionHeader={({ section }) => (
         <Text style={styles.heading}>{section.heading}</Text>
         )}
