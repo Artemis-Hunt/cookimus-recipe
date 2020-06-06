@@ -65,13 +65,14 @@ export default class GroceryList extends Component {
   //Possibly use filter method
   deleteItem = (id) => {
     alert(id);
-    for(let i=0; i<RecipeList.length; i++) {
-      for(let j=0; j<RecipeList[i].data.length; j++) {
-        if(id === RecipeList[i].data[j].key) {
-          RecipeList[i].data.splice(j, 1);
+    RecipeList.map(
+      (item) => {
+        let index = item.data.findIndex(ingredient => (ingredient.key === id));
+        if(index !== -1) {
+          item.data.splice(index, 1);
         }
       }
-    }
+    )
   };
 
   //Check if entered is valid
