@@ -10,7 +10,7 @@ const combineList = (RecipeList) => {
         //Loop through all the individual ingriedients in each recipe
         for(let j=0; j<RecipeList[i].data.length; j++) {
             //Split ingriedient into different parts if more than 1 word and capitalise all starting
-            splitArray = str.split(" ");
+            splitArray = str.split(" "); //Need change this str
             for(let k=0; k<splitArray.length; k++) {
                 splitArray[k] = splitArray[k][0].toUpperCase() + splitArray[k].substr(1); //Appends everything else from index 1 onwards
             }
