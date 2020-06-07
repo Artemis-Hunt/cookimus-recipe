@@ -31,7 +31,7 @@ export default class combineList extends Component {
         //Handling item slotting/collisions
         let collision = 0;
 
-        while (collision !== 100) {
+        while (collision !== ArraySize) {
             if (this.hashTable[this.key + collision].name === null) {
                 //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
                 this.hashTable[this.key].name = this.combinedItem;
@@ -45,7 +45,7 @@ export default class combineList extends Component {
                 return;
             }
             collision++;
-            if (collision === 100)
+            if (collision === ArraySize)
                 alert("Error, array full");
         }
     }
