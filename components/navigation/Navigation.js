@@ -7,6 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import HomeScreenList from "../screens/HomeScreenList.js";
 import Recipe from "../screens/Recipe.js";
 import GroceryList from "../screens/GroceryList.js";
+import Search from "../screens/Search.js"
 
 const HomeStack = createStackNavigator();
 
@@ -46,6 +47,7 @@ const NavigationBar = () => {
         })}
       >
         <NavBar.Screen name="Home" component={HomeScreen} />
+        <NavBar.Screen name="Search" component={Search} />
         <NavBar.Screen name="Grocery List" component={GroceryList} />
       </NavBar.Navigator>
     </NavigationContainer>
