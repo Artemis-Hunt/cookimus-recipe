@@ -21,7 +21,7 @@ const Greetings = {
 };
 
 const timeGreeting = (name) => {
-  let hours = 12;//new Date().getHours();
+  let hours = new Date().getHours();
   let greeting = Greetings.evening + name + ".";
   if (hours >= 22 || hours <= 4) {
     greeting = Greetings.early + name + "?";
