@@ -51,9 +51,7 @@ export default class GroceryList extends Component {
 
   //Run combine list on startup
   componentDidMount() {
-    //Initialise hash table
     this.combineFunction();
-    alert(HashTable.length);
   }
 
   _handleButtonClick() {
@@ -86,13 +84,20 @@ export default class GroceryList extends Component {
     this.setState({ units: item });
   };
 
-  //DELETE FUNCTION FOR LIST
+  //Delte function for list
   deleteItem = (id) => {
-    alert(id);
     RecipeList.map(
       (item) => {
         let index = item.data.findIndex(ingredient => (ingredient.key === id));
         if (index !== -1) {
+          let key = this.hashFunction(item.data[index].name);
+          HashTable[key].amount -= item.data[index].amount;
+          if(HashTable[key].amount === 0) {
+            HashTable[key].name = null;
+            HashTable[key].amount = "";
+            HashTable[key].unit = "";
+            this.addToCombined();
+          }
           item.data.splice(index, 1);
         }
       }
@@ -116,7 +121,6 @@ export default class GroceryList extends Component {
 
       //Set key value for the new added item
       newObject.key = this.state.name + (RecipeList.length - 1) + (itemIndex);
-      alert(newObject.key);
 
       this.handleSingleItem(newObject.name, itemIndex)
 
@@ -145,16 +149,16 @@ export default class GroceryList extends Component {
 
     while (collision !== ArraySize) {
       //Need to fix for deletion
-      if (HashTable[this.key+collision].name === null) {
+      if (HashTable[this.key + collision].name === null) {
         //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
         HashTable[this.key].name = this.combinedItem;
-        HashTable[this.key].amount = RecipeList[i].data[j].amount;
+        HashTable[this.key].amount = Number(RecipeList[i].data[j].amount);
         HashTable[this.key].unit = RecipeList[i].data[j].unit;
         return;
       }
       else if (HashTable[this.key].name === this.combinedItem) {
         //Same Item, add amounts
-        HashTable[this.key].amount += RecipeList[i].data[j].amount;
+        HashTable[this.key].amount += Number(RecipeList[i].data[j].amount);
         return;
       }
       collision++;
@@ -165,6 +169,8 @@ export default class GroceryList extends Component {
 
   //This function adds all the items in the hashtable into the combinedlist
   addToCombined = () => {
+    //Clear item
+    CombinedList[0].data.splice(0, CombinedList[0].data.length);
     for (let i = 0; i < ArraySize; i++) {
       if (HashTable[i].name !== null) {
         CombinedList[0].data.push(HashTable[i]);
@@ -177,7 +183,7 @@ export default class GroceryList extends Component {
     this.splitArray = newSingleItem.split(" ");
     this.capitaliseString();
     this.key = this.hashFunction(this.combinedItem);
-    this.handleNewItem(RecipeList.length-1, itemIndex);
+    this.handleNewItem(RecipeList.length - 1, itemIndex);
     this.addToCombined();
   }
 
@@ -207,11 +213,11 @@ export default class GroceryList extends Component {
 
         //Add item into hash table
         this.handleNewItem(i, j);
-
-        //Move all items from hash table into the combined list
-        this.addToCombined();
       }
     }
+    
+    //Move all items from hash table into the combined list
+    this.addToCombined();
   }
 
   render() {
@@ -248,7 +254,22 @@ export default class GroceryList extends Component {
         ) : null}
 
         {/* Determine whether to render combined list or individual list */}
-        {this.state.combine ? null :
+        {this.state.combine ?
+          <SectionList
+            stickySectionHeadersEnabled={true}
+            sections={CombinedList}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <TouchableOpacity>
+                <Item title={item.name} amounts={item.amount} units={item.unit} />
+              </TouchableOpacity>
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={[styles.header, styles.text]}>{title}</Text>
+            )}
+            ItemSeparatorComponent={ItemSeparator}
+          />
+          :
           <SectionList
             stickySectionHeadersEnabled={true}
             sections={RecipeList}
