@@ -16,49 +16,9 @@ import {
 } from "@expo/vector-icons";
 import Card from "../screen-components/homescreen-list/Card.js";
 import FlavorText from "../screen-components/homescreen-list/FlavorText.js"
+import HomeScreenRecipe from "../../data/HomeScreenRecipe.js"
 
 const containerMarginHorizontal = 5;
-
-const breakfast = <FontAwesome5 name="bread-slice" size={29} color="black" />;
-
-const DATA = [
-  {
-    heading: "Breakfast ideas",
-    data: [
-      {
-        name: "American Breakfast",
-        image:
-          "https://sethlui.com/wp-content/uploads/2016/04/chengs-9747-1280x720.jpg",
-        icon: {breakfast}
-      },
-      {
-        name: "Ground Beef Tacos, Mexican-style",
-        image:
-          "https://www.cookingclassy.com/wp-content/uploads/2019/03/ground-beef-tacos-01.jpg",
-      },
-    ],
-  },
-  {
-    heading: "Recommended for you",
-    data: [
-      {
-        name: "Spaghetti",
-        image:
-          "https://www.inspiredtaste.net/wp-content/uploads/2019/03/Spaghetti-with-Meat-Sauce-Recipe-1-1200.jpg",
-      },
-    ],
-  },
-  {
-    heading: "Recommended for you",
-    data: [
-      {
-        name: "Spaghetti",
-        image:
-          "https://www.inspiredtaste.net/wp-content/uploads/2019/03/Spaghetti-with-Meat-Sauce-Recipe-1-1200.jpg",
-      },
-    ],
-  },
-];
 
 const ItemSeparator = () => {
   return (
@@ -74,7 +34,7 @@ const HomeScreenList = () => {
         ListHeaderComponent={()=> <FlavorText name="James"/>}
         stickySectionHeadersEnabled={false}
         showsVerticalScrollIndicator={false}
-        sections={DATA}
+        sections={HomeScreenRecipe}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <Card name={item.name} image={item.image} Window={Window} />}
         renderSectionHeader={({ section }) => (
