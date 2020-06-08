@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     marginVertical: 5,
+    marginHorizontal: 5,
 
     //Android shadow
     elevation: 5,
