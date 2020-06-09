@@ -73,7 +73,10 @@ export default class Search extends React.Component {
           <Ionicons style={styles.icon} name="ios-search" size={18} />
           <TextInput
             style={[styles.input, styles.text]}
-            onChangeText={(text) => this.setState({ searchText: text })}
+            onChangeText={(text) => {
+              this.setState({ searchText: text });
+              if (text === "") this.setState({ filtered: this.data });
+            }}
             onSubmitEditing={(event) =>
               this.filterArray(event.nativeEvent.text)
             }

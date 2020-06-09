@@ -29,7 +29,7 @@ const Recipe = () => {
     <View style={styles.container}>
       <View>
         <Image
-          style={[styles.image, { height: route.params.Window.height / 2.5 }]}
+          style={[styles.image, { height: route.params.Window.height / 3 }]}
           source={{ uri: `${route.params.image}` }}
         />
         <Text style={[styles.text, styles.name]}>{route.params.name}</Text>
@@ -47,6 +47,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   image: {
+    borderRadius: 5,
+    marginTop: 10,
     width: null,
   },
   text: {
