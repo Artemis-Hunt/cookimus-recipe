@@ -90,12 +90,15 @@ export default class GroceryList extends Component {
       (item) => {
         let index = item.data.findIndex(ingredient => (ingredient.key === id));
         if (index !== -1) {
-          let key = this.hashFunction(item.data[index].name);
-          HashTable[key].amount -= item.data[index].amount;
-          if(HashTable[key].amount === 0) {
-            HashTable[key].name = null;
-            HashTable[key].amount = "";
-            HashTable[key].unit = "";
+          let newItem = item.data[index].name;
+          this.splitArray = newItem.split(" ");
+          this.capitaliseString();
+          this.key = this.hashFunction(this.combinedItem);
+          HashTable[this.key].amount -= item.data[index].amount;
+          if(HashTable[this.key].amount === 0) {
+            HashTable[this.key].name = null;
+            HashTable[this.key].amount = "";
+            HashTable[this.key].unit = "";
             this.addToCombined();
           }
           item.data.splice(index, 1);

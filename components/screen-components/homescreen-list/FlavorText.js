@@ -2,10 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import {
   Ionicons,
-  Entypo,
-  FontAwesome,
-  FontAwesome5,
   MaterialCommunityIcons,
+  Feather
 } from "@expo/vector-icons";
 import { Row } from "native-base";
 
