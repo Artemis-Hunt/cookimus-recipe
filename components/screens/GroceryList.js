@@ -91,29 +91,16 @@ export default class GroceryList extends Component {
 
   //Delte function for list
   deleteItem = (id) => {
-    // RecipeList.map((item) => {
-    //   let index = item.data.findIndex((ingredient) => ingredient.key === id);
-    //   if (index !== -1) {
-    //     let key = this.hashFunction(item.data[index].name);
-    //     HashTable[key].amount -= item.data[index].amount;
-    //     if (HashTable[key].amount === 0) {
-    //       HashTable[key].name = null;
-    //       HashTable[key].amount = "";
-    //       HashTable[key].unit = "";
-    //       this.addToCombined();
-    //     }
-    //     item.data.splice(index, 1);
-    //   }
-    // });
-
     //Split id into name / recipe index / ingredient index
     let [name, recipeIndex, ingrIndex] = id.split(".");
 
     //Reference the item to be deleted
     let toDelete = RecipeList[recipeIndex].data[ingrIndex];
+    this.splitArray = toDelete.name.split(" ");
+    this.capitaliseString();
 
     //Update hash table. Delete entry if required
-    let hashKey = this.hashFunction(toDelete.name);
+    let hashKey = this.hashFunction(this.combinedItem);
     HashTable[hashKey].amount -= toDelete.amount;
     if (HashTable[hashKey].amount === 0) {
       HashTable[hashKey].name = null;
@@ -138,14 +125,13 @@ export default class GroceryList extends Component {
       newObject.amount = this.state.quantity;
       newObject.unit = this.state.units;
 
-      let RecipeIndex = RecipeList.length - 1;
+      //Recipe Index
+      let RecipeIndex = RecipeList.length-1;
+      //itemIndex
+      let itemIndex = RecipeList[RecipeIndex].data.length;
 
       RecipeList[RecipeIndex].data.push(newObject);
-
-      let itemIndex = RecipeList[RecipeIndex].data.length - 1;
-
-      //Set key value for the new added item
-      newObject.key = this.state.name + (RecipeList.length - 1) + itemIndex;
+      RecipeList[RecipeIndex].data[itemIndex].key = this.generateKey(RecipeIndex, itemIndex);
 
       this.handleSingleItem(newObject.name, itemIndex);
 
