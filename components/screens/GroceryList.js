@@ -39,7 +39,7 @@ export default class GroceryList extends Component {
       units: "",
       incompleteField: "",
       refresh: false,
-      combine: false
+      combine: false,
     };
     this._handleButtonClick = this._handleButtonClick.bind(this);
     this._handleCloseClick = this._handleCloseClick.bind(this);
@@ -68,8 +68,8 @@ export default class GroceryList extends Component {
 
   toggleMenu() {
     this.setState({
-      combine: !this.state.combine
-    })
+      combine: !this.state.combine,
+    });
   }
 
   handleName = (text) => {
@@ -84,27 +84,49 @@ export default class GroceryList extends Component {
     this.setState({ units: item });
   };
 
+  generateKey = (i, j) => {
+    let key = `${RecipeList[i].data[j].name}.${i}.${j}`;
+    return key;
+  };
+
   //Delte function for list
   deleteItem = (id) => {
-    RecipeList.map(
-      (item) => {
-        let index = item.data.findIndex(ingredient => (ingredient.key === id));
-        if (index !== -1) {
-          let newItem = item.data[index].name;
-          this.splitArray = newItem.split(" ");
-          this.capitaliseString();
-          this.key = this.hashFunction(this.combinedItem);
-          HashTable[this.key].amount -= item.data[index].amount;
-          if(HashTable[this.key].amount === 0) {
-            HashTable[this.key].name = null;
-            HashTable[this.key].amount = "";
-            HashTable[this.key].unit = "";
-            this.addToCombined();
-          }
-          item.data.splice(index, 1);
-        }
-      }
-    )
+    // RecipeList.map((item) => {
+    //   let index = item.data.findIndex((ingredient) => ingredient.key === id);
+    //   if (index !== -1) {
+    //     let key = this.hashFunction(item.data[index].name);
+    //     HashTable[key].amount -= item.data[index].amount;
+    //     if (HashTable[key].amount === 0) {
+    //       HashTable[key].name = null;
+    //       HashTable[key].amount = "";
+    //       HashTable[key].unit = "";
+    //       this.addToCombined();
+    //     }
+    //     item.data.splice(index, 1);
+    //   }
+    // });
+
+    //Split id into name / recipe index / ingredient index
+    let [name, recipeIndex, ingrIndex] = id.split(".");
+
+    //Reference the item to be deleted
+    let toDelete = RecipeList[recipeIndex].data[ingrIndex];
+
+    //Update hash table. Delete entry if required
+    let hashKey = this.hashFunction(toDelete.name);
+    HashTable[hashKey].amount -= toDelete.amount;
+    if (HashTable[hashKey].amount === 0) {
+      HashTable[hashKey].name = null;
+      HashTable[hashKey].amount = "";
+      HashTable[hashKey].unit = "";
+      this.addToCombined();
+    }
+
+    //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
+    RecipeList[recipeIndex].data.splice(ingrIndex, 1);
+    for (let j = ingrIndex; j < RecipeList[recipeIndex].data.length; j++) {
+      RecipeList[recipeIndex].data[j].key = this.generateKey(recipeIndex, j);
+    }
   };
 
   //Check if entered is valid
@@ -123,13 +145,12 @@ export default class GroceryList extends Component {
       let itemIndex = RecipeList[RecipeIndex].data.length - 1;
 
       //Set key value for the new added item
-      newObject.key = this.state.name + (RecipeList.length - 1) + (itemIndex);
+      newObject.key = this.state.name + (RecipeList.length - 1) + itemIndex;
 
-      this.handleSingleItem(newObject.name, itemIndex)
+      this.handleSingleItem(newObject.name, itemIndex);
 
       //Clear fields
       this.setState({ name: "", quantity: "", units: "", incompleteField: "" });
-
     } else this.setState({ incompleteField: "Please fill in all fields" });
   };
 
@@ -143,7 +164,7 @@ export default class GroceryList extends Component {
     total %= ArraySize;
 
     return total;
-  }
+  };
 
   //This function will handle the item added to the combined list
   handleNewItem = (i, j) => {
@@ -158,17 +179,15 @@ export default class GroceryList extends Component {
         HashTable[this.key].amount = Number(RecipeList[i].data[j].amount);
         HashTable[this.key].unit = RecipeList[i].data[j].unit;
         return;
-      }
-      else if (HashTable[this.key].name === this.combinedItem) {
+      } else if (HashTable[this.key].name === this.combinedItem) {
         //Same Item, add amounts
         HashTable[this.key].amount += Number(RecipeList[i].data[j].amount);
         return;
       }
       collision++;
-      if (collision === ArraySize)
-        alert("Error, array full");
     }
-  }
+    if (collision === ArraySize) alert("Error, array full");
+  };
 
   //This function adds all the items in the hashtable into the combinedlist
   addToCombined = () => {
@@ -179,7 +198,7 @@ export default class GroceryList extends Component {
         CombinedList[0].data.push(HashTable[i]);
       }
     }
-  }
+  };
 
   //This function will add to combined list single items - No need to loop entire list
   handleSingleItem = (newSingleItem, itemIndex) => {
@@ -188,17 +207,18 @@ export default class GroceryList extends Component {
     this.key = this.hashFunction(this.combinedItem);
     this.handleNewItem(RecipeList.length - 1, itemIndex);
     this.addToCombined();
-  }
+  };
 
   //Function to capitalise first letter of all leading words in string
   capitaliseString = () => {
     for (let k = 0; k < this.splitArray.length; k++) {
-      this.splitArray[k] = this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
+      this.splitArray[k] =
+        this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
 
       //Combine back
       this.combinedItem = this.splitArray.join(" ");
     }
-  }
+  };
 
   //Pass in single recipes at a time in recipe list format, add into hash table
   //Outer to loop through all the individual Recipes - Currently loops from start of list
@@ -206,6 +226,9 @@ export default class GroceryList extends Component {
     for (let i = 0; i < RecipeList.length; i++) {
       //Loop through all the individual ingriedients in each recipe
       for (let j = 0; j < RecipeList[i].data.length; j++) {
+        //Generate keys for each item, if it hasn't already been done
+        if (RecipeList[i].data[j].key === undefined)
+          RecipeList[i].data[j].key = this.generateKey(i, j);
         //Split ingriedient into different parts if more than 1 word and capitalise all starting
         let newItem = RecipeList[i].data[j].name;
         this.splitArray = newItem.split(" ");
@@ -218,10 +241,10 @@ export default class GroceryList extends Component {
         this.handleNewItem(i, j);
       }
     }
-    
+
     //Move all items from hash table into the combined list
     this.addToCombined();
-  }
+  };
 
   render() {
     return (
@@ -239,7 +262,10 @@ export default class GroceryList extends Component {
         </View>
 
         {/* Menu Bar */}
-        <MenuBar buttonClick={this._handleButtonClick} togglemenu={this.toggleMenu} />
+        <MenuBar
+          buttonClick={this._handleButtonClick}
+          togglemenu={this.toggleMenu}
+        />
 
         {/* Toggle menu for add item */}
         {this.state.showComponent ? (
@@ -257,14 +283,18 @@ export default class GroceryList extends Component {
         ) : null}
 
         {/* Determine whether to render combined list or individual list */}
-        {this.state.combine ?
+        {this.state.combine ? (
           <SectionList
             stickySectionHeadersEnabled={true}
             sections={CombinedList}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => (
               <TouchableOpacity>
-                <Item title={item.name} amounts={item.amount} units={item.unit} />
+                <Item
+                  title={item.name}
+                  amounts={item.amount}
+                  units={item.unit}
+                />
               </TouchableOpacity>
             )}
             renderSectionHeader={({ section: { title } }) => (
@@ -272,7 +302,7 @@ export default class GroceryList extends Component {
             )}
             ItemSeparatorComponent={ItemSeparator}
           />
-          :
+        ) : (
           <SectionList
             stickySectionHeadersEnabled={true}
             sections={RecipeList}
@@ -280,13 +310,17 @@ export default class GroceryList extends Component {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  this.deleteItem(item.key)
+                  this.deleteItem(item.key);
                   this.setState({
-                    refresh: !this.state.refresh
-                  })
+                    refresh: !this.state.refresh,
+                  });
                 }}
               >
-                <Item title={item.name} amounts={item.amount} units={item.unit} />
+                <Item
+                  title={item.name}
+                  amounts={item.amount}
+                  units={item.unit}
+                />
               </TouchableOpacity>
             )}
             renderSectionHeader={({ section: { title } }) => (
@@ -294,7 +328,7 @@ export default class GroceryList extends Component {
             )}
             ItemSeparatorComponent={ItemSeparator}
           />
-        }
+        )}
       </View>
     );
   }

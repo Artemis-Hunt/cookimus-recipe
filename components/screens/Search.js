@@ -70,7 +70,7 @@ export default class Search extends React.Component {
           value={this.state.searchText}
         /> */}
         <View style={styles.searchBar}>
-        <Ionicons style={styles.icon} name="ios-search" size={18} />
+          <Ionicons style={styles.icon} name="ios-search" size={18} />
           <TextInput
             style={[styles.input, styles.text]}
             onChangeText={(text) => this.setState({ searchText: text })}
@@ -101,24 +101,29 @@ export default class Search extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginHorizontal: 10,
   },
-  icon: {
-    position: "absolute",
-  },
+  icon: {},
   input: {
-    borderWidth: 2,
+    flex: 1,
+    height: 40,
+    paddingLeft: 10,
   },
   text: {
     fontFamily: "SourceSansPro",
   },
   searchBar: {
+    //size, color
     backgroundColor: "white",
     borderRadius: 20,
     borderWidth: 1,
-    flexDirection: "row",
     height: 40,
+    //flex
+    flexDirection: "row",
+    alignItems: "center",
+    //box
     marginVertical: 5,
-    padding: 10,
+    paddingHorizontal: 10,
   },
 });
