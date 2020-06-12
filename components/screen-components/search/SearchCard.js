@@ -15,13 +15,14 @@ const SearchCard = (props) => {
   const Window = useWindowDimensions();
   const navigation = useNavigation();
   return (
+
     <View>
       <TouchableOpacity
         activeOpacity={1}
         delayPressIn={5}
         delayPressOut={5}
         delayLongPress={5}
-        onPress={() => navigation.navigate("Recipe", {...props, Window, name: `${props.data.title}`})}
+        onPress={() => navigation.navigate("Recipe", {...props, Window, name: `${props.data.name}`})}
         style={styles.card}
       >
         <Image
