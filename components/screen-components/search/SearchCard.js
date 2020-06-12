@@ -41,7 +41,7 @@ const SearchCard = (props) => {
             ]}
             numberOfLines={2}
           >
-            {props.data.title}
+            {props.data.name}
           </Text>
           <Text style={[styles.site, styles.text]}>website.com</Text>
         </View>
