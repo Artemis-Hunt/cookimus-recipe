@@ -21,7 +21,7 @@ const SearchCard = (props) => {
         source={{ uri: `${props.image}` }}
       />
       <View style={styles.descriptionBox}>
-        <Text style={[styles.title, styles.text]}>{props.data.title}</Text>
+        <Text style={[styles.title, styles.text]}>{props.data.name}</Text>
       </View>
     </View>
   );

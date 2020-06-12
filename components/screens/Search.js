@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SearchCard from "../screen-components/search/SearchCard.js";
+import * as scrapedList from "../../data/allRecipesScraped.json" 
 
 export default class Search extends React.Component {
   constructor(props) {
@@ -25,20 +26,9 @@ export default class Search extends React.Component {
     this.fetchData();
   }
 
-  async fetchData() {
-    try {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      if (!response.ok) {
-        alert(response.statusText);
-      }
-      const result = await response.json();
-      this.setState({ loading: false, filtered: result });
-      this.data = result;
-    } catch (error) {
-      alert(error);
-    }
+  fetchData() {
+    this.setState({ loading: false, filtered: scrapedList.data });
+    this.data = scrapedList.data;
   }
 
   filterArray(text) {
@@ -87,9 +77,7 @@ export default class Search extends React.Component {
           renderItem={({ item }) => (
             <SearchCard
               data={item}
-              image={
-                "https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/2013/05/chorizo-mozarella-gnocchi-bake-cropped.jpg"
-              }
+              image={`${item.recipeImageURL}`}
             />
           )}
           keyExtractor={(item, index) => index.toString()}
