@@ -14,16 +14,48 @@ const HomeStack = createStackNavigator();
 const HomeScreen = () => {
   return (
     <HomeStack.Navigator
-      initialRouteName="HomePage"
-      screenOptions={{ headerStatusBarHeight: 0 }}
+      screenOptions={{
+        headerStatusBarHeight: 0,
+        headerStyle: { ...styles.headerStyle },
+        headerTitleStyle: { ...styles.headerTitle },
+      }}
     >
       <HomeStack.Screen
         name="HomePage"
         component={HomeScreenList}
         options={{ header: () => null }}
       />
-      <HomeStack.Screen name="Recipe" component={Recipe} />
+      <HomeStack.Screen
+        name="Recipe"
+        component={Recipe}
+        options={({ route }) => ({ title: route.params.name })}
+      />
     </HomeStack.Navigator>
+  );
+};
+
+const SearchStack = createStackNavigator();
+
+const SearchScreen = () => {
+  return (
+    <SearchStack.Navigator
+      screenOptions={{
+        headerStatusBarHeight: 0,
+        headerStyle: { ...styles.headerStyle },
+        headerTitleStyle: { ...styles.headerTitle },
+      }}
+    >
+      <SearchStack.Screen
+        name="Search"
+        component={Search}
+        options={{ header: () => null }}
+      />
+      <SearchStack.Screen
+        name="Recipe"
+        component={Recipe}
+        options={({ route }) => ({ title: route.params.name })}
+      />
+    </SearchStack.Navigator>
   );
 };
 const NavBar = createBottomTabNavigator();
@@ -60,7 +92,7 @@ const NavigationBar = () => {
         })}
       >
         <NavBar.Screen name="Home" component={HomeScreen} />
-        <NavBar.Screen name="Search" component={Search} />
+        <NavBar.Screen name="Search" component={SearchScreen} />
         <NavBar.Screen name="Grocery List" component={GroceryList} />
       </NavBar.Navigator>
     </NavigationContainer>
@@ -76,5 +108,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     marginVertical: 15,
     marginHorizontal: 10,
+  },
+  headerStyle: {
+    backgroundColor: "rgba(0,0,0,0)",
+    elevation: 0,
+  },
+  headerTitle: {
+    fontFamily: "SourceSansPro-SemiBold",
   },
 });
