@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from "react-native";
+import { Rating } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
 const roundedRadius = 10;
@@ -14,36 +15,40 @@ const roundedRadius = 10;
 const SearchCard = (props) => {
   const Window = useWindowDimensions();
   const navigation = useNavigation();
+  const scaledSize = sizeScaler(18, Window);
+  const scaledHeight = Window.height / 7.5;
   return (
-
     <View>
       <TouchableOpacity
         activeOpacity={1}
-        delayPressIn={5}
-        delayPressOut={5}
-        delayLongPress={5}
-        onPress={() => navigation.navigate("Recipe", {...props, Window, name: `${props.data.name}`})}
+        onPress={() =>
+          navigation.navigate("Recipe", {
+            ...props,
+            Window,
+            name: `${props.name}`,
+          })
+        }
         style={styles.card}
       >
         <Image
-          style={[
-            styles.image,
-            { height: Window.height / 7, width: Window.width / 4 },
-          ]}
+          style={[styles.image, { height: scaledHeight, width: scaledHeight }]}
           source={{ uri: `${props.image}` }}
         />
         <View style={styles.descriptionBox}>
           <Text
-            style={[
-              styles.title,
-              styles.text,
-              { fontSize: sizeScaler(22, Window) },
-            ]}
-            numberOfLines={2}
+            style={[styles.title, styles.text, { fontSize: scaledSize }]}
+            numberOfLines={3}
           >
-            {props.data.name}
+            {props.name}
           </Text>
-          <Text style={[styles.site, styles.text]}>website.com</Text>
+          <View style={styles.extraDetailsBox}>
+            <Text style={[styles.site, styles.text]}>website.com</Text>
+            <Rating
+              imageSize={scaledSize - 5}
+              readonly={true}
+              startingValue={props.rating}
+            />
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -90,6 +95,9 @@ const styles = StyleSheet.create({
   descriptionBox: {
     flex: 1,
     margin: 8,
+  },
+  extraDetailsBox: {
+    flexDirection: "row",
   },
   text: {
     flex: 1,
