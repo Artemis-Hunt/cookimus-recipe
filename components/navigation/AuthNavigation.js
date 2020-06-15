@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import NavigationBar from "./NavigationBar";
 import Login from "../screens/Login";
 import Signup from "../screens/Signup";
+import Loading from "../screens/Loading"
 import firebase from "../../config/Firebase/firebaseConfig";
 import UserContext from "../context/UserContext"
 
@@ -35,7 +36,7 @@ const AuthNavigation = () => {
   }, []);
 
   if (loading) {
-    return <></>;
+    return <Loading />;
   }
 
   return (

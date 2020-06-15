@@ -25,7 +25,6 @@ const SearchCard = (props) => {
           navigation.navigate("Recipe", {
             ...props,
             Window,
-            name: `${props.name}`,
           })
         }
         style={styles.card}
