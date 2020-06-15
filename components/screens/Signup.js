@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "../../config/Firebase/firebaseConfig";
@@ -15,6 +16,7 @@ export default function Signup({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onLoginLinkPress = () => {
     navigation.navigate("Login");
@@ -25,6 +27,7 @@ export default function Signup({ navigation }) {
       alert("Passwords do not match!");
       return;
     }
+    setLoading(true);
     try {
       const response = await firebase
         .auth()
@@ -42,6 +45,8 @@ export default function Signup({ navigation }) {
       //navigation.navigate("Main", { user: data });
     } catch (err) {
       alert(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,8 +95,16 @@ export default function Signup({ navigation }) {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button} onPress={() => onSignupPress()}>
-          <Text style={styles.buttonTitle}>Create account</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => onSignupPress()}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={"white"} />
+          ) : (
+            <Text style={styles.buttonTitle}>Create account</Text>
+          )}
         </TouchableOpacity>
         <View style={styles.footerView}>
           <Text style={styles.footerText}>

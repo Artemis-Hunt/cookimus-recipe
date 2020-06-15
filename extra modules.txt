@@ -1,3 +1,6 @@
 expo-constants
+firebase
+react-navigation (look at docs for installation)
 react-native-elements
 react-native-linear-gradient
+react-native-keyboard-aware-scroll-view
