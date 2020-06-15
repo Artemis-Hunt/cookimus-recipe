@@ -5,12 +5,10 @@ const IngredientBox = ({ ingredients }) => {
   return (
     <View style={styles.ingredientBox}>
       <Text style={[styles.text, styles.header]}>Ingredients:</Text>
+      {/* Have to change the key */}
       {ingredients.map((item) => (
-        <View style={styles.ingredientEntry} key={item.name}>
-          <Text style={[styles.text, styles.ingredient]}>{item.name}</Text>
-          <Text style={[styles.text, styles.ingredient]}>
-            {item.quantity + " " + item.unit}
-          </Text>
+        <View style={styles.ingredientEntry} key={item}>
+          <Text style={[styles.text, styles.ingredient]}>{item}</Text>
         </View>
       ))}
     </View>

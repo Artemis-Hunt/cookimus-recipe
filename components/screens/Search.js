@@ -9,7 +9,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SearchCard from "../screen-components/search/SearchCard.js";
+
+//Temp JSON files
 import * as scrapedList from "../../data/allRecipesScraped.json";
+import * as scrapedListAdditional from "../../data/allRecipesAdditional.json";
+let combinedData = [];
+
+
 import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
@@ -30,8 +36,14 @@ export default class Search extends React.PureComponent {
   }
 
   fetchData() {
-    this.setState({ loading: false, filtered: scrapedList.data });
-    this.data = scrapedList.data;
+    for(let object of scrapedList.data) {
+      let tempObject = object;
+      tempObject.additionalInfo = scrapedListAdditional.data[object.id].additionalInfo;
+      tempObject.prepInstructions = scrapedListAdditional.data[object.id].prepInstructions;
+      combinedData.push(tempObject);
+    }
+    this.setState({ loading: false, filtered: combinedData });
+    this.data = combinedData;
   }
 
   filterArray(text) {
@@ -93,7 +105,10 @@ export default class Search extends React.PureComponent {
             <SearchCard
               name={item.name}
               image={item.recipeImageURL}
-              rating={4.3}
+              rating={Number(item.ratings)}
+              ingredients={item.originalIngredient}
+              extraInfo={item.additionalInfo}
+              prep={item.prepInstructions}
             />
           )}
           keyExtractor={(item, index) => index.toString()}
