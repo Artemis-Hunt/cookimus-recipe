@@ -4,10 +4,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import HomeScreenList from "../screens/HomeScreenList.js";
-import Recipe from "../screens/Recipe.js";
-import GroceryList from "../screens/GroceryList.js";
-import Search from "../screens/Search.js";
+import HomeScreenList from "../screens/HomeScreenList";
+import Recipe from "../screens/Recipe";
+import GroceryList from "../screens/GroceryList";
+import Search from "../screens/Search";
+import Settings from "../screens/Settings";
 
 const HomeStack = createStackNavigator();
 
@@ -62,40 +63,38 @@ const NavBar = createBottomTabNavigator();
 
 const NavigationBar = () => {
   return (
-    <NavigationContainer>
-      <NavBar.Navigator
-        initialRouteName="Home"
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+    <NavBar.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-            switch (route.name) {
-              case "Home":
-                iconName = focused ? "home-variant" : "home-variant-outline";
-                break;
-              case "Search":
-                iconName = focused ? "book-search" : "book-search-outline";
-                break;
-              case "Grocery List":
-                iconName = focused ? "cart" : "cart-outline";
-                break;
-            }
+          switch (route.name) {
+            case "Home":
+              iconName = focused ? "home-variant" : "home-variant-outline";
+              break;
+            case "Search":
+              iconName = focused ? "book-search" : "book-search-outline";
+              break;
+            case "Grocery List":
+              iconName = focused ? "cart" : "cart-outline";
+              break;
+            case "Settings":
+              iconName = focused ? "settings" : "settings-outline";
+              break;
+          }
 
-            return (
-              <MaterialCommunityIcons
-                name={iconName}
-                size={size}
-                color={color}
-              />
-            );
-          },
-        })}
-      >
-        <NavBar.Screen name="Home" component={HomeScreen} />
-        <NavBar.Screen name="Search" component={SearchScreen} />
-        <NavBar.Screen name="Grocery List" component={GroceryList} />
-      </NavBar.Navigator>
-    </NavigationContainer>
+          return (
+            <MaterialCommunityIcons name={iconName} size={size} color={color} />
+          );
+        },
+      })}
+    >
+      <NavBar.Screen name="Home" component={HomeScreen} />
+      <NavBar.Screen name="Search" component={SearchScreen} />
+      <NavBar.Screen name="Grocery List" component={GroceryList} />
+      <NavBar.Screen name="Settings" component={Settings} />
+    </NavBar.Navigator>
   );
 };
 

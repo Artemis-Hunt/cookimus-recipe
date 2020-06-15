@@ -21,9 +21,6 @@ const SearchCard = (props) => {
     <View>
       <TouchableOpacity
         activeOpacity={1}
-        delayPressIn={5}
-        delayPressOut={5}
-        delayLongPress={5}
         onPress={() =>
           navigation.navigate("Recipe", {
             ...props,
