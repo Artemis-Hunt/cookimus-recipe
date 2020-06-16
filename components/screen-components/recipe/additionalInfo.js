@@ -7,12 +7,13 @@ const additionalInfo = ({ additional }) => {
         item.heading = item.heading[0].toUpperCase() + item.heading.substr(1);
     });
     return (
-        <View>
+        <View style={styles.box}>
             {/* Need to change the key also */}
             {additional.map((item) => (
-                <View key={item.heading+item.body}>
-                    <Text>{item.heading}</Text>
-                    <Text>{item.body}</Text>
+                <View style={styles.container}
+                    key={item.heading+item.body}>
+                    <Text style={[styles.heading, styles.text]}>{item.heading} </Text>
+                    <Text style={[styles.body, styles.text]}> {item.body}</Text>
                 </View>
             ))}
         </View>
@@ -20,3 +21,27 @@ const additionalInfo = ({ additional }) => {
 }
 
 export default additionalInfo;
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        margin: 5,
+        justifyContent: "center",
+    },
+    box: {
+        marginBottom: 10,
+        borderRadius: 10,
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    heading: {
+        fontFamily: "SourceSansPro-SemiBold",
+    },
+    body: {
+        fontFamily: "SourceSansPro",
+    },
+    text: {
+        fontSize: 17,
+        textAlign: "center",
+    },
+})

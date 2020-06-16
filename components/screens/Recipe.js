@@ -19,10 +19,12 @@ const Recipe = () => {
           source={{ uri: `${route.params.image}` }}
         />
         <View style={styles.categoryBox}>
-          <Text style={[styles.text, styles.name]}>{route.params.name}</Text>
-          <AdditionalInfo additional={route.params.extraInfo}/>
+          <View style={styles.subBox}>
+            <Text style={[styles.text, styles.name]}>{route.params.name}</Text>
+          </View>
+          <AdditionalInfo additional={route.params.extraInfo} />
         </View>
-        <IngredientBox ingredients={route.params.ingredients} />
+          <IngredientBox ingredients={route.params.ingredients} />
       </ScrollView>
     </View>
   );
@@ -37,7 +39,6 @@ const styles = StyleSheet.create({
   },
   image: {
     borderRadius: 5,
-    //marginTop: 10,
     width: null,
   },
   text: {
@@ -52,5 +53,10 @@ const styles = StyleSheet.create({
   categoryBox: {
     borderBottomWidth: 5,
     borderBottomColor: "#778899"
+  },
+  subBox: {
+    borderBottomWidth: 2,
+    marginBottom: 10,
+    borderBottomColor: "#F08080",
   }
 });
