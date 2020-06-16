@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
+import AdditionalInfo from "../screen-components/recipe/additionalInfo.js";
 
 //This file will render the individual recipe pages when clicked into from the search page
 const Recipe = () => {
@@ -19,6 +20,7 @@ const Recipe = () => {
         />
         <View style={styles.categoryBox}>
           <Text style={[styles.text, styles.name]}>{route.params.name}</Text>
+          <AdditionalInfo additional={route.params.extraInfo}/>
         </View>
         <IngredientBox ingredients={route.params.ingredients} />
       </ScrollView>
