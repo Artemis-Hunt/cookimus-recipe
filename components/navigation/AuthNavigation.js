@@ -13,6 +13,12 @@ const Stack = createStackNavigator();
 const AuthNavigation = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const emptyUser = {
+    id: null,
+    email: "",
+    firstName: "",
+    lastName: "",
+  }
 
   useEffect(() => {
     const usersRef = firebase.firestore().collection("users");
@@ -24,7 +30,7 @@ const AuthNavigation = () => {
           setUser(userData);
         }
         else {
-          setUser(null);
+          setUser(emptyUser);
         }
       } catch (err) {
         alert(err);
@@ -48,7 +54,7 @@ const AuthNavigation = () => {
             headerStatusBarHeight: 0,
           }}
         >
-          {user ? (
+          {user.id ? (
             <Stack.Screen name="Main" component={NavigationBar} />
           ) : (
             <>

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "../../config/Firebase/firebaseConfig";
+import Button from "../generic/Button";
 
 export default function Signup({ navigation }) {
   const [firstName, setFirstName] = useState("");
@@ -105,19 +106,14 @@ export default function Signup({ navigation }) {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
-        <TouchableOpacity
+        <Button
+          text={"Create account"}
+          onPressHandle={onSignupPress}
+          loading={loading}
           style={styles.button}
-          onPress={() => onSignupPress()}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color={"white"} />
-          ) : (
-            <Text style={styles.buttonTitle}>Create account</Text>
-          )}
-        </TouchableOpacity>
+        />
         <View style={styles.footerView}>
-          <Text style={styles.footerText}>
+          <Text style={[styles.footerText, styles.text]}>
             Already got an account?{" "}
             <Text onPress={onLoginLinkPress} style={styles.footerLink}>
               Log in
@@ -151,6 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     margin: 10,
     paddingLeft: 16,
+    fontFamily: "SourceSansPro",
   },
   name: {
     flexDirection: "row",
@@ -160,20 +157,14 @@ const styles = StyleSheet.create({
     width: 200,
     marginTop: 20,
     height: 48,
-    borderRadius: 5,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonTitle: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   footerView: {
     flex: 1,
     alignItems: "center",
     marginTop: 20,
+  },
+  text: {
+    fontFamily: "SourceSansPro",
   },
   footerText: {
     fontSize: 16,

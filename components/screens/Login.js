@@ -10,11 +10,13 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "../../config/Firebase/firebaseConfig";
+import Button from "../generic/Button";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [anonLoading, setAnonLoading] = useState(false);
 
   const onSignupLinkPress = () => {
     navigation.navigate("Signup");
@@ -40,12 +42,35 @@ export default function LoginScreen({ navigation }) {
         case "auth/wrong-password":
           alert("Incorrect username or password");
           break;
+        case "auth/invalid-email":
+          alert("Invalid email");
+          break;
         default:
           alert(err.code);
           break;
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onAnonLoginPress = async () => {
+    setAnonLoading(true);
+    try {
+      const response = await firebase.auth().signInAnonymously();
+      const uid = response.user.uid;
+      const data = {
+        id: uid,
+        email: "",
+        firstName: "Guest",
+        lastName: "",
+      };
+      const usersRef = firebase.firestore().collection("users");
+      await usersRef.doc(uid).set(data);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setAnonLoading(false);
     }
   };
 
@@ -78,26 +103,30 @@ export default function LoginScreen({ navigation }) {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
-        <TouchableOpacity
+        <Button
+          text={"Log in"}
+          onPressHandle={onLoginPress}
+          loading={loading}
           style={styles.button}
-          activeOpacity={0.7}
-          onPress={() => onLoginPress()}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color={"white"} />
-          ) : (
-            <Text style={styles.buttonTitle}>Log in</Text>
-          )}
-        </TouchableOpacity>
+        />
         <View style={styles.footerView}>
-          <Text style={styles.footerText}>
+          <Text style={[styles.footerText, styles.text]}>
             Don't have an account?{" "}
             <Text onPress={onSignupLinkPress} style={styles.footerLink}>
               Sign up
             </Text>
+            {`
+
+            Or continue as Guest
+            `}
           </Text>
         </View>
+        <Button
+          text={"Guest login"}
+          onPressHandle={onAnonLoginPress}
+          loading={anonLoading}
+          style={styles.button}
+        />
       </KeyboardAwareScrollView>
     </View>
   );
@@ -124,26 +153,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     paddingLeft: 16,
+    fontFamily: "SourceSansPro",
   },
   button: {
     backgroundColor: "#788eec",
     width: 200,
     marginTop: 20,
     height: 48,
-    borderRadius: 5,
-    alignItems: "center",
-    alignSelf: "center",
-    justifyContent: "center",
-  },
-  buttonTitle: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   footerView: {
     flex: 1,
     alignItems: "center",
     marginTop: 20,
+  },
+  text: {
+    fontFamily: "SourceSansPro",
   },
   footerText: {
     fontSize: 16,

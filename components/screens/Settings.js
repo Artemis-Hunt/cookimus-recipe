@@ -3,16 +3,22 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import UserContext from "../context/UserContext";
 import firebase from "../../config/Firebase/firebaseConfig";
 
-const onLogOutPress = async () => {
+const onLogOutPress = async (user) => {
   await firebase.auth().signOut();
-  alert("Signed out!")
+  if(user.firstName === "Guest") {
+    const usersRef = firebase.firestore().collection("users")
+    await usersRef.doc(user.id).delete();
+  }
 }
 const Settings = () => {
   const user = useContext(UserContext);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.logOut} onPress={onLogOutPress}>
+      <Text>
+        {`Current user is ${user.firstName}.`}
+      </Text>
+      <TouchableOpacity style={styles.logOut} onPress={() => onLogOutPress(user)}>
         <Text>Log out</Text>
       </TouchableOpacity>
     </View>
