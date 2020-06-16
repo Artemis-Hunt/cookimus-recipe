@@ -1,49 +1,51 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import Constants from "expo-constants";
-import { Ionicons, Entypo, AntDesign} from '@expo/vector-icons';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { FontAwesome5, Entypo, AntDesign } from '@expo/vector-icons';
 
 const menuBar = ({ buttonClick, togglemenu }) => (
     <View style={styles.menuBar}>
-        <TouchableOpacity
-            style={styles.addItem}
-            onPress={togglemenu}
-        >
-            <Text style={[styles.addItemText, styles.text]}>
-                <AntDesign name="retweet" size={18} color="black" /> Toggle View
-            </Text>
-        </TouchableOpacity>
+        <Text style={[styles.titleText, styles.text]}>Grocery List  <FontAwesome5 name="shopping-basket" size={24} color="white" /></Text>
+        <View style={styles.iconBar}>
+            <TouchableOpacity
+                style={styles.icon}
+                onPress={togglemenu}
+            >
+                <AntDesign name="retweet" size={24} color="white" />
+            </TouchableOpacity>
 
-        <TouchableOpacity
-            style={styles.addItem}
-            onPress={buttonClick}
-        >
-            <Text style={[styles.addItemText, styles.text]}>
-                Add Item... <Entypo name="squared-plus" size={18} color="black" />
-            </Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.icon}
+                onPress={buttonClick}
+            >
+                <Entypo name="squared-plus" size={26} color="white" />
+            </TouchableOpacity>
+        </View>
     </View>
 )
 
 //StyleSheets
 const styles = StyleSheet.create({
     menuBar: {
-        padding: 5,
-        backgroundColor: "cyan",
-        alignItems:"flex-end",
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        backgroundColor: "forestgreen",
         flexDirection: "row",
-        justifyContent: "center"
-    },
-    addItem: {
-        width: 115,
-        flex: 1,
+        justifyContent: "space-between",
+        alignItems: "baseline"
     },
     text: {
         fontFamily: "SourceSansPro"
     },
-    addItemText: {
-        fontSize: 18,
-        padding: 5,
+    titleText: {
+        fontSize: 30,
+        color: "white",
+    },
+    iconBar: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+    },
+    icon: {
+        paddingHorizontal: 10,
     }
 });
 

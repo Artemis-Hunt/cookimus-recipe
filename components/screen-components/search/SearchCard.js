@@ -40,8 +40,11 @@ const SearchCard = (props) => {
           >
             {props.name}
           </Text>
+          <Text style={[styles.site, styles.text]}>website.com</Text>
           <View style={styles.extraDetailsBox}>
-            <Text style={[styles.site, styles.text]}>website.com</Text>
+            <Text style = {styles.rating}> 
+              Ratings: ({props.review})
+            </Text>
             <Rating
               imageSize={scaledSize - 5}
               readonly={true}
@@ -97,16 +100,24 @@ const styles = StyleSheet.create({
   },
   extraDetailsBox: {
     flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "baseline",
   },
   text: {
     flex: 1,
     fontFamily: "SourceSansPro",
     textAlign: "center",
   },
-  title: {},
+  title: {
+  },
   site: {
     color: "grey",
-    fontSize: 15,
+    fontSize: 13,
     fontStyle: "italic",
   },
+  rating: {
+    color: "grey",
+    fontSize: 11,
+    fontStyle: "italic",
+  }
 });

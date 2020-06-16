@@ -49,7 +49,7 @@ const DropMenu = ({
             Close <FontAwesome
               name="window-close"
               size={18}
-              color="black"
+              color="crimson"
             />{" "}
           </Text>
         </TouchableOpacity>
@@ -61,7 +61,7 @@ const DropMenu = ({
         onChangeText={(text) => handlename(text)}
       />
       <Text style={styles.menuText}>
-        Quantity <FontAwesome5 name="weight" size={18} color="black" />
+        Quantity <FontAwesome5 name="weight" size={18} color="#2F4F4F" />
       </Text>
       <View style={styles.quantityBox}>
         <TextInput
@@ -70,11 +70,6 @@ const DropMenu = ({
           value={quantity}
           onChangeText={(text) => handlequantity(text)}
         />
-
-        {/* <Text style={styles.menuText}>
-        Choose Units{" "}
-        <FontAwesome5 name="ruler-vertical" size={24} color="black" />
-      </Text> */}
         <DropDownPicker
           items={[
             { label: "No Units", value: "" },
@@ -119,17 +114,18 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 18,
     padding: 5,
+    color: "black"
   },
   //Outermost container
   dropMenu: {
-    backgroundColor: "coral",
+    backgroundColor: "mediumaquamarine",
     padding: 10,
   },
   //Text input box style
   textInput: {
     height: 30,
     padding: 5,
-    borderColor: "gray",
+    borderColor: "#CCC",
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: "#f8f8f8",
@@ -137,6 +133,7 @@ const styles = StyleSheet.create({
   quantityBox: {
     flexDirection: "row",
     justifyContent: "flex-start",
+    alignItems: "center",
   },
   errorText: {
     color: "crimson",
