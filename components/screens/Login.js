@@ -21,23 +21,31 @@ export default function LoginScreen({ navigation }) {
   };
 
   const onLoginPress = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const response = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
       const uid = response.user.uid;
-      const usersRef = firebase.firestore().collection("users")
+      const usersRef = firebase.firestore().collection("users");
       const firestoreDoc = await usersRef.doc(uid).get();
-      if(!firestoreDoc.exists) {
-        alert("User does not exist!")
+      if (!firestoreDoc.exists) {
+        alert("User does not exist!");
         return;
       }
       const user = firestoreDoc.data();
-    }
-    catch (err) {
-      alert(err)
-    }
-    finally {
-      setLoading(false)
+    } catch (err) {
+      switch (err.code) {
+        case "auth/user-not-found":
+        case "auth/wrong-password":
+          alert("Incorrect username or password");
+          break;
+        default:
+          alert(err.code);
+          break;
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +55,10 @@ export default function LoginScreen({ navigation }) {
         style={{ flex: 1, width: "100%" }}
         keyboardShouldPersistTaps="always"
       >
-        <Image style={styles.logo} source={require("../../assets/splash.png")} />
+        <Image
+          style={styles.logo}
+          source={require("../../assets/splash.png")}
+        />
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -67,8 +78,17 @@ export default function LoginScreen({ navigation }) {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button} onPress={() => onLoginPress()} disabled={loading}>
-          {loading ? <ActivityIndicator color={"white"}/> : <Text style={styles.buttonTitle}>Log in</Text>}
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.7}
+          onPress={() => onLoginPress()}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={"white"} />
+          ) : (
+            <Text style={styles.buttonTitle}>Log in</Text>
+          )}
         </TouchableOpacity>
         <View style={styles.footerView}>
           <Text style={styles.footerText}>
@@ -87,6 +107,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    marginHorizontal: 30,
   },
   title: {},
   logo: {
@@ -102,18 +123,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: 10,
     marginBottom: 10,
-    marginLeft: 30,
-    marginRight: 30,
     paddingLeft: 16,
   },
   button: {
     backgroundColor: "#788eec",
-    marginLeft: 30,
-    marginRight: 30,
+    width: 200,
     marginTop: 20,
     height: 48,
     borderRadius: 5,
     alignItems: "center",
+    alignSelf: "center",
     justifyContent: "center",
   },
   buttonTitle: {

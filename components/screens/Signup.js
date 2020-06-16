@@ -12,7 +12,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import firebase from "../../config/Firebase/firebaseConfig";
 
 export default function Signup({ navigation }) {
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,13 +37,11 @@ export default function Signup({ navigation }) {
       const data = {
         id: uid,
         email,
-        fullName,
+        firstName,
+        lastName,
       };
       const usersRef = firebase.firestore().collection("users");
       await usersRef.doc(uid).set(data);
-
-      //Navigate to homescreen?
-      //navigation.navigate("Main", { user: data });
     } catch (err) {
       alert(err);
     } finally {
@@ -57,15 +56,26 @@ export default function Signup({ navigation }) {
         keyboardShouldPersistTaps="always"
       >
         <Image style={styles.logo} source={require("../../assets/icon.png")} />
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={(text) => setFullName(text)}
-          value={fullName}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
+        <View style={styles.name}>
+          <TextInput
+            style={styles.input}
+            placeholder="First Name"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(text) => setFirstName(text)}
+            value={firstName}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(text) => setLastName(text)}
+            value={lastName}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -123,6 +133,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    marginHorizontal: 20,
   },
   title: {},
   logo: {
@@ -133,23 +144,24 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   input: {
+    flex: 1,
     height: 48,
     borderRadius: 5,
     overflow: "hidden",
     backgroundColor: "white",
-    marginTop: 10,
-    marginBottom: 10,
-    marginLeft: 30,
-    marginRight: 30,
+    margin: 10,
     paddingLeft: 16,
+  },
+  name: {
+    flexDirection: "row",
   },
   button: {
     backgroundColor: "#788eec",
-    marginLeft: 30,
-    marginRight: 30,
+    width: 200,
     marginTop: 20,
     height: 48,
     borderRadius: 5,
+    alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
   },
