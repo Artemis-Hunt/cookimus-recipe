@@ -10,9 +10,11 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "../../config/Firebase/firebaseConfig";
+import Button from "../generic/Button";
 
 export default function Signup({ navigation }) {
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,13 +38,11 @@ export default function Signup({ navigation }) {
       const data = {
         id: uid,
         email,
-        fullName,
+        firstName,
+        lastName,
       };
       const usersRef = firebase.firestore().collection("users");
       await usersRef.doc(uid).set(data);
-
-      //Navigate to homescreen?
-      //navigation.navigate("Main", { user: data });
     } catch (err) {
       alert(err);
     } finally {
@@ -57,15 +57,26 @@ export default function Signup({ navigation }) {
         keyboardShouldPersistTaps="always"
       >
         <Image style={styles.logo} source={require("../../assets/icon.png")} />
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          placeholderTextColor="#aaaaaa"
-          onChangeText={(text) => setFullName(text)}
-          value={fullName}
-          underlineColorAndroid="transparent"
-          autoCapitalize="none"
-        />
+        <View style={styles.name}>
+          <TextInput
+            style={styles.input}
+            placeholder="First Name"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(text) => setFirstName(text)}
+            value={firstName}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            placeholderTextColor="#aaaaaa"
+            onChangeText={(text) => setLastName(text)}
+            value={lastName}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+        </View>
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -95,19 +106,14 @@ export default function Signup({ navigation }) {
           underlineColorAndroid="transparent"
           autoCapitalize="none"
         />
-        <TouchableOpacity
+        <Button
+          text={"Create account"}
+          onPressHandle={onSignupPress}
+          loading={loading}
           style={styles.button}
-          onPress={() => onSignupPress()}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color={"white"} />
-          ) : (
-            <Text style={styles.buttonTitle}>Create account</Text>
-          )}
-        </TouchableOpacity>
+        />
         <View style={styles.footerView}>
-          <Text style={styles.footerText}>
+          <Text style={[styles.footerText, styles.text]}>
             Already got an account?{" "}
             <Text onPress={onLoginLinkPress} style={styles.footerLink}>
               Log in
@@ -123,6 +129,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    marginHorizontal: 20,
   },
   title: {},
   logo: {
@@ -133,35 +140,31 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   input: {
+    flex: 1,
     height: 48,
     borderRadius: 5,
     overflow: "hidden",
     backgroundColor: "white",
-    marginTop: 10,
-    marginBottom: 10,
-    marginLeft: 30,
-    marginRight: 30,
+    margin: 10,
     paddingLeft: 16,
+    fontFamily: "SourceSansPro",
+  },
+  name: {
+    flexDirection: "row",
   },
   button: {
     backgroundColor: "#788eec",
-    marginLeft: 30,
-    marginRight: 30,
+    width: 200,
     marginTop: 20,
     height: 48,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonTitle: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   footerView: {
     flex: 1,
     alignItems: "center",
     marginTop: 20,
+  },
+  text: {
+    fontFamily: "SourceSansPro",
   },
   footerText: {
     fontSize: 16,
