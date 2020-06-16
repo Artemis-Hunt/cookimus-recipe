@@ -5,7 +5,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const IngredientBox = ({ ingredients }) => {
   return (
     <View style={styles.ingredientBox}>
-      <Text style={[styles.headerText, styles.header]}>Ingredients <MaterialCommunityIcons name="food-variant" size={24} color="black" /></Text>
+      <View style={styles.container}>
+        <Text style={[styles.headerText, styles.header]}>Ingredients  </Text>
+        <MaterialCommunityIcons name="food-variant" size={20} color="black" />
+      </View>
       {/* Have to change the key */}
       {ingredients.map((item) => (
         <View style={styles.ingredientEntry} key={item}>
@@ -43,5 +46,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginBottom: 5,
     color: "#484848",
+  },
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
   },
 });
