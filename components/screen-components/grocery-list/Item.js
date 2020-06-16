@@ -23,10 +23,10 @@ const styles = StyleSheet.create({
   },
   //Ingredient Card Text
   ingredientText: {
-    fontSize: 20,
+    fontSize: 18,
   },
   ingredientValueText: {
-    fontSize: 20,
+    fontSize: 18,
     color: "#A9A9A9",
   },
 });

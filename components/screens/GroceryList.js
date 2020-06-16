@@ -235,18 +235,6 @@ export default class GroceryList extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.titleCard}>
-          <ImageBackground
-            source={{
-              uri:
-                "https://www.healthline.com/hlcmsresource/images/AN_images/fruits-and-vegetables-thumb.jpg",
-            }}
-            style={styles.image}
-          >
-            <Text style={[styles.title, styles.text]}>Grocery List</Text>
-          </ImageBackground>
-        </View>
-
         {/* Menu Bar */}
         <MenuBar
           buttonClick={this._handleButtonClick}
@@ -335,8 +323,9 @@ const styles = StyleSheet.create({
   //Recipe Names
   header: {
     padding: 10,
-    fontSize: 32,
-    backgroundColor: "#fff",
+    fontSize: 24,
+    backgroundColor: "#E8E8E8",
+    color: "black"
   },
   //Main Top Bar Text
   title: {
