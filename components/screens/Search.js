@@ -106,6 +106,7 @@ export default class Search extends React.PureComponent {
               name={item.name}
               image={item.recipeImageURL}
               rating={Number(item.ratings)}
+              review={item.reviewCount}
               ingredients={item.originalIngredient}
               extraInfo={item.additionalInfo}
               prep={item.prepInstructions}
