@@ -6,11 +6,17 @@ import { Entypo, Feather } from '@expo/vector-icons';
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/additionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
+import AddItem from "../screen-components/recipe/AddIngredient.js"
 
 //This file will render the individual recipe pages when clicked into from the search page
 const Recipe = () => {
   const route = useRoute();
   const navigation = useNavigation();
+
+  const modIngre = route.params.modIngredient;
+  const newName = route.params.name;
+
+  //alert(modIngre);
 
   return (
     <View style={styles.container}>
@@ -29,6 +35,7 @@ const Recipe = () => {
         </View>
         <IngredientBox ingredients={route.params.ingredients} />
         <TouchableOpacity
+          onPress={() => {AddItem(modIngre, newName)}}
           style={styles.buttonBox}>
           <Text style={styles.addButton}>Add to Grocery List </Text>
           <Entypo name="add-to-list" size={19} color="#1E90FF" />
