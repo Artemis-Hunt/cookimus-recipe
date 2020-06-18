@@ -3,7 +3,6 @@ import { StyleSheet, Text, View } from "react-native";
 import Constants from "expo-constants";
 import { useFonts } from "@use-expo/font";
 import AuthNavigation from "./components/navigation/AuthNavigation";
-import Login from "./components/screens/Login"
 
 export default function App() {
   let [fontsLoaded] = useFonts({

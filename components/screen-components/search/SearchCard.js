@@ -18,7 +18,7 @@ const SearchCard = (props) => {
   const scaledSize = sizeScaler(18, Window);
   const scaledHeight = Window.height / 7.5;
   return (
-    <View>
+    <View style={{height: props.height}}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() =>
@@ -30,7 +30,7 @@ const SearchCard = (props) => {
         style={styles.card}
       >
         <Image
-          style={[styles.image, { height: scaledHeight, width: scaledHeight }]}
+          style={[styles.image, { width: props.height - 20 }]}
           source={{ uri: `${props.image}` }}
         />
         <View style={styles.descriptionBox}>

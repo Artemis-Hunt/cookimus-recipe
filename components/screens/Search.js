@@ -6,19 +6,17 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SearchCard from "../screen-components/search/SearchCard.js";
 
 //Temp JSON files
-import * as scrapedList from "../../data/allRecipesScraped.json";
-import * as scrapedListAdditional from "../../data/allRecipesAdditional.json";
-let combinedData = [];
+import scrapedList from "../../data/allRecipesScraped.json";
+import scrapedListAdditional from "../../data/allRecipesAdditional.json";
+const combinedData = [];
 
-
-import {
-  TouchableWithoutFeedback,
-} from "react-native-gesture-handler";
+import SearchList from "../screen-components/search/SearchList";
 
 export default class Search extends React.PureComponent {
   constructor(props) {
@@ -29,6 +27,8 @@ export default class Search extends React.PureComponent {
       searchText: "",
     };
     this.data = [];
+    this.containerWidth = 0;
+    this.renderItem = this.renderItem.bind(this);
   }
 
   componentDidMount() {
@@ -36,10 +36,12 @@ export default class Search extends React.PureComponent {
   }
 
   fetchData() {
-    for(let object of scrapedList.data) {
+    for (let object of scrapedList.data) {
       let tempObject = object;
-      tempObject.additionalInfo = scrapedListAdditional.data[object.id].additionalInfo;
-      tempObject.prepInstructions = scrapedListAdditional.data[object.id].prepInstructions;
+      tempObject.additionalInfo =
+        scrapedListAdditional.data[object.id].additionalInfo;
+      tempObject.prepInstructions =
+        scrapedListAdditional.data[object.id].prepInstructions;
       combinedData.push(tempObject);
     }
     this.setState({ loading: false, filtered: combinedData });
@@ -60,6 +62,20 @@ export default class Search extends React.PureComponent {
     this.setState({ filtered: this.data, searchText: "" });
   }
 
+  renderItem(item) {
+    return (
+      <SearchCard
+        name={item.name}
+        image={item.recipeImageURL}
+        rating={Number(item.ratings)}
+        review={item.reviewCount}
+        ingredients={item.originalIngredient}
+        extraInfo={item.additionalInfo}
+        prep={item.prepInstructions}
+      />
+    );
+  }
+
   render() {
     if (this.state.loading) {
       return (
@@ -69,7 +85,12 @@ export default class Search extends React.PureComponent {
       );
     }
     return (
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        onLayout={(e) => {
+          this.containerWidth = e.nativeEvent.layout.width;
+        }}
+      >
         <View style={styles.searchBar}>
           <Ionicons style={styles.icon} name="ios-search" size={18} />
           <TextInput
@@ -98,21 +119,9 @@ export default class Search extends React.PureComponent {
             </TouchableWithoutFeedback>
           )}
         </View>
-        <FlatList
-          showsVerticalScrollIndicator={false}
+        <SearchList
           data={this.state.filtered}
-          renderItem={({ item }) => (
-            <SearchCard
-              name={item.name}
-              image={item.recipeImageURL}
-              rating={Number(item.ratings)}
-              review={item.reviewCount}
-              ingredients={item.originalIngredient}
-              extraInfo={item.additionalInfo}
-              prep={item.prepInstructions}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
+          height={150}
         />
       </View>
     );
