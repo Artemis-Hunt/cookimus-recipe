@@ -44,6 +44,7 @@ export default class SearchList extends React.Component {
           rating={Number(item.ratings)}
           review={item.reviewCount}
           ingredients={item.originalIngredient}
+          modIngredient={item.ingredient}
           extraInfo={item.additionalInfo}
           prep={item.prepInstructions}
           height={this.props.height}
