@@ -136,7 +136,6 @@ export default class GroceryList extends Component {
       HashTable[hashIndex].amount = "";
       HashTable[hashIndex].unit = "";
       //HashTable[hashIndex] = "Deleted";
-      alert("VEGETABLE OIL");
       this.addToCombined();
     }
 
