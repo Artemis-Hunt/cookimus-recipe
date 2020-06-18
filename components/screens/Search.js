@@ -110,6 +110,7 @@ export default class Search extends React.PureComponent {
               ingredients={item.originalIngredient}
               extraInfo={item.additionalInfo}
               prep={item.prepInstructions}
+              modIngredient={item.ingredient}
             />
           )}
           keyExtractor={(item, index) => index.toString()}

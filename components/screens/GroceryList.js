@@ -7,7 +7,6 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  ImageBackground,
 } from "react-native";
 import Constants from "expo-constants";
 
