@@ -9,6 +9,7 @@ import Recipe from "../screens/Recipe";
 import GroceryList from "../screens/GroceryList";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
+import RecipeList from "../../data/RecipeList"
 
 const HomeStack = createStackNavigator();
 
@@ -49,7 +50,7 @@ const SearchScreen = () => {
       <SearchStack.Screen
         name="Search"
         component={Search}
-        options={{ header: () => null }}
+        options={{ headerShown: false }}
       />
       <SearchStack.Screen
         name="Recipe"
@@ -59,6 +60,13 @@ const SearchScreen = () => {
     </SearchStack.Navigator>
   );
 };
+
+const GroceryScreen = () => {
+  return(
+    <GroceryList RecipeList={RecipeList}/>
+  )
+}
+
 const NavBar = createBottomTabNavigator();
 
 const NavigationBar = () => {
@@ -73,7 +81,7 @@ const NavigationBar = () => {
             case "Home":
               iconName = focused ? "home-variant" : "home-variant-outline";
               break;
-            case "Search":
+            case "Browse":
               iconName = focused ? "book-search" : "book-search-outline";
               break;
             case "Grocery List":
@@ -91,7 +99,7 @@ const NavigationBar = () => {
       })}
     >
       <NavBar.Screen name="Home" component={HomeScreen} />
-      <NavBar.Screen name="Search" component={SearchScreen} />
+      <NavBar.Screen name="Browse" component={SearchScreen} />
       <NavBar.Screen name="Grocery List" component={GroceryList} />
       <NavBar.Screen name="Settings" component={Settings} />
     </NavBar.Navigator>

@@ -13,7 +13,7 @@ import Constants from "expo-constants";
 import DropMenu from "../screen-components/grocery-list/DropMenu.js";
 import MenuBar from "../screen-components/grocery-list/MenuBar.js";
 import Item from "../screen-components/grocery-list/Item.js";
-import RecipeList from "../../data/RecipeList.js";
+import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
 
@@ -53,6 +53,9 @@ export default class GroceryList extends Component {
   componentDidMount() {
     this.combineFunction(RecipeList.length);
     this.bulkGenerateKey(RecipeList.length);
+    this.unsubscribe = this.props.navigation.addListener("tabPress", (e) => {
+      this.forceUpdate();
+    });
   }
   //Run combine list on refresh
   componentDidUpdate() {
@@ -63,8 +66,14 @@ export default class GroceryList extends Component {
       this.oldLength = newLength;
       this.combineFunction(index);
       this.bulkGenerateKey(newLength);
+      this.forceUpdate();
     }
   }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
   //Generate keys in bulk
   bulkGenerateKey(endIndex) {
     for (let i = 0; i < endIndex; i++) {
@@ -91,6 +100,10 @@ export default class GroceryList extends Component {
     this.setState({
       combine: !this.state.combine,
     });
+  }
+
+  forceUpdate() {
+    this.setState({ refresh: !this.state.refresh })
   }
 
   handleName = (text) => {
@@ -123,7 +136,7 @@ export default class GroceryList extends Component {
     //Update hash table. Delete entry if required
     let hashKey = this.hashFunction(this.combinedItem);
     let collision = 0;
-    let hashIndex = (hashKey+collision)%ArraySize;
+    let hashIndex = (hashKey + collision) % ArraySize;
     while (collision !== ArraySize) {
       if (HashTable[hashIndex].name === this.combinedItem) {
         HashTable[hashIndex].amount -= toDelete.amount;
@@ -137,15 +150,18 @@ export default class GroceryList extends Component {
         break;
       }
       collision++;
-      hashIndex = (hashKey+collision)%ArraySize;
+      hashIndex = (hashKey + collision) % ArraySize;
     }
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
     RecipeList[recipeIndex].data.splice(ingrIndex, 1);
     for (let j = ingrIndex; j < RecipeList[recipeIndex].data.length; j++) {
       RecipeList[recipeIndex].data[j].key = this.generateKey(recipeIndex, j);
     }
-    //Remove Title from recipeList
-    if (RecipeList[recipeIndex].data.length === 0 && RecipeList[recipeIndex].title !== "Added to list") {
+    //Remove Title from RecipeList
+    if (
+      RecipeList[recipeIndex].data.length === 0 &&
+      RecipeList[recipeIndex].title !== "Added to list"
+    ) {
       RecipeList.splice(recipeIndex, 1);
       this.oldLength = RecipeList.length;
       this.bulkGenerateKey(RecipeList.length);
@@ -167,7 +183,10 @@ export default class GroceryList extends Component {
       let itemIndex = RecipeList[RecipeIndex].data.length;
 
       RecipeList[RecipeIndex].data.push(newObject);
-      RecipeList[RecipeIndex].data[itemIndex].key = this.generateKey(RecipeIndex, itemIndex);
+      RecipeList[RecipeIndex].data[itemIndex].key = this.generateKey(
+        RecipeIndex,
+        itemIndex
+      );
 
       this.handleSingleItem(newObject.name, itemIndex);
 
@@ -192,10 +211,14 @@ export default class GroceryList extends Component {
   handleNewItem = (i, j) => {
     //Handling item slotting/collisions
     let collision = 0;
-    let hashIndex = (this.key+collision)%ArraySize;
+    let hashIndex = (this.key + collision) % ArraySize;
     while (collision !== ArraySize) {
       //Need to fix for deletion
-      if ((HashTable[hashIndex].name === null || HashTable[hashIndex].deleted === 1) && (HashTable[hashIndex].name !== this.combinedItem)) {
+      if (
+        (HashTable[hashIndex].name === null ||
+          HashTable[hashIndex].deleted === 1) &&
+        HashTable[hashIndex].name !== this.combinedItem
+      ) {
         //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
         HashTable[hashIndex].name = this.combinedItem;
         HashTable[hashIndex].amount = Number(RecipeList[i].data[j].amount);
@@ -208,7 +231,7 @@ export default class GroceryList extends Component {
         return;
       }
       collision++;
-      hashIndex = (this.key+collision)%ArraySize;
+      hashIndex = (this.key + collision) % ArraySize;
     }
     if (collision === ArraySize) alert("Error, array full");
   };
@@ -311,32 +334,30 @@ export default class GroceryList extends Component {
             ItemSeparatorComponent={ItemSeparator}
           />
         ) : (
-            <SectionList
-              stickySectionHeadersEnabled={true}
-              sections={RecipeList}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    this.deleteItem(item.key);
-                    this.setState({
-                      refresh: !this.state.refresh,
-                    });
-                  }}
-                >
-                  <Item
-                    title={item.name}
-                    amounts={item.amount}
-                    units={item.unit}
-                  />
-                </TouchableOpacity>
-              )}
-              renderSectionHeader={({ section: { title } }) => (
-                <Text style={[styles.header, styles.text]}>{title}</Text>
-              )}
-              ItemSeparatorComponent={ItemSeparator}
-            />
-          )}
+          <SectionList
+            stickySectionHeadersEnabled={true}
+            sections={RecipeList}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  this.deleteItem(item.key);
+                  this.forceUpdate();
+                }}
+              >
+                <Item
+                  title={item.name}
+                  amounts={item.amount}
+                  units={item.unit}
+                />
+              </TouchableOpacity>
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={[styles.header, styles.text]}>{title}</Text>
+            )}
+            ItemSeparatorComponent={ItemSeparator}
+          />
+        )}
       </View>
     );
   }
@@ -359,7 +380,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 24,
     backgroundColor: "#E8E8E8",
-    color: "black"
+    color: "black",
   },
   //Main Top Bar Text
   title: {
