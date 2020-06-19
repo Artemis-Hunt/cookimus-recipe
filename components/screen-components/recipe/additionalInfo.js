@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const additionalInfo = ({ additional }) => {
+const AdditionalInfo = ({ additional }) => {
     additional.map((item) => {
         //Capitalise all headings
         item.heading = item.heading[0].toUpperCase() + item.heading.substr(1);
@@ -20,7 +20,7 @@ const additionalInfo = ({ additional }) => {
     );
 }
 
-export default additionalInfo;
+export default AdditionalInfo;
 
 const styles = StyleSheet.create({
     container: {

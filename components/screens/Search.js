@@ -27,8 +27,6 @@ export default class Search extends React.PureComponent {
       searchText: "",
     };
     this.data = [];
-    this.containerWidth = 0;
-    this.renderItem = this.renderItem.bind(this);
   }
 
   componentDidMount() {
@@ -56,24 +54,13 @@ export default class Search extends React.PureComponent {
         return itemName.indexOf(textName) !== -1;
       }),
     });
+    if(this.state.filtered.isEmpty) {
+
+    }
   }
 
   clearSearch() {
     this.setState({ filtered: this.data, searchText: "" });
-  }
-
-  renderItem(item) {
-    return (
-      <SearchCard
-        name={item.name}
-        image={item.recipeImageURL}
-        rating={Number(item.ratings)}
-        review={item.reviewCount}
-        ingredients={item.originalIngredient}
-        extraInfo={item.additionalInfo}
-        prep={item.prepInstructions}
-      />
-    );
   }
 
   render() {
@@ -85,12 +72,9 @@ export default class Search extends React.PureComponent {
       );
     }
     return (
-      <View
-        style={styles.container}
-        onLayout={(e) => {
-          this.containerWidth = e.nativeEvent.layout.width;
-        }}
-      >
+      <View style={styles.container}>
+
+        {/* Search Bar */}
         <View style={styles.searchBar}>
           <Ionicons style={styles.icon} name="ios-search" size={18} />
           <TextInput
@@ -119,10 +103,9 @@ export default class Search extends React.PureComponent {
             </TouchableWithoutFeedback>
           )}
         </View>
-        <SearchList
-          data={this.state.filtered}
-          height={150}
-        />
+
+        {/* List view for search */}
+        <SearchList data={this.state.filtered} height={150} />
       </View>
     );
   }

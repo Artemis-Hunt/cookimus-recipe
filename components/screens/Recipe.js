@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Entypo, Feather } from '@expo/vector-icons';
 
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
-import AdditionalInfo from "../screen-components/recipe/additionalInfo.js";
+import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddItem from "../screen-components/recipe/AddIngredient.js"
 

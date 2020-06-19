@@ -3,11 +3,15 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import UserContext from "../context/UserContext";
 import firebase from "../../config/Firebase/firebaseConfig";
 
-const onLogOutPress = async (user) => {
-  await firebase.auth().signOut();
-  if(user.firstName === "Guest") {
+const onLogOutPress = async () => {
+  const user = firebase.auth().currentUser;
+  if(user.isAnonymous) {
     const usersRef = firebase.firestore().collection("users")
     await usersRef.doc(user.id).delete();
+    await user.delete();
+  }
+  else {
+    await firebase.auth().signOut();
   }
 }
 const Settings = () => {
@@ -18,7 +22,7 @@ const Settings = () => {
       <Text>
         {`Current user is ${user.firstName}.`}
       </Text>
-      <TouchableOpacity style={styles.logOut} onPress={() => onLogOutPress(user)}>
+      <TouchableOpacity style={styles.logOut} onPress={onLogOutPress}>
         <Text>Log out</Text>
       </TouchableOpacity>
     </View>

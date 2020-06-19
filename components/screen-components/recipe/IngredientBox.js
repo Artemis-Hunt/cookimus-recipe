@@ -10,8 +10,8 @@ const IngredientBox = ({ ingredients }) => {
         <MaterialCommunityIcons name="food-variant" size={20} color="black" />
       </View>
       {/* Have to change the key */}
-      {ingredients.map((item) => (
-        <View style={styles.ingredientEntry} key={item}>
+      {ingredients.map((item, index) => (
+        <View style={styles.ingredientEntry} key={item+index}>
           <Text style={[styles.text, styles.ingredient]}>{item}</Text>
         </View>
       ))}

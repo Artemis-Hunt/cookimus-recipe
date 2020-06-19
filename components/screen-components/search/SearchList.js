@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Dimensions,
-  Image,
-  FlatList,
-} from "react-native";
-import faker from "faker";
+import { View, Dimensions } from "react-native";
 import {
   RecyclerListView,
   DataProvider,
@@ -17,13 +8,14 @@ import {
 import SearchCard from "./SearchCard";
 
 const Window = Dimensions.get("window");
+const dataProvider = new DataProvider((r1, r2) => r1 !== r2);
 
-export default class SearchList extends React.Component {
+export default class SearchList extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      list: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(props.data),
+      data: dataProvider.cloneWithRows(props.data),
     };
     this.layoutProvider = new LayoutProvider(
       (index) => "NORMAL",
@@ -35,21 +27,25 @@ export default class SearchList extends React.Component {
     this.rowRenderer = this.rowRenderer.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data) {
+      this.setState({ data: dataProvider.cloneWithRows(this.props.data) });
+    }
+  }
+
   rowRenderer(type, item) {
     return (
-      <View>
-        <SearchCard
-          name={item.name}
-          image={item.recipeImageURL}
-          rating={Number(item.ratings)}
-          review={item.reviewCount}
-          ingredients={item.originalIngredient}
-          modIngredient={item.ingredient}
-          extraInfo={item.additionalInfo}
-          prep={item.prepInstructions}
-          height={this.props.height}
-        />
-      </View>
+      <SearchCard
+        name={item.name}
+        image={item.recipeImageURL}
+        rating={Number(item.ratings)}
+        review={item.reviewCount}
+        ingredients={item.originalIngredient}
+        modIngredient={item.ingredient}
+        extraInfo={item.additionalInfo}
+        prep={item.prepInstructions}
+        height={this.props.height}
+      />
     );
   }
 
@@ -58,8 +54,9 @@ export default class SearchList extends React.Component {
       <View style={{ flex: 1 }}>
         <RecyclerListView
           rowRenderer={this.rowRenderer}
-          dataProvider={this.state.list}
+          dataProvider={this.state.data}
           layoutProvider={this.layoutProvider}
+          scrollViewProps={{ showsVerticalScrollIndicator: false }}
         />
       </View>
     );
