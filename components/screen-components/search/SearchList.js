@@ -8,7 +8,6 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import faker from "faker";
 import {
   RecyclerListView,
   DataProvider,

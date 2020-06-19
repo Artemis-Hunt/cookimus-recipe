@@ -127,26 +127,27 @@ export default class GroceryList extends Component {
     while (collision !== ArraySize) {
       if (HashTable[hashIndex].name === this.combinedItem) {
         HashTable[hashIndex].amount -= toDelete.amount;
+        if (HashTable[hashIndex].amount <= 0) {
+          HashTable[hashIndex].name = null;
+          HashTable[hashIndex].amount = "";
+          HashTable[hashIndex].unit = "";
+          HashTable[hashIndex].deleted = 1;
+          this.addToCombined();
+        }
+        break;
       }
       collision++;
       hashIndex = (hashKey+collision)%ArraySize;
     }
-    if (HashTable[hashIndex].amount <= 0) {
-      HashTable[hashIndex].name = null;
-      HashTable[hashIndex].amount = "";
-      HashTable[hashIndex].unit = "";
-      //HashTable[hashIndex] = "Deleted";
-      this.addToCombined();
-    }
-
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
     RecipeList[recipeIndex].data.splice(ingrIndex, 1);
     for (let j = ingrIndex; j < RecipeList[recipeIndex].data.length; j++) {
       RecipeList[recipeIndex].data[j].key = this.generateKey(recipeIndex, j);
     }
     //Remove Title from recipeList
-    if (RecipeList[recipeIndex].data.length === 0) {
+    if (RecipeList[recipeIndex].data.length === 0 && RecipeList[recipeIndex].title !== "Added to list") {
       RecipeList.splice(recipeIndex, 1);
+      this.oldLength = RecipeList.length;
       this.bulkGenerateKey(RecipeList.length);
     }
   };
@@ -194,11 +195,12 @@ export default class GroceryList extends Component {
     let hashIndex = (this.key+collision)%ArraySize;
     while (collision !== ArraySize) {
       //Need to fix for deletion
-      if ((HashTable[hashIndex].name === null || HashTable[hashIndex].name === "Deleted") && (HashTable[hashIndex].name !== this.combinedItem)) {
+      if ((HashTable[hashIndex].name === null || HashTable[hashIndex].deleted === 1) && (HashTable[hashIndex].name !== this.combinedItem)) {
         //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
         HashTable[hashIndex].name = this.combinedItem;
         HashTable[hashIndex].amount = Number(RecipeList[i].data[j].amount);
         HashTable[hashIndex].unit = RecipeList[i].data[j].unit;
+        HashTable[hashIndex].deleted = 0;
         return;
       } else if (HashTable[hashIndex].name === this.combinedItem) {
         //Same Item, add amounts
