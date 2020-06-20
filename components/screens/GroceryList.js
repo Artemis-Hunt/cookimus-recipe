@@ -347,13 +347,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  image: {
-    flex: 1,
-    resizeMode: "cover",
-    paddingTop: 80,
-    width: null,
-    height: 85,
-  },
   //Recipe Names
   header: {
     padding: 10,
@@ -379,6 +372,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 2,
-    backgroundColor: "#CCCCCC",
+    backgroundColor: "#E8E8E8",
   },
 });
