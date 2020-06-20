@@ -50,7 +50,7 @@ const AuthNavigation = () => {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
-            header: () => null,
+            headerShown: false,
             headerStatusBarHeight: 0,
           }}
         >
