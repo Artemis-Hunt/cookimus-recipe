@@ -38,6 +38,7 @@ export default class SearchList extends React.PureComponent {
     return (
       <SearchCard
         name={item.name}
+        url={item.recipeURL}
         image={item.recipeImageURL}
         rating={Number(item.ratings)}
         review={item.reviewCount}

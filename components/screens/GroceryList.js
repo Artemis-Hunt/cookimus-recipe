@@ -15,6 +15,7 @@ import Item from "../screen-components/grocery-list/Item.js";
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
+import SavedRecipes from "../../data/SavedRecipes.js"
 
 //Size of hash table
 const ArraySize = 100;
@@ -166,6 +167,13 @@ export default class GroceryList extends Component {
       RecipeList[recipeIndex].data.length === 0 &&
       RecipeList[recipeIndex].title !== "Added to list"
     ) {
+      //Clear Savedrecipe
+      for (let i = 0; i < SavedRecipes.length; i++) {
+        if (RecipeList[recipeIndex].title === SavedRecipes[i].title) {
+          SavedRecipes.splice(i, 1);
+          break;
+        }
+      }
       RecipeList.splice(recipeIndex, 1);
       this.oldLength = RecipeList.length;
       this.bulkGenerateKey(RecipeList.length);
@@ -176,16 +184,22 @@ export default class GroceryList extends Component {
   deleteSection = (title) => {
     let index = 0;
     //Finding index of the recipe in recipelist
-    for(let i of RecipeList) {
-      if (i.title === title) {break;}
+    for (let i of RecipeList) {
+      if (i.title === title) { break; }
       index++;
     }
     //Bulk delete of all ingredients found in recipe
-    for(let j=0; j<RecipeList[index].data.length; j++) {
+    for (let j = 0; j < RecipeList[index].data.length; j++) {
       this.hashDelete(index, j);
     }
     //Delete entire entry
-    if(RecipeList[index].title !== "Added to list") {
+    if (RecipeList[index].title !== "Added to list") {
+      for (let i = 0; i < SavedRecipes.length; i++) {
+        if (RecipeList[index].title === SavedRecipes[i].title) {
+          SavedRecipes.splice(i, 1);
+          break;
+        }
+      }
       RecipeList.splice(index, 1);
       this.oldLength = RecipeList.length;
       this.bulkGenerateKey(RecipeList.length);

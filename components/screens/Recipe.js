@@ -15,6 +15,7 @@ const Recipe = () => {
 
   const modIngre = route.params.modIngredient;
   const newName = route.params.name;
+  const url = route.params.url;
 
   //alert(modIngre);
 
@@ -35,7 +36,7 @@ const Recipe = () => {
         </View>
         <IngredientBox ingredients={route.params.ingredients} />
         <TouchableOpacity
-          onPress={() => {AddItem(modIngre, newName)}}
+          onPress={() => {AddItem(modIngre, newName, url)}}
           style={styles.buttonBox}>
           <Text style={styles.addButton}>Add to Grocery List </Text>
           <Entypo name="add-to-list" size={19} color="#1E90FF" />
