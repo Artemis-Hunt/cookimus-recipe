@@ -1,9 +1,9 @@
 
 const RecipeList = [
-    {
-      title: "Added to list",
-      data: [],
-    },
-  ];
+  {
+    title: "Added to list",
+    data: [],
+  },
+];
 
-  export default RecipeList;
+export default RecipeList;
