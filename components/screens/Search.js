@@ -11,10 +11,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import SearchCard from "../screen-components/search/SearchCard.js";
 
-//Temp JSON files
+// //Temp JSON files
 import scrapedList from "../../data/allRecipesScraped.json";
 import scrapedListAdditional from "../../data/allRecipesAdditional.json";
-const combinedData = [];
+ const combinedData = {};
+
+import {firestoreDb} from "../../config/Firebase/firebaseConfig"
 
 import SearchList from "../screen-components/search/SearchList";
 
@@ -33,7 +35,7 @@ export default class Search extends React.PureComponent {
     this.fetchData();
   }
 
-  fetchData() {
+  fetchData = async() => {
     for (let object of scrapedList.data) {
       let tempObject = object;
       tempObject.additionalInfo =
@@ -44,6 +46,11 @@ export default class Search extends React.PureComponent {
     }
     this.setState({ loading: false, filtered: combinedData });
     this.data = combinedData;
+
+    //For testing
+    // for(let i = 0; i < 3 ; i++) {
+    //   firestoreDb.collection("AllRecipes").doc(`${scrapedList.data[i].name}`).set(scrapedList.data[i])
+    // }
   }
 
   filterArray(text) {

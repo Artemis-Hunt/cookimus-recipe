@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import firebase from "../../config/Firebase/firebaseConfig";
+import { firestoreDb, auth } from "../../config/Firebase/firebaseConfig";
 import Button from "../generic/Button";
 
 export default function LoginScreen({ navigation }) {
@@ -25,11 +25,9 @@ export default function LoginScreen({ navigation }) {
   const onLoginPress = async () => {
     setLoading(true);
     try {
-      const response = await firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password);
+      const response = await auth.signInWithEmailAndPassword(email, password);
       const uid = response.user.uid;
-      const usersRef = firebase.firestore().collection("users");
+      const usersRef = firestoreDb.collection("users");
       const firestoreDoc = await usersRef.doc(uid).get();
       if (!firestoreDoc.exists) {
         alert("User does not exist!");
@@ -57,7 +55,7 @@ export default function LoginScreen({ navigation }) {
   const onAnonLoginPress = async () => {
     setAnonLoading(true);
     try {
-      const response = await firebase.auth().signInAnonymously();
+      const response = await auth.signInAnonymously();
       const uid = response.user.uid;
       const data = {
         id: uid,
@@ -65,7 +63,7 @@ export default function LoginScreen({ navigation }) {
         firstName: "Guest",
         lastName: "",
       };
-      const usersRef = firebase.firestore().collection("users");
+      const usersRef = firestoreDb.collection("users");
       await usersRef.doc(uid).set(data);
     } catch (err) {
       alert(err.message);

@@ -10,6 +10,7 @@ export default function App() {
     "SourceSansPro-SemiBold": require("./assets/fonts/SourceSansPro-SemiBold.ttf"),
     Pattaya: require("./assets/fonts/Pattaya-Regular.ttf"),
   });
+
   return (
     fontsLoaded && (
       <View style={styles.container}>
