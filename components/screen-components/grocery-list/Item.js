@@ -5,10 +5,11 @@ const frac = require('frac');
 
 const Item = ({ title, amounts, units }) => {
   let fracArray = frac(amounts, 9, true);
-  let final = 0;
+  let final = '';
   //Conversion to fractions
   if(fracArray[2] === 1) {
     final = amounts;
+    if(final === 0) {final = '';}
   } else {
     if(fracArray[0] === 0) {
       final = fracArray[1].toString() + '/' + fracArray[2].toString();
