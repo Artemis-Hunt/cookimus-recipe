@@ -14,7 +14,7 @@ const Item = ({ title, amounts, units }) => {
       final = fracArray[1].toString() + '/' + fracArray[2].toString();
     }
     else {
-      final = fracArray[0].toString() + ' ' + fracArray[1].toString() + '/' + fracArray[2].toString();
+      final = fracArray[0].toString() + '"' + fracArray[1].toString() + '/' + fracArray[2].toString();
     }
   }
   return(
