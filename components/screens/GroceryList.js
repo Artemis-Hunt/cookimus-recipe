@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import Constants from "expo-constants";
 
 import DropMenu from "../screen-components/grocery-list/DropMenu.js";
 import MenuBar from "../screen-components/grocery-list/MenuBar.js";
@@ -16,6 +15,7 @@ import Item from "../screen-components/grocery-list/Item.js";
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
+import SavedRecipes from "../../data/SavedRecipes.js"
 
 //Size of hash table
 const ArraySize = 100;
@@ -57,6 +57,7 @@ export default class GroceryList extends Component {
       this.forceUpdate();
     });
   }
+
   //Run combine list on refresh
   componentDidUpdate() {
     let newLength = RecipeList.length;
@@ -123,11 +124,8 @@ export default class GroceryList extends Component {
     return key;
   };
 
-  //Delte function for list
-  deleteItem = (id) => {
-    //Split id into name / recipe index / ingredient index
-    let [name, recipeIndex, ingrIndex] = id.split(".");
-
+  //Deletes items from the hashtable to update combined list
+  hashDelete = (recipeIndex, ingrIndex) => {
     //Reference the item to be deleted
     let toDelete = RecipeList[recipeIndex].data[ingrIndex];
     this.splitArray = toDelete.name.split(" ");
@@ -152,6 +150,13 @@ export default class GroceryList extends Component {
       collision++;
       hashIndex = (hashKey + collision) % ArraySize;
     }
+  }
+
+  //Delte function for list
+  deleteItem = (id) => {
+    //Split id into name / recipe index / ingredient index
+    let [name, recipeIndex, ingrIndex] = id.split(".");
+    this.hashDelete(recipeIndex, ingrIndex);
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
     RecipeList[recipeIndex].data.splice(ingrIndex, 1);
     for (let j = ingrIndex; j < RecipeList[recipeIndex].data.length; j++) {
@@ -162,11 +167,47 @@ export default class GroceryList extends Component {
       RecipeList[recipeIndex].data.length === 0 &&
       RecipeList[recipeIndex].title !== "Added to list"
     ) {
+      //Clear Savedrecipe
+      for (let i = 0; i < SavedRecipes.length; i++) {
+        if (RecipeList[recipeIndex].title === SavedRecipes[i].title) {
+          SavedRecipes.splice(i, 1);
+          break;
+        }
+      }
       RecipeList.splice(recipeIndex, 1);
       this.oldLength = RecipeList.length;
       this.bulkGenerateKey(RecipeList.length);
     }
   };
+
+  //Delete entire recipe at once
+  deleteSection = (title) => {
+    let index = 0;
+    //Finding index of the recipe in recipelist
+    for (let i of RecipeList) {
+      if (i.title === title) { break; }
+      index++;
+    }
+    //Bulk delete of all ingredients found in recipe
+    for (let j = 0; j < RecipeList[index].data.length; j++) {
+      this.hashDelete(index, j);
+    }
+    //Delete entire entry
+    if (RecipeList[index].title !== "Added to list") {
+      for (let i = 0; i < SavedRecipes.length; i++) {
+        if (RecipeList[index].title === SavedRecipes[i].title) {
+          SavedRecipes.splice(i, 1);
+          break;
+        }
+      }
+      RecipeList.splice(index, 1);
+      this.oldLength = RecipeList.length;
+      this.bulkGenerateKey(RecipeList.length);
+    } else {
+      //Delete all except title for added to list
+      RecipeList[index].data.splice(0, RecipeList[index].data.length);
+    }
+  }
 
   //Check if entered is valid
   _verifyInfo = (name, quantity, units) => {
@@ -334,30 +375,37 @@ export default class GroceryList extends Component {
             ItemSeparatorComponent={ItemSeparator}
           />
         ) : (
-          <SectionList
-            stickySectionHeadersEnabled={true}
-            sections={RecipeList}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  this.deleteItem(item.key);
-                  this.forceUpdate();
-                }}
-              >
-                <Item
-                  title={item.name}
-                  amounts={item.amount}
-                  units={item.unit}
-                />
-              </TouchableOpacity>
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={[styles.header, styles.text]}>{title}</Text>
-            )}
-            ItemSeparatorComponent={ItemSeparator}
-          />
-        )}
+            <SectionList
+              stickySectionHeadersEnabled={true}
+              sections={RecipeList}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    this.deleteItem(item.key);
+                    this.forceUpdate();
+                  }}
+                >
+                  <Item
+                    title={item.name}
+                    amounts={item.amount}
+                    units={item.unit}
+                  />
+                </TouchableOpacity>
+              )}
+              renderSectionHeader={({ section: { title } }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    this.deleteSection(title);
+                    this.forceUpdate();
+                  }}
+                >
+                  <Text style={[styles.header, styles.text]}>{title}</Text>
+                </TouchableOpacity>
+              )}
+              ItemSeparatorComponent={ItemSeparator}
+            />
+          )}
       </View>
     );
   }

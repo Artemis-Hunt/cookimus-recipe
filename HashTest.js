@@ -2,6 +2,7 @@
 //Hashes the passed in string in item and returns the key
 const ArraySize = 100;
 const Multiplier = 37;
+const frac = require('frac');
 
 const hashFunction = () => {
     let total = 0;
@@ -14,6 +15,8 @@ const hashFunction = () => {
     total %= ArraySize;
 
     console.log("Index: " + total);
+    let fraction = frac(3, 9);
+    console.log(fraction);
 
     return total;
 };

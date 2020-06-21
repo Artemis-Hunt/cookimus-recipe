@@ -1,16 +1,31 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
-
 import { FontAwesome } from '@expo/vector-icons'; 
+const frac = require('frac');
 
-const Item = ({ title, amounts, units }) => (
+const Item = ({ title, amounts, units }) => {
+  let fracArray = frac(amounts, 9, true);
+  let final = '';
+  //Conversion to fractions
+  if(fracArray[2] === 1) {
+    final = amounts;
+    if(final === 0) {final = '';}
+  } else {
+    if(fracArray[0] === 0) {
+      final = fracArray[1].toString() + '/' + fracArray[2].toString();
+    }
+    else {
+      final = fracArray[0].toString() + '"' + fracArray[1].toString() + '/' + fracArray[2].toString();
+    }
+  }
+  return(
   <View style={styles.ingredientEntry}>
     <Text style={[styles.ingredientText, styles.text]}><FontAwesome name="circle-thin" size={17} color="coral" />  {title}</Text>
     <Text style={[styles.ingredientValueText, styles.text]}>
-      {amounts} {units}
+      {final} {units}
     </Text>
   </View>
-);
+)};
 
 const styles = StyleSheet.create({
   //For each ingredient entry
