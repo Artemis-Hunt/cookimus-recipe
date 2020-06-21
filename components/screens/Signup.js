@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import firebase from "../../config/Firebase/firebaseConfig";
+import { firestoreDb, auth } from "../../config/Firebase/firebaseConfig";
 import Button from "../generic/Button";
 
 export default function Signup({ navigation }) {
@@ -31,9 +31,10 @@ export default function Signup({ navigation }) {
     }
     setLoading(true);
     try {
-      const response = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password);
+      const response = await auth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
       const uid = response.user.uid;
       const data = {
         id: uid,
@@ -41,7 +42,7 @@ export default function Signup({ navigation }) {
         firstName,
         lastName,
       };
-      const usersRef = firebase.firestore().collection("users");
+      const usersRef = firestoreDb.collection("users");
       await usersRef.doc(uid).set(data);
     } catch (err) {
       alert(err);

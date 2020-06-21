@@ -5,7 +5,7 @@ import NavigationBar from "./NavigationBar";
 import Login from "../screens/Login";
 import Signup from "../screens/Signup";
 import Loading from "../screens/Loading"
-import firebase from "../../config/Firebase/firebaseConfig";
+import {firestoreDb, auth} from "../../config/Firebase/firebaseConfig";
 import UserContext from "../context/UserContext"
 
 const Stack = createStackNavigator();
@@ -21,8 +21,8 @@ const AuthNavigation = () => {
   }
 
   useEffect(() => {
-    const usersRef = firebase.firestore().collection("users");
-    const subscriber = firebase.auth().onAuthStateChanged(async (user) => {
+    const usersRef = firestoreDb.collection("users");
+    const subscriber = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
           const firestoreDoc = await usersRef.doc(user.uid).get();
