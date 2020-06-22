@@ -41,8 +41,8 @@ export default class GroceryList extends Component {
       refresh: false,
       combine: false,
     };
-    this._handleButtonClick = this._handleButtonClick.bind(this);
-    this._handleCloseClick = this._handleCloseClick.bind(this);
+    this.showAddItem = this.showAddItem.bind(this);
+    this.hideAddItem = this.hideAddItem.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
@@ -53,12 +53,12 @@ export default class GroceryList extends Component {
   componentDidMount() {
     this.combineFunction(RecipeList.length);
     this.bulkGenerateKey(0);
+    //Trigger a re-render whenever the grocery list tab is pressed
     this.unsubscribe = this.props.navigation.addListener("tabPress", (e) => {
       this.forceUpdate();
     });
   }
 
-  //Run combine list on refresh
   componentDidUpdate() {
     let newLength = RecipeList.length;
     if (newLength > this.oldLength) {
@@ -72,6 +72,7 @@ export default class GroceryList extends Component {
   }
 
   componentWillUnmount() {
+    //Unsubscribe event handler
     this.unsubscribe();
   }
 
@@ -85,13 +86,13 @@ export default class GroceryList extends Component {
     }
   }
 
-  _handleButtonClick() {
+  showAddItem() {
     this.setState({
       showComponent: true,
     });
   }
 
-  _handleCloseClick() {
+  hideAddItem() {
     this.setState({
       showComponent: false,
     });
@@ -150,7 +151,7 @@ export default class GroceryList extends Component {
       hashIndex = (hashKey + collision) % ArraySize;
     }
     //Need to change where this is called
-    this.addToCombined();
+    this.rebuildCombinedList();
   }
 
   //Delte function for list
@@ -250,7 +251,7 @@ export default class GroceryList extends Component {
   };
 
   //This function will handle the item added to the combined list
-  handleNewItem = (i, j) => {
+  insertIntoHash = (i, j) => {
     //Handling item slotting/collisions
     let collision = 0;
     let hashIndex = (this.key + collision) % ArraySize;
@@ -279,9 +280,10 @@ export default class GroceryList extends Component {
   };
 
   //This function adds all the items in the hashtable into the combinedlist
-  addToCombined = () => {
+  rebuildCombinedList = () => {
     //Clear item
     CombinedList[0].data.splice(0, CombinedList[0].data.length);
+    //Repopulate combined list from hash table
     for (let i = 0; i < ArraySize; i++) {
       if (HashTable[i].name !== null) {
         CombinedList[0].data.push(HashTable[i]);
@@ -294,8 +296,8 @@ export default class GroceryList extends Component {
     this.splitArray = newSingleItem.split(" ");
     this.capitaliseString();
     this.key = this.hashFunction(this.combinedItem);
-    this.handleNewItem(RecipeList.length - 1, itemIndex);
-    this.addToCombined();
+    this.insertIntoHash(RecipeList.length - 1, itemIndex);
+    this.rebuildCombinedList();
   };
 
   //Function to capitalise first letter of all leading words in string
@@ -313,9 +315,9 @@ export default class GroceryList extends Component {
   //Outer to loop through all the individual Recipes - Currently loops from start of list
   combineFunction = (index) => {
     for (let i = 0; i < index; i++) {
-      //Loop through all the individual ingriedients in each recipe
+      //Loop through all the individual ingredients in each recipe
       for (let j = 0; j < RecipeList[i].data.length; j++) {
-        //Split ingriedient into different parts if more than 1 word and capitalise all starting
+        //Split ingredient into different parts if more than 1 word and capitalise all starting
         let newItem = RecipeList[i].data[j].name;
         this.splitArray = newItem.split(" ");
         this.capitaliseString();
@@ -324,11 +326,11 @@ export default class GroceryList extends Component {
         this.key = this.hashFunction(this.combinedItem);
 
         //Add item into hash table
-        this.handleNewItem(i, j);
+        this.insertIntoHash(i, j);
       }
     }
     //Move all items from hash table into the combined list
-    this.addToCombined();
+    this.rebuildCombinedList();
   };
 
   render() {
@@ -336,14 +338,14 @@ export default class GroceryList extends Component {
       <View style={styles.container}>
         {/* Menu Bar */}
         <MenuBar
-          buttonClick={this._handleButtonClick}
+          buttonClick={this.showAddItem}
           togglemenu={this.toggleMenu}
         />
 
         {/* Toggle menu for add item */}
         {this.state.showComponent ? (
           <DropMenu
-            close={this._handleCloseClick}
+            close={this.hideAddItem}
             name={this.state.name}
             quantity={this.state.quantity}
             unit={this.state.units}
