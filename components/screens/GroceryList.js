@@ -149,6 +149,7 @@ export default class GroceryList extends Component {
       collision++;
       hashIndex = (hashKey + collision) % ArraySize;
     }
+    //Need to change where this is called
     this.addToCombined();
   }
 

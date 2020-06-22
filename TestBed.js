@@ -173,7 +173,7 @@ export default class combineList extends Component {
         oldValue = determineValue(previous);
         //If new value is larger than oldValue, we are adding
         if(newValue > oldValue) {
-
+            //Find new quantity from original and minus from old
         }
     }
     determineValue = (selection) => {
