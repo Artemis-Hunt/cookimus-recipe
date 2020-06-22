@@ -157,4 +157,39 @@ export default class combineList extends Component {
 
         return convertedQuantity;
     }
+
+    //This function will convert the grocery servings to the set portion
+    //Selection = New selection, previous = Previous selection (Default values start as original)
+    changePortion = (selection, previous) => {
+        let newValue = 0;
+        let oldValue = 0;
+
+        if (selection === previous) {
+            //No change
+            return;
+        } 
+        //Determine Selected
+        newValue = determineValue(selection);
+        oldValue = determineValue(previous);
+        //If new value is larger than oldValue, we are adding
+        if(newValue > oldValue) {
+            //Find new quantity from original and minus from old
+        }
+    }
+    determineValue = (selection) => {
+        let value = 0;
+        switch (selection) {
+            case "Double": value = 2;
+                break;
+            case "Original": value = 1;
+                break;
+            case "Half": value = 0.5;
+                break;
+            case "Third": value = Number(1/3);
+                break;
+            case "Quarter": value = 0.25;
+                break;
+        }
+        return value;
+    }
 } 

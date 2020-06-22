@@ -30,7 +30,7 @@ export default class Search extends React.PureComponent {
     };
     this.data = [];
   }
-
+ 
   componentDidMount() {
     this.fetchData();
   }
