@@ -52,7 +52,7 @@ export default class GroceryList extends Component {
   //Run combine list on startup
   componentDidMount() {
     this.combineFunction(RecipeList.length);
-    this.bulkGenerateKey(RecipeList.length);
+    this.bulkGenerateKey(0);
     this.unsubscribe = this.props.navigation.addListener("tabPress", (e) => {
       this.forceUpdate();
     });
@@ -76,8 +76,8 @@ export default class GroceryList extends Component {
   }
 
   //Generate keys in bulk
-  bulkGenerateKey(endIndex) {
-    for (let i = 0; i < endIndex; i++) {
+  bulkGenerateKey(startIndex) {
+    for (let i = startIndex; i < RecipeList.length; i++) {
       for (let j = 0; j < RecipeList[i].data.length; j++) {
         //Generate keys for each item, if it hasn't already been done
         RecipeList[i].data[j].key = this.generateKey(i, j);
@@ -143,13 +143,13 @@ export default class GroceryList extends Component {
           HashTable[hashIndex].amount = "";
           HashTable[hashIndex].unit = "";
           HashTable[hashIndex].deleted = 1;
-          this.addToCombined();
         }
         break;
       }
       collision++;
       hashIndex = (hashKey + collision) % ArraySize;
     }
+    this.addToCombined();
   }
 
   //Delte function for list
@@ -176,7 +176,7 @@ export default class GroceryList extends Component {
       }
       RecipeList.splice(recipeIndex, 1);
       this.oldLength = RecipeList.length;
-      this.bulkGenerateKey(RecipeList.length);
+      this.bulkGenerateKey(recipeIndex);
     }
   };
 

@@ -14,7 +14,7 @@ import SearchCard from "../screen-components/search/SearchCard.js";
 // //Temp JSON files
 import scrapedList from "../../data/allRecipesScraped.json";
 import scrapedListAdditional from "../../data/allRecipesAdditional.json";
- const combinedData = {};
+ const combinedData = [];
 
 import {firestoreDb} from "../../config/Firebase/firebaseConfig"
 
@@ -30,7 +30,7 @@ export default class Search extends React.PureComponent {
     };
     this.data = [];
   }
-
+ 
   componentDidMount() {
     this.fetchData();
   }
