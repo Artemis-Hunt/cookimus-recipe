@@ -17,6 +17,10 @@ import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
 import SavedRecipes from "../../data/SavedRecipes.js"
 import { diff } from "react-native-reanimated";
+import { Swipeable } from "react-native-gesture-handler"
+import SwipeRightView from "../screen-components/grocery-list/SwipeRight.js";
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 //Size of hash table
 const ArraySize = 100;
@@ -338,7 +342,7 @@ export default class GroceryList extends Component {
   changePortion = (selection, previous, recipeIndex) => {
     let newValue = 0;
     let oldValue = 0;
-    
+
     //No change
     if (selection === previous) {
       return;
@@ -460,18 +464,26 @@ export default class GroceryList extends Component {
               sections={RecipeList}
               keyExtractor={(item, index) => item + index}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
+                <Swipeable
+                  renderRightActions={SwipeRightView}
+                  onSwipeableRightOpen={() => {
                     this.deleteItem(item.key);
                     this.forceUpdate();
                   }}
                 >
-                  <Item
-                    title={item.name}
-                    amounts={item.amount}
-                    units={item.unit}
-                  />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                  // onPress={() => {
+                  //   this.deleteItem(item.key);
+                  //   this.forceUpdate();
+                  // }}
+                  >
+                    <Item
+                      title={item.name}
+                      amounts={item.amount}
+                      units={item.unit}
+                    />
+                  </TouchableOpacity>
+                </Swipeable>
               )}
               renderSectionHeader={({ section: { title } }) => (
                 <TouchableOpacity
