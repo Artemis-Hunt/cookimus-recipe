@@ -11,12 +11,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import SearchCard from "../screen-components/search/SearchCard.js";
 
-// //Temp JSON files
+//Temp JSON files
 import scrapedList from "../../data/allRecipesScraped.json";
 import scrapedListAdditional from "../../data/allRecipesAdditional.json";
- const combinedData = [];
+const combinedData = [];
 
-import {firestoreDb} from "../../config/Firebase/firebaseConfig"
+import { firestoreDb } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";
 
@@ -30,12 +30,12 @@ export default class Search extends React.PureComponent {
     };
     this.data = [];
   }
- 
+
   componentDidMount() {
     this.fetchData();
   }
 
-  fetchData = async() => {
+  fetchData = async () => {
     for (let object of scrapedList.data) {
       let tempObject = object;
       tempObject.additionalInfo =
@@ -51,18 +51,20 @@ export default class Search extends React.PureComponent {
     // for(let i = 0; i < 3 ; i++) {
     //   firestoreDb.collection("AllRecipes").doc(`${scrapedList.data[i].name}`).set(scrapedList.data[i])
     // }
-  }
+  };
 
+  //Search the array with the specified term
   filterArray(text) {
+    this.setState({ loading: true });
     this.setState({
       filtered: this.data.filter((item) => {
         const itemName = item.name.toLowerCase();
         const textName = text.toLowerCase();
         return itemName.indexOf(textName) !== -1;
       }),
+      loading: false,
     });
-    if(this.state.filtered.isEmpty) {
-
+    if (this.state.filtered.isEmpty) {
     }
   }
 
@@ -71,16 +73,8 @@ export default class Search extends React.PureComponent {
   }
 
   render() {
-    if (this.state.loading) {
-      return (
-        <View>
-          <ActivityIndicator />
-        </View>
-      );
-    }
     return (
       <View style={styles.container}>
-
         {/* Search Bar */}
         <View style={styles.searchBar}>
           <Ionicons style={styles.icon} name="ios-search" size={18} />
@@ -112,7 +106,13 @@ export default class Search extends React.PureComponent {
         </View>
 
         {/* List view for search */}
-        <SearchList data={this.state.filtered} height={150} />
+        {this.state.loading ? (
+          <View>
+            <ActivityIndicator />
+          </View>
+        ) : (
+          <SearchList data={this.state.filtered} height={150} />
+        )}
       </View>
     );
   }
