@@ -4,3 +4,4 @@ react-navigation (look at docs for installation)
 react-native-elements
 react-native-linear-gradient
 react-native-keyboard-aware-scroll-view
+expo install react-native-gesture-handler
