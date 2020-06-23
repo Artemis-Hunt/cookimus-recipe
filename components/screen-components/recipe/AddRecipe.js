@@ -1,22 +1,21 @@
 import RecipeList from "../../../data/RecipeList.js"
 import SavedRecipes from "../../../data/SavedRecipes.js"
 
-const AddItem = (ingredient, name, url) => {
-    let newObject = { title: name, data: [] };
-    for(let check of SavedRecipes) {
+const AddRecipe = (ingredient, name, url) => {
+    for(const check of SavedRecipes) {
         if( check.link === url) {
             alert("Item Already Added");
             return;
         }
     }
-    newObject.data = Array.from(ingredient);
-    let saveObject = {title: '', link: ''};
-    //Add to start of RecipeList
+    //Add entire recipe to RecipeList
+    const newObject = { title: name, data: Array.from(ingredient) };
     RecipeList.unshift(newObject);
-    saveObject.title = name;
-    saveObject.link = url;
+
+    //Keep track of saved recipes
+    const saveObject = {title: name, link: url};
     SavedRecipes.push(saveObject);
     alert("Added to grocery list");
 }
 
-export default AddItem
+export default AddRecipe
