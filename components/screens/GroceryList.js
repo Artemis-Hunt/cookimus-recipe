@@ -20,7 +20,6 @@ import Animated, { diff } from "react-native-reanimated";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 //Size of hash table
 const ArraySize = 100;
@@ -432,7 +431,7 @@ export default class GroceryList extends Component {
             this.forceUpdate();
           }}
         >
-          <MaterialCommunityIcons name="delete" size={27} color="black" />
+          <MaterialCommunityIcons name="trash-can-outline" size={27} color="white" />
         </TouchableOpacity>
       </View>
     )
@@ -478,7 +477,9 @@ export default class GroceryList extends Component {
               </TouchableOpacity>
             )}
             renderSectionHeader={({ section: { title } }) => (
-              <Text style={[styles.header, styles.text]}>{title}</Text>
+              <View style={styles.combineBorder}>
+                <Text style={[styles.header, styles.text]}>{title}</Text>
+              </View>
             )}
             ItemSeparatorComponent={ItemSeparator}
           />
@@ -512,13 +513,14 @@ export default class GroceryList extends Component {
                     this.forceUpdate();
                   }}
                 >
-                  <Text style={[styles.header, styles.text]}>{title}</Text>
+                  <View style={styles.cardBorder}>
+                    <Text style={[styles.header]}>{title}</Text>
+                  </View>
                 </TouchableOpacity>
               )}
               renderHiddenItem={this.renderHiddenItem}
               ItemSeparatorComponent={ItemSeparator}
               disableRightSwipe
-              leftOpenValue={75}
               rightOpenValue={-75}
               previewRowKey={'0'}
               previewOpenValue={-40}
@@ -539,8 +541,8 @@ const styles = StyleSheet.create({
   header: {
     padding: 10,
     fontSize: 24,
-    backgroundColor: "#E8E8E8",
-    color: "black",
+    backgroundColor: "#f8f8f8",
+    color: "#708090",
   },
   //Main Top Bar Text
   title: {
@@ -561,6 +563,7 @@ const styles = StyleSheet.create({
   separator: {
     height: 2,
     backgroundColor: "#E8E8E8",
+    //marginHorizontal: 10,
   },
   hiddenItem: {
     flex: 1,
@@ -568,5 +571,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingTop: 7,
     backgroundColor: "red",
+  },
+  cardBorder: {
+    borderLeftWidth: 6,
+    borderLeftColor: "steelblue",
+    borderTopRightRadius: 5,
+  },
+  combineBorder: {
+    borderLeftWidth: 6,
+    borderLeftColor: "tomato",
+    borderTopRightRadius: 5,
   }
 });
