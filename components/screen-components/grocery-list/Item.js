@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { FontAwesome } from '@expo/vector-icons'; 
 const frac = require('frac');
 
-const Item = ({ title, amounts, units }) => {
+const Item = ({ title, amounts, units, mark }) => {
   let fracArray = frac(amounts, 9, true);
   let final = '';
   //Conversion to fractions
@@ -18,9 +18,11 @@ const Item = ({ title, amounts, units }) => {
       final = fracArray[0].toString() + '"' + fracArray[1].toString() + '/' + fracArray[2].toString();
     }
   }
+  let icon = (mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="coral" /> : <FontAwesome name="check" size={14} color="green" />;
+  let checkStyle = (mark === undefined || mark === false) ? [styles.ingredientText, styles.text] : [styles.ingredientValueText, styles.text];
   return(
   <View style={styles.ingredientEntry}>
-    <Text style={[styles.ingredientText, styles.text]}><FontAwesome name="circle-thin" size={17} color="coral" />  {title}</Text>
+    <Text style={checkStyle}>{icon}  {title}</Text>
     <Text style={[styles.ingredientValueText, styles.text]}>
       {final} {units}
     </Text>

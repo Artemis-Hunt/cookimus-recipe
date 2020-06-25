@@ -162,9 +162,9 @@ export default class GroceryList extends Component {
   //Delte function for list
   deleteItem = (id) => {
     //Split id into name / recipe index / ingredient index
-    alert(id);
     let [name, recipeIndex, ingrIndex] = id.split(".");
     this.hashDelete(recipeIndex, ingrIndex);
+    RecipeList[recipeIndex].data[ingrIndex].mark = false;
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
     RecipeList[recipeIndex].data.splice(ingrIndex, 1);
     for (let j = ingrIndex; j < RecipeList[recipeIndex].data.length; j++) {
@@ -198,6 +198,7 @@ export default class GroceryList extends Component {
     }
     //Bulk delete of all ingredients found in recipe
     for (let j = 0; j < RecipeList[index].data.length; j++) {
+      RecipeList[index].data[j].mark = false;
       this.hashDelete(index, j);
     }
     //Delete entire entry
@@ -488,13 +489,20 @@ export default class GroceryList extends Component {
               sections={RecipeList}
               keyExtractor={(item, index) => item + index}
               renderItem={({ item }) => (
-                <TouchableWithoutFeedback>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    item.mark = (item.mark === undefined) ? true : !item.mark;
+                    this.forceUpdate();
+                  }}
+                >
                   <Item
                     title={item.name}
                     amounts={item.amount}
                     units={item.unit}
+                    mark={item.mark}
                   />
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               )
               }
               renderSectionHeader={({ section: { title } }) => (
