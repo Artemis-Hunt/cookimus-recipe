@@ -84,7 +84,7 @@ export default class GroceryList extends Component {
   bulkGenerateKey(startIndex) {
     for (let i = startIndex; i < RecipeList.length; i++) {
       for (let j = 0; j < RecipeList[i].data.length; j++) {
-        //Generate keys for each item, if it hasn't already been done
+        //Generate keys for each item
         RecipeList[i].data[j].key = this.generateKey(i, j);
       }
     }
@@ -148,13 +148,14 @@ export default class GroceryList extends Component {
           HashTable[hashIndex].amount = "";
           HashTable[hashIndex].unit = "";
           HashTable[hashIndex].deleted = 1;
+          HashTable[hashIndex].mark = false;
         }
         break;
       }
       collision++;
       hashIndex = (hashKey + collision) % ArraySize;
     }
-    if(rebuildFlag === true) {
+    if (rebuildFlag === true) {
       this.rebuildCombinedList();
     } else {
       return;
@@ -472,11 +473,17 @@ export default class GroceryList extends Component {
             sections={CombinedList}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => (
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  item.mark = (item.mark === undefined) ? true : !item.mark;
+                  this.forceUpdate();
+                }}
+              >
                 <Item
                   title={item.name}
                   amounts={item.amount}
                   units={item.unit}
+                  mark={item.mark}
                 />
               </TouchableOpacity>
             )}
