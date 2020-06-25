@@ -130,7 +130,7 @@ export default class GroceryList extends Component {
   };
 
   //Deletes items from the hashtable to update combined list
-  hashDelete = (recipeIndex, ingrIndex) => {
+  hashDelete = (recipeIndex, ingrIndex, rebuildFlag) => {
     //Reference the item to be deleted
     let toDelete = RecipeList[recipeIndex].data[ingrIndex];
     this.splitArray = toDelete.name.split(" ");
@@ -154,15 +154,18 @@ export default class GroceryList extends Component {
       collision++;
       hashIndex = (hashKey + collision) % ArraySize;
     }
-    //Need to change where this is called
-    this.rebuildCombinedList();
+    if(rebuildFlag === true) {
+      this.rebuildCombinedList();
+    } else {
+      return;
+    }
   }
 
   //Delte function for list
   deleteItem = (id) => {
     //Split id into name / recipe index / ingredient index
     let [name, recipeIndex, ingrIndex] = id.split(".");
-    this.hashDelete(recipeIndex, ingrIndex);
+    this.hashDelete(recipeIndex, ingrIndex, true);
     RecipeList[recipeIndex].data[ingrIndex].mark = false;
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
     RecipeList[recipeIndex].data.splice(ingrIndex, 1);
@@ -198,7 +201,7 @@ export default class GroceryList extends Component {
     //Bulk delete of all ingredients found in recipe
     for (let j = 0; j < RecipeList[index].data.length; j++) {
       RecipeList[index].data[j].mark = false;
-      this.hashDelete(index, j);
+      this.hashDelete(index, j, false);
     }
     //Delete entire entry
     if (RecipeList[index].title !== "Added to list") {
@@ -215,6 +218,7 @@ export default class GroceryList extends Component {
       //Delete all except title for added to list
       RecipeList[index].data.splice(0, RecipeList[index].data.length);
     }
+    this.rebuildCombinedList();
   }
 
   //Check if entered is valid
