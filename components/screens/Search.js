@@ -16,7 +16,7 @@ import scrapedList from "../../data/allRecipesScraped.json";
 import scrapedListAdditional from "../../data/allRecipesAdditional.json";
 const combinedData = [];
 
-import { firestoreDb } from "../../config/Firebase/firebaseConfig";
+import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";
 
@@ -46,6 +46,15 @@ export default class Search extends React.PureComponent {
     }
     this.setState({ loading: false, filtered: combinedData });
     this.data = combinedData;
+
+    //Trigger Firebase cloud function
+    
+    // try {
+    //   const response = await functions.httpsCallable("test")();
+    //   alert(response.data);
+    // } catch (err) {
+    //   alert(`Error: ${err}`);
+    // }
 
     //For testing
     // for(let i = 0; i < 3 ; i++) {
