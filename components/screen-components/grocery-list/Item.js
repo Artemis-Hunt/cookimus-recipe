@@ -18,7 +18,7 @@ const Item = ({ title, amounts, units, mark }) => {
       final = fracArray[0].toString() + '"' + fracArray[1].toString() + '/' + fracArray[2].toString();
     }
   }
-  let icon = (mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="coral" /> : <FontAwesome name="check" size={14} color="green" />;
+  let icon = (mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="#ccc" /> : <FontAwesome name="check" size={14} color="green" />;
   let checkStyle = (mark === undefined || mark === false) ? [styles.ingredientText, styles.text] : [styles.ingredientValueText, styles.text];
   return(
   <View style={styles.ingredientEntry}>
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     padding: 10,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "white",
   },
   text: {
       fontFamily: "SourceSansPro",
