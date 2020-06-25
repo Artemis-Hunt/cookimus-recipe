@@ -117,7 +117,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   headerStyle: {
-    backgroundColor: "rgba(0,0,0,0)",
     elevation: 0,
   },
   headerTitle: {

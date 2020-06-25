@@ -16,11 +16,11 @@ import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
 import SavedRecipes from "../../data/SavedRecipes.js"
-import { diff } from "react-native-reanimated";
-import { Swipeable } from "react-native-gesture-handler"
-import SwipeRightView from "../screen-components/grocery-list/SwipeRight.js";
-
+import Animated, { diff } from "react-native-reanimated";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 //Size of hash table
 const ArraySize = 100;
@@ -71,7 +71,7 @@ export default class GroceryList extends Component {
       let index = newLength - this.oldLength;
       this.oldLength = newLength;
       this.combineFunction(index);
-      this.bulkGenerateKey(newLength);
+      this.bulkGenerateKey(0);
       this.forceUpdate();
     }
   }
@@ -162,6 +162,7 @@ export default class GroceryList extends Component {
   //Delte function for list
   deleteItem = (id) => {
     //Split id into name / recipe index / ingredient index
+    alert(id);
     let [name, recipeIndex, ingrIndex] = id.split(".");
     this.hashDelete(recipeIndex, ingrIndex);
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
@@ -414,6 +415,28 @@ export default class GroceryList extends Component {
     return value;
   }
 
+  closeRow = (rowMap, rowKey) => {
+    if (rowMap[rowKey]) {
+      rowMap[rowKey].closeRow();
+    }
+  }
+
+  renderHiddenItem = (data, rowMap) => {
+    return (
+      <View style={styles.hiddenItem}>
+        <TouchableOpacity
+          onPress={() => {
+            this.deleteItem(data.item.key);
+            this.closeRow(rowMap, data.item.key);
+            this.forceUpdate();
+          }}
+        >
+          <MaterialCommunityIcons name="delete" size={27} color="black" />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -459,32 +482,21 @@ export default class GroceryList extends Component {
             ItemSeparatorComponent={ItemSeparator}
           />
         ) : (
-            <SectionList
+            <SwipeListView
+              useSectionList
               stickySectionHeadersEnabled={true}
               sections={RecipeList}
               keyExtractor={(item, index) => item + index}
               renderItem={({ item }) => (
-                <Swipeable
-                  renderRightActions={SwipeRightView}
-                  onSwipeableRightOpen={() => {
-                    this.deleteItem(item.key);
-                    this.forceUpdate();
-                  }}
-                >
-                  <TouchableOpacity
-                  // onPress={() => {
-                  //   this.deleteItem(item.key);
-                  //   this.forceUpdate();
-                  // }}
-                  >
-                    <Item
-                      title={item.name}
-                      amounts={item.amount}
-                      units={item.unit}
-                    />
-                  </TouchableOpacity>
-                </Swipeable>
-              )}
+                <TouchableWithoutFeedback>
+                  <Item
+                    title={item.name}
+                    amounts={item.amount}
+                    units={item.unit}
+                  />
+                </TouchableWithoutFeedback>
+              )
+              }
               renderSectionHeader={({ section: { title } }) => (
                 <TouchableOpacity
                   onPress={() => {
@@ -495,10 +507,17 @@ export default class GroceryList extends Component {
                   <Text style={[styles.header, styles.text]}>{title}</Text>
                 </TouchableOpacity>
               )}
+              renderHiddenItem={this.renderHiddenItem}
               ItemSeparatorComponent={ItemSeparator}
+              disableRightSwipe
+              leftOpenValue={75}
+              rightOpenValue={-75}
+              previewRowKey={'0'}
+              previewOpenValue={-40}
+              previewOpenDelay={3000}
             />
           )}
-      </View>
+      </View >
     );
   }
 }
@@ -535,4 +554,11 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: "#E8E8E8",
   },
+  hiddenItem: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingHorizontal: 25,
+    paddingTop: 7,
+    backgroundColor: "red",
+  }
 });
