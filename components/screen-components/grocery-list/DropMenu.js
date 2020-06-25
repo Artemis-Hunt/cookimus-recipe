@@ -118,8 +118,10 @@ const styles = StyleSheet.create({
   },
   //Outermost container
   dropMenu: {
-    backgroundColor: "mediumaquamarine",
+    //backgroundColor: "mediumaquamarine",
     padding: 10,
+    borderBottomWidth: 2,
+    borderBottomColor: "forestgreen"
   },
   //Text input box style
   textInput: {
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     borderColor: "#CCC",
     borderWidth: 1,
     borderRadius: 5,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "white",
   },
   quantityBox: {
     flexDirection: "row",

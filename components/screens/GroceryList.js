@@ -20,7 +20,6 @@ import Animated, { diff } from "react-native-reanimated";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 //Size of hash table
 const ArraySize = 100;
@@ -85,7 +84,7 @@ export default class GroceryList extends Component {
   bulkGenerateKey(startIndex) {
     for (let i = startIndex; i < RecipeList.length; i++) {
       for (let j = 0; j < RecipeList[i].data.length; j++) {
-        //Generate keys for each item, if it hasn't already been done
+        //Generate keys for each item
         RecipeList[i].data[j].key = this.generateKey(i, j);
       }
     }
@@ -131,7 +130,7 @@ export default class GroceryList extends Component {
   };
 
   //Deletes items from the hashtable to update combined list
-  hashDelete = (recipeIndex, ingrIndex) => {
+  hashDelete = (recipeIndex, ingrIndex, rebuildFlag) => {
     //Reference the item to be deleted
     let toDelete = RecipeList[recipeIndex].data[ingrIndex];
     this.splitArray = toDelete.name.split(" ");
@@ -149,21 +148,25 @@ export default class GroceryList extends Component {
           HashTable[hashIndex].amount = "";
           HashTable[hashIndex].unit = "";
           HashTable[hashIndex].deleted = 1;
+          HashTable[hashIndex].mark = false;
         }
         break;
       }
       collision++;
       hashIndex = (hashKey + collision) % ArraySize;
     }
-    //Need to change where this is called
-    this.rebuildCombinedList();
+    if (rebuildFlag === true) {
+      this.rebuildCombinedList();
+    } else {
+      return;
+    }
   }
 
   //Delte function for list
   deleteItem = (id) => {
     //Split id into name / recipe index / ingredient index
     let [name, recipeIndex, ingrIndex] = id.split(".");
-    this.hashDelete(recipeIndex, ingrIndex);
+    this.hashDelete(recipeIndex, ingrIndex, true);
     RecipeList[recipeIndex].data[ingrIndex].mark = false;
     //Remove ingredient from RecipeList. Update keys for ingredients after deleted ingredient
     RecipeList[recipeIndex].data.splice(ingrIndex, 1);
@@ -199,7 +202,7 @@ export default class GroceryList extends Component {
     //Bulk delete of all ingredients found in recipe
     for (let j = 0; j < RecipeList[index].data.length; j++) {
       RecipeList[index].data[j].mark = false;
-      this.hashDelete(index, j);
+      this.hashDelete(index, j, false);
     }
     //Delete entire entry
     if (RecipeList[index].title !== "Added to list") {
@@ -211,11 +214,12 @@ export default class GroceryList extends Component {
       }
       RecipeList.splice(index, 1);
       this.oldLength = RecipeList.length;
-      this.bulkGenerateKey(RecipeList.length);
+      this.bulkGenerateKey(index);
     } else {
       //Delete all except title for added to list
       RecipeList[index].data.splice(0, RecipeList[index].data.length);
     }
+    this.rebuildCombinedList();
   }
 
   //Check if entered is valid
@@ -432,7 +436,7 @@ export default class GroceryList extends Component {
             this.forceUpdate();
           }}
         >
-          <MaterialCommunityIcons name="delete" size={27} color="black" />
+          <MaterialCommunityIcons name="trash-can-outline" size={27} color="white" />
         </TouchableOpacity>
       </View>
     )
@@ -469,16 +473,24 @@ export default class GroceryList extends Component {
             sections={CombinedList}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => (
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  item.mark = (item.mark === undefined) ? true : !item.mark;
+                  this.forceUpdate();
+                }}
+              >
                 <Item
                   title={item.name}
                   amounts={item.amount}
                   units={item.unit}
+                  mark={item.mark}
                 />
               </TouchableOpacity>
             )}
             renderSectionHeader={({ section: { title } }) => (
-              <Text style={[styles.header, styles.text]}>{title}</Text>
+              <View style={styles.combineBorder}>
+                <Text style={[styles.header, styles.text]}>{title}</Text>
+              </View>
             )}
             ItemSeparatorComponent={ItemSeparator}
           />
@@ -512,13 +524,14 @@ export default class GroceryList extends Component {
                     this.forceUpdate();
                   }}
                 >
-                  <Text style={[styles.header, styles.text]}>{title}</Text>
+                  <View style={styles.cardBorder}>
+                    <Text style={[styles.header]}>{title}</Text>
+                  </View>
                 </TouchableOpacity>
               )}
               renderHiddenItem={this.renderHiddenItem}
               ItemSeparatorComponent={ItemSeparator}
               disableRightSwipe
-              leftOpenValue={75}
               rightOpenValue={-75}
               previewRowKey={'0'}
               previewOpenValue={-40}
@@ -539,8 +552,8 @@ const styles = StyleSheet.create({
   header: {
     padding: 10,
     fontSize: 24,
-    backgroundColor: "#E8E8E8",
-    color: "black",
+    backgroundColor: "#f8f8f8",
+    color: "#708090",
   },
   //Main Top Bar Text
   title: {
@@ -561,6 +574,7 @@ const styles = StyleSheet.create({
   separator: {
     height: 2,
     backgroundColor: "#E8E8E8",
+    //marginHorizontal: 10,
   },
   hiddenItem: {
     flex: 1,
@@ -568,5 +582,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingTop: 7,
     backgroundColor: "red",
+  },
+  cardBorder: {
+    borderLeftWidth: 6,
+    borderLeftColor: "steelblue",
+    borderTopRightRadius: 5,
+  },
+  combineBorder: {
+    borderLeftWidth: 6,
+    borderLeftColor: "tomato",
+    borderTopRightRadius: 5,
   }
 });
