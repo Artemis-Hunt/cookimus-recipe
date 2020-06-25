@@ -7,6 +7,7 @@ import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddRecipe from "../screen-components/recipe/AddRecipe.js"
+import SaveRecipe from "../screen-components/recipe/SaveRecipe.js"
 
 //Render the individual recipe pages when clicked into from the search page
 const Recipe = () => {
@@ -16,6 +17,11 @@ const Recipe = () => {
   const modIngre = route.params.modIngredient;
   const newName = route.params.name;
   const url = route.params.url;
+  const image = route.params.image;
+  const ingredients = route.params.ingredients;
+  const modIngredient = route.params.modIngredient;
+  const extraInfo = route.params.extraInfo;
+  const prep = route.params.prep;
 
   //alert(modIngre);
 
@@ -43,6 +49,7 @@ const Recipe = () => {
         </TouchableOpacity>
         <PrepMethod instructions={route.params.prep} />
         <TouchableOpacity
+          onPress={() => {SaveRecipe(newName, url, image, ingredients, modIngredient, extraInfo, prep)}}
           style={styles.buttonBox}>
           <Text style={styles.addButton}>Save This Recipe </Text>
           <Feather name="save" size={19} color="#1E90FF" />
