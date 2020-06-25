@@ -210,7 +210,7 @@ export default class GroceryList extends Component {
       }
       RecipeList.splice(index, 1);
       this.oldLength = RecipeList.length;
-      this.bulkGenerateKey(RecipeList.length);
+      this.bulkGenerateKey(index);
     } else {
       //Delete all except title for added to list
       RecipeList[index].data.splice(0, RecipeList[index].data.length);
