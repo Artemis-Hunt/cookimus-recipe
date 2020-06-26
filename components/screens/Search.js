@@ -97,6 +97,7 @@ export default class Search extends React.PureComponent {
               if (text.replace(/\s+/g,"") !== "") {
                 this.filterArray(text);
               }
+              alert(this.data[1].ingredient[0].amount)
             }}
             placeholder={"What would you like to eat?"}
             value={this.state.searchText}

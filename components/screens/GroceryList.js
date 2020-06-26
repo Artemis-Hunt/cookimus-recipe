@@ -18,6 +18,7 @@ import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
 import SavedRecipes from "../../data/SavedRecipes.js"
+import scrapedList from "../../data/allRecipesScraped.json"
 import Animated, { diff } from "react-native-reanimated";
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 
@@ -85,7 +86,7 @@ export default class GroceryList extends Component {
 
   componentWillUnmount() {
     //Unsubscribe event handler
-    this.unsubscribe();
+    //this.unsubscribe();
   }
 
   //Generate keys in bulk
@@ -225,6 +226,7 @@ export default class GroceryList extends Component {
       for (let i = 0; i < SavedRecipes.length; i++) {
         if (RecipeList[index].title === SavedRecipes[i].title) {
           SavedRecipes.splice(i, 1);
+          alert("Spliced!")
           break;
         }
       }
@@ -449,7 +451,8 @@ export default class GroceryList extends Component {
                   <Item
                     title={item.name}
                     amounts={item.amount}
-                    units={item.unit}
+                    // units={item.unit}
+                    units={scrapedList.data[1].ingredient[0].amount}
                     mark={item.mark}
                   />
                 </TouchableOpacity>
