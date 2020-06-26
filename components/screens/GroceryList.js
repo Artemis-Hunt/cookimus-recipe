@@ -291,7 +291,7 @@ export default class GroceryList extends Component {
                 </TouchableOpacity>
               )
               }
-              renderSectionHeader={({ section: { title, portion } }) => (
+              renderSectionHeader={({ section: { title, portion, portionText } }) => (
                 <View style={styles.titleCard}>
                   <TouchableOpacity
                     onPress={() => {
@@ -310,7 +310,7 @@ export default class GroceryList extends Component {
                         this.showModal();
                       }}
                     >
-                      <Text style={[styles.portionText, styles.text]}><Entypo name="bowl" size={17} color="cornflowerblue" />: {portion}</Text>
+                      <Text style={[styles.portionText, styles.text]}><Entypo name="bowl" size={17} color="cornflowerblue" />: {portionText}</Text>
                     </TouchableOpacity>
                   }
                 </View>

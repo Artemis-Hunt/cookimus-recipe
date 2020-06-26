@@ -8,6 +8,7 @@ import HashTable from '../../../data/HashTable.js'
 let screen = Dimensions.get('window');
 let previous = 0;
 let selected;
+let selectedText='';
 let recipeIndex = 0;
 
 const ArraySize = 100;
@@ -105,7 +106,7 @@ export default class PortionModal extends Component {
                 break;
             case 1: value = 1;
                 break;
-            case 3 / 4: value = 1 / 3;
+            case 3 / 4: value = 4 / 3;
                 break;
             case 1 / 2: value = 2;
                 break;
@@ -116,8 +117,9 @@ export default class PortionModal extends Component {
         }
         return value;
     }
-    handlePress = (value) => {
+    handlePress = (value, text) => {
         selected = value;
+        selectedText = text;
         this.forceUpdate();
     }
     hashFunction = (item) => {
@@ -153,7 +155,7 @@ export default class PortionModal extends Component {
                         data={DATA}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                                onPress={() => this.handlePress(item.value)}
+                                onPress={() => this.handlePress(item.value, item.text)}
                             >
                                 <Item title={item.title} text={item.text} value={item.value} />
                             </TouchableOpacity>
@@ -164,6 +166,7 @@ export default class PortionModal extends Component {
                         onPress={() => {
                             this.changePortion(selected, previous, recipeIndex);
                             RecipeList[recipeIndex].portion = selected;
+                            RecipeList[recipeIndex].portionText = selectedText;
                             this.props.MainRefresh();
                             recipeIndex = 0;
                             this.refs.portionModal.close();

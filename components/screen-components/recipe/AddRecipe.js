@@ -11,7 +11,7 @@ const AddRecipe = (ingredient, name, url) => {
     const ingredientToAdd = Object.assign({}, ingredient)
     const nameToAdd = String(name)
     //Add entire recipe to RecipeList
-    const newObject = { title: nameToAdd, data: Object.values(ingredientToAdd), portion: 1 };
+    const newObject = { title: nameToAdd, data: Object.values(ingredientToAdd), portion: 1, portionText: '1' };
     RecipeList.unshift(newObject);
 
     //Keep track of saved recipes
