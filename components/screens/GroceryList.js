@@ -146,10 +146,12 @@ export default class GroceryList extends Component {
     this.refs.hashFunctions.handleSingleItem(name, index);
   }
   callDeleteItem = (key) => {
-    this.refs.hashFunctions.deleteItem(key);
+    let newLength = this.refs.hashFunctions.deleteItem(key);
+    this.oldLength = newLength;
   }
   callDeleteSection = (title) => {
-    this.refs.hashFunctions.deleteSection(title);
+    let newLength = this.refs.hashFunctions.deleteSection(title);
+    this.oldLength = newLength;
   }
 
   //Check if entered is valid
@@ -330,6 +332,7 @@ export default class GroceryList extends Component {
         <HashFunctions
           ref={'hashFunctions'}
           rebuildList={this.rebuildCombinedList}
+          OldLength={this.oldLength}
         />
       </View >
     );

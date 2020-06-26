@@ -11,6 +11,7 @@ const Multiplier = 37;
 export default class HashFunctions extends Component {
     constructor(props) {
         super(props);
+        this.updatedLength;
     }
     //Hashes the passed in string in item and returns the key
     hashFunction = (item) => {
@@ -116,8 +117,9 @@ export default class HashFunctions extends Component {
                 }
             }
             RecipeList.splice(recipeIndex, 1);
-            this.oldLength = RecipeList.length;
+            this.updatedLength = RecipeList.length;
             this.bulkGenerateKey(recipeIndex);
+            return this.updatedLength;
         }
     };
 
@@ -143,13 +145,14 @@ export default class HashFunctions extends Component {
                 }
             }
             RecipeList.splice(index, 1);
-            this.oldLength = RecipeList.length;
+            this.updatedLength = RecipeList.length;
             this.bulkGenerateKey(index);
         } else {
             //Delete all except title for added to list
             RecipeList[index].data.splice(0, RecipeList[index].data.length);
         }
         this.props.rebuildList();
+        return this.updatedLength;
     }
     //Deletes items from the hashtable to update combined list
     hashDelete = (recipeIndex, ingrIndex, rebuildFlag) => {
