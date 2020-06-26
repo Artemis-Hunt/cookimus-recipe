@@ -12,12 +12,13 @@ import {
 import DropMenu from "../screen-components/grocery-list/DropMenu.js";
 import MenuBar from "../screen-components/grocery-list/MenuBar.js";
 import Item from "../screen-components/grocery-list/Item.js";
+import PortionModal from "../screen-components/grocery-list/PortionModal.js";
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
 import SavedRecipes from "../../data/SavedRecipes.js"
 import Animated, { diff } from "react-native-reanimated";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -51,6 +52,8 @@ export default class GroceryList extends Component {
     this.handleName = this.handleName.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.sendPortion = this.sendPortion.bind(this);
   }
 
   //Run combine list on startup
@@ -128,6 +131,14 @@ export default class GroceryList extends Component {
     let key = `${RecipeList[i].data[j].name}.${i}.${j}`;
     return key;
   };
+
+  //Functions for modal
+  showModal = () => {
+    this.refs.portionModal.renderModal();
+  }
+  sendPortion = (portion) => {
+    this.refs.portionModal.receivePortion(portion);
+  }
 
   //Deletes items from the hashtable to update combined list
   hashDelete = (recipeIndex, ingrIndex, rebuildFlag) => {
@@ -343,83 +354,6 @@ export default class GroceryList extends Component {
     this.rebuildCombinedList();
   };
 
-  //This function will convert the grocery servings to the set portion
-  //Selection = New selection, previous = Previous selection (Default values start as original)
-  changePortion = (selection, previous, recipeIndex) => {
-    let newValue = 0;
-    let oldValue = 0;
-
-    //No change
-    if (selection === previous) {
-      return;
-    }
-    //Determine Selected
-    newValue = determineValue(selection);
-    oldValue = determineValue(previous);
-    //Multiplier to get quantities back to original
-    let multiplier = determineMultiplier(oldValue);
-
-    //If new value is larger than oldValue, we are adding
-    for (let item of RecipeList[recipeIndex].data) {
-      let newQuantity = item.amount * multiplier;
-      newQuantity *= newValue;
-      //Add difference into the hash table
-      let diff = newQuantity - item.amount;
-      //Set as new amount
-      item.amount = newQuantity;
-
-      this.splitArray = item.name.split(" ");
-      this.capitaliseString();
-      this.updateHashValue(diff);
-    }
-  }
-  updateHashValue = (diff) => {
-    let hashKey = this.hashFunction(this.combinedItem);
-    let collision = 0;
-    let hashIndex = (hashKey + collision) % ArraySize;
-    while (collision !== ArraySize) {
-      if (HashTable[hashIndex].name === this.combinedItem) {
-        HashTable[hashIndex].amount += diff;
-        break;
-      }
-      collision++;
-      hashIndex = (hashKey + collision) % ArraySize;
-    }
-  }
-  //May be removed
-  determineValue = (selection) => {
-    let value = 0;
-    switch (selection) {
-      case "Double": value = 2;
-        break;
-      case "Original": value = 1;
-        break;
-      case "Half": value = 0.5;
-        break;
-      case "Third": value = Number(1 / 3);
-        break;
-      case "Quarter": value = 0.25;
-        break;
-    }
-    return value;
-  }
-  determineMultiplier = (selection) => {
-    let value = 0;
-    switch (selection) {
-      case "Double": value = 0.5;
-        break;
-      case "Original": value = 1;
-        break;
-      case "Half": value = 2;
-        break;
-      case "Third": value = 3;
-        break;
-      case "Quarter": value = 4;
-        break;
-    }
-    return value;
-  }
-
   closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
@@ -517,17 +451,29 @@ export default class GroceryList extends Component {
                 </TouchableOpacity>
               )
               }
-              renderSectionHeader={({ section: { title } }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    this.deleteSection(title);
-                    this.forceUpdate();
-                  }}
-                >
-                  <View style={styles.cardBorder}>
-                    <Text style={[styles.header]}>{title}</Text>
-                  </View>
-                </TouchableOpacity>
+              renderSectionHeader={({ section: { title, portion } }) => (
+                <View style={styles.titleCard}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.deleteSection(title);
+                      this.forceUpdate();
+                    }}
+                  >
+                    <View style={styles.cardBorder}>
+                      <Text style={[styles.header]}>{title}</Text>
+                    </View>
+                  </TouchableOpacity>
+                  {(title === "Added to list") ? null : 
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.sendPortion(portion);
+                      this.showModal();
+                    }}
+                  >
+                    <Text style={[styles.portionText, styles.text]}><Entypo name="bowl" size={17} color="cornflowerblue" />: {portion}</Text>
+                  </TouchableOpacity>
+                  }
+                </View>
               )}
               renderHiddenItem={this.renderHiddenItem}
               ItemSeparatorComponent={ItemSeparator}
@@ -538,6 +484,7 @@ export default class GroceryList extends Component {
               previewOpenDelay={3000}
             />
           )}
+        <PortionModal ref={'portionModal'} />
       </View >
     );
   }
@@ -552,7 +499,6 @@ const styles = StyleSheet.create({
   header: {
     padding: 10,
     fontSize: 24,
-    backgroundColor: "#f8f8f8",
     color: "#708090",
   },
   //Main Top Bar Text
@@ -565,8 +511,11 @@ const styles = StyleSheet.create({
   },
   //Main Top Bar Background
   titleCard: {
+    flex: 1,
     flexDirection: "row",
     alignContent: "center",
+    backgroundColor: "#f8f8f8",
+    alignItems: "center",
   },
   text: {
     fontFamily: "SourceSansPro",
@@ -592,5 +541,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 6,
     borderLeftColor: "tomato",
     borderTopRightRadius: 5,
+  },
+  portionText: {
+    color: "cornflowerblue",
+    fontSize: 17,
   }
 });
