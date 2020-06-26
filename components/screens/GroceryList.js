@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  TouchableHighlight,
 } from "react-native";
 
 import DropMenu from "../screen-components/grocery-list/DropMenu.js";

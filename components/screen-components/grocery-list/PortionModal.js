@@ -1,9 +1,25 @@
 import React, { Component } from "react";
-import { AppRegistry, FlatList, StyleSheet, Text, View, Image, Platform, Dimensions } from 'react-native';
+import { AppRegistry, FlatList, StyleSheet, Text, View, Platform, Dimensions, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modalbox';
 
 let screen = Dimensions.get('window');
 let previous = 0;
+
+const DATA = [{ title: 'Double', value: 2, text: "2" },
+{ title: 'Original', value: 1, text: "1" },
+{ title: 'Half', value: 1 / 2, text: "1/2" },
+{ title: 'Third', value: 1 / 3, text: "1/3" },
+{ title: 'Quarter', value: 1 / 4, text: "1/4" }
+]
+
+//Renders the item for the flatlist
+const Item = ({ title, text }) => {
+    return (
+        <View>
+            <Text>{title} {text}</Text>
+        </View>
+    )
+}
 
 export default class PortionModal extends Component {
     constructor(props) {
@@ -14,7 +30,7 @@ export default class PortionModal extends Component {
     }
     receivePortion = (portion) => {
         previous = portion;
-    } 
+    }
     //This function will convert the grocery servings to the set portion
     //Selection = New selection, previous = Previous selection (Default values start as original)
     changePortion = (selection, previous, recipeIndex) => {
@@ -25,9 +41,10 @@ export default class PortionModal extends Component {
         if (selection === previous) {
             return;
         }
-        //Determine Selected
-        newValue = determineValue(selection);
-        oldValue = determineValue(previous);
+        // //Determine Selected
+        // newValue = determineValue(selection);
+        // oldValue = determineValue(previous);
+
         //Multiplier to get quantities back to original
         let multiplier = determineMultiplier(oldValue);
 
@@ -58,23 +75,6 @@ export default class PortionModal extends Component {
             hashIndex = (hashKey + collision) % ArraySize;
         }
     }
-    //May be removed
-    determineValue = (selection) => {
-        let value = 0;
-        switch (selection) {
-            case "2": value = 2;
-                break;
-            case "1": value = 1;
-                break;
-            case "1/2": value = 0.5;
-                break;
-            case "1/3": value = Number(1 / 3);
-                break;
-            case "1/4": value = 0.25;
-                break;
-        }
-        return value;
-    }
     determineMultiplier = (selection) => {
         let value = 0;
         switch (selection) {
@@ -99,7 +99,18 @@ export default class PortionModal extends Component {
                 position='center'
                 backdrop={true}
             >
-                <Text>Change Serving Portion</Text>
+                <View style={styles.contents}>
+                    <Text style={styles.headerText}>Serving Portion</Text>
+                    <FlatList
+                        data={DATA}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity>
+                                <Item title={item.title} text={item.text} />
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={item => item.title}
+                    />
+                </View>
             </Modal>
         )
     }
@@ -113,4 +124,12 @@ const styles = StyleSheet.create({
         width: screen.width - 80,
         height: 280,
     },
+    contents: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10,
+    },
+    headerText: {
+        
+    }
 })
