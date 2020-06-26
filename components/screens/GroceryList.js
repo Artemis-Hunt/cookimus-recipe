@@ -554,6 +554,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 6,
     borderLeftColor: "tomato",
     borderTopRightRadius: 5,
+    backgroundColor: "#f8f8f8",
   },
   portionText: {
     color: "cornflowerblue",
