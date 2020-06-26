@@ -94,7 +94,7 @@ export default class Search extends React.PureComponent {
               if (text === "") this.clearSearch();
             }}
             onSubmitEditing={({ nativeEvent: { text } }) => {
-              if (text !== "") {
+              if (text.replace(/\s+/g,"") !== "") {
                 this.filterArray(text);
               }
             }}
