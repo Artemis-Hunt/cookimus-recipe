@@ -35,8 +35,6 @@ const ItemSeparator = () => {
 export default class GroceryList extends Component {
   constructor(props) {
     super(props);
-    this.splitArray = "";
-    this.combinedItem = "";
     this.key;
     this.oldLength = RecipeList.length;
     this.state = {
@@ -58,8 +56,6 @@ export default class GroceryList extends Component {
     this.sendPortion = this.sendPortion.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
     this.rebuildCombinedList = this.rebuildCombinedList.bind(this);
-    this.capitaliseString = this.capitaliseString.bind(this);
-    this.hashFunction = this.hashFunction.bind(this);
   }
 
   //Run combine list on startup
@@ -150,15 +146,15 @@ export default class GroceryList extends Component {
   hashDelete = (recipeIndex, ingrIndex, rebuildFlag) => {
     //Reference the item to be deleted
     let toDelete = RecipeList[recipeIndex].data[ingrIndex];
-    this.splitArray = toDelete.name.split(" ");
-    this.capitaliseString();
+    let splitName = toDelete.name.split(" ");
+    let newName = this.capitaliseString(splitName);
 
     //Update hash table. Delete entry if required
-    let hashKey = this.hashFunction(this.combinedItem);
+    let hashKey = this.hashFunction(newName);
     let collision = 0;
     let hashIndex = (hashKey + collision) % ArraySize;
     while (collision !== ArraySize) {
-      if (HashTable[hashIndex].name === this.combinedItem) {
+      if (HashTable[hashIndex].name === newName) {
         HashTable[hashIndex].amount -= toDelete.amount;
         if (HashTable[hashIndex].amount <= 0) {
           HashTable[hashIndex].name = null;
@@ -226,7 +222,6 @@ export default class GroceryList extends Component {
       for (let i = 0; i < SavedRecipes.length; i++) {
         if (RecipeList[index].title === SavedRecipes[i].title) {
           SavedRecipes.splice(i, 1);
-          alert("Spliced!")
           break;
         }
       }
@@ -279,7 +274,7 @@ export default class GroceryList extends Component {
   };
 
   //This function will handle the item added to the combined list
-  insertIntoHash = (i, j) => {
+  insertIntoHash = (i, j, itemName) => {
     //Handling item slotting/collisions
     let collision = 0;
     let hashIndex = (this.key + collision) % ArraySize;
@@ -287,15 +282,15 @@ export default class GroceryList extends Component {
       if (
         (HashTable[hashIndex].name === null ||
           HashTable[hashIndex].deleted === 1) &&
-        HashTable[hashIndex].name !== this.combinedItem
+        HashTable[hashIndex].name !== itemName
       ) {
         //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
-        HashTable[hashIndex].name = this.combinedItem;
+        HashTable[hashIndex].name = itemName;
         HashTable[hashIndex].amount = Number(RecipeList[i].data[j].amount);
         HashTable[hashIndex].unit = RecipeList[i].data[j].unit;
         HashTable[hashIndex].deleted = 0;
         return;
-      } else if (HashTable[hashIndex].name === this.combinedItem) {
+      } else if (HashTable[hashIndex].name === itemName) {
         //Same Item, add amounts
         HashTable[hashIndex].amount += Number(RecipeList[i].data[j].amount);
         return;
@@ -320,22 +315,21 @@ export default class GroceryList extends Component {
 
   //This function will add to combined list single items - No need to loop entire list
   handleSingleItem = (newSingleItem, itemIndex) => {
-    this.splitArray = newSingleItem.split(" ");
-    this.capitaliseString();
-    this.key = this.hashFunction(this.combinedItem);
-    this.insertIntoHash(RecipeList.length - 1, itemIndex);
+    let splitName = newSingleItem.split(" ");
+    let newName = this.capitaliseString(splitName);
+    this.key = this.hashFunction(newName);
+    this.insertIntoHash(RecipeList.length - 1, itemIndex, newName);
     this.rebuildCombinedList();
   };
 
   //Function to capitalise first letter of all leading words in string
-  capitaliseString = () => {
-    for (let k = 0; k < this.splitArray.length; k++) {
-      this.splitArray[k] =
-        this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
-
-      //Combine back
-      this.combinedItem = this.splitArray.join(" ");
+  capitaliseString = (str) => {
+    for (let k = 0; k < str.length; k++) {
+      str[k] =
+        str[k][0].toUpperCase() + str[k].substr(1); //Appends everything else from index 1 onwards
     }
+    //Combine back
+    return str.join(" ");
   };
 
   //Pass in single recipes at a time in recipe list format, add into hash table
@@ -346,14 +340,14 @@ export default class GroceryList extends Component {
       for (let j = 0; j < RecipeList[i].data.length; j++) {
         //Split ingredient into different parts if more than 1 word and capitalise all starting
         let newItem = RecipeList[i].data[j].name;
-        this.splitArray = newItem.split(" ");
-        this.capitaliseString();
+        let splitName = newItem.split(" ");
+        let newName = this.capitaliseString(splitName);
 
         //Hash combinedItem
-        this.key = this.hashFunction(this.combinedItem);
+        this.key = this.hashFunction(newName);
 
         //Add item into hash table
-        this.insertIntoHash(i, j);
+        this.insertIntoHash(i, j, newName);
       }
     }
     //Move all items from hash table into the combined list
@@ -470,15 +464,15 @@ export default class GroceryList extends Component {
                       <Text style={[styles.header]}>{title}</Text>
                     </View>
                   </TouchableOpacity>
-                  {(title === "Added to list") ? null : 
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.sendPortion(portion, title);
-                      this.showModal();
-                    }}
-                  >
-                    <Text style={[styles.portionText, styles.text]}><Entypo name="bowl" size={17} color="cornflowerblue" />: {portion}</Text>
-                  </TouchableOpacity>
+                  {(title === "Added to list") ? null :
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.sendPortion(portion, title);
+                        this.showModal();
+                      }}
+                    >
+                      <Text style={[styles.portionText, styles.text]}><Entypo name="bowl" size={17} color="cornflowerblue" />: {portion}</Text>
+                    </TouchableOpacity>
                   }
                 </View>
               )}
@@ -491,14 +485,10 @@ export default class GroceryList extends Component {
               previewOpenDelay={3000}
             />
           )}
-        <PortionModal 
-          ref={'portionModal'} 
-          //CapitaliseString={this.capitaliseString} 
-          //HashFunction={this.hashFunction}
-          //CombinedItem={this.combinedItem}
+        <PortionModal
+          ref={'portionModal'}
           MainRefresh={this.forceUpdate}
           rebuildList={this.rebuildCombinedList}
-          //SplitArray={this.splitArray}
         />
       </View >
     );
