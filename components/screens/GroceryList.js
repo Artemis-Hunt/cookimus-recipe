@@ -140,7 +140,7 @@ export default class GroceryList extends Component {
     this.refs.hashFunctions.bulkGenerateKey(startIndex);
   }
   callgenerateKey = (recipeIndex, itemIndex) => {
-    this.refs.generateKey(recipeIndex, itemIndex);
+    this.refs.hashFunctions.generateKey(recipeIndex, itemIndex);
   }
   callhandleSingleItem = (name, index) => {
     this.refs.hashFunctions.handleSingleItem(name, index);
