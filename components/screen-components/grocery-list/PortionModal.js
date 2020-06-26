@@ -41,8 +41,6 @@ export default class PortionModal extends Component {
         this.state = {
             refresh: false,
         }
-        this.splitArray = "";
-        this.combinedItem = "";
     }
     forceUpdate() {
         this.setState({ refresh: !this.state.refresh })
@@ -79,20 +77,19 @@ export default class PortionModal extends Component {
             //Set as new amount
             item.amount = newQuantity;
 
-            this.splitArray = item.name.split(" ");
-            this.capitaliseString();
-            this.updateHashValue(diff);
+            let splitArray = item.name.split(" ");
+            let newName = this.capitaliseString(splitArray);
+            this.updateHashValue(diff, newName);
         }
         this.props.rebuildList();
     }
-    updateHashValue = (diff) => {
-        let hashKey = this.hashFunction(this.combinedItem);
+    updateHashValue = (diff, newName) => {
+        let hashKey = this.hashFunction(newName);
         let collision = 0;
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
-            if (HashTable[hashIndex].name === this.combinedItem) {
+            if (HashTable[hashIndex].name === newName) {
                 HashTable[hashIndex].amount += diff;
-                alert('Changed');
                 break;
             }
             collision++;
@@ -133,14 +130,13 @@ export default class PortionModal extends Component {
         return total;
     };
     //Function to capitalise first letter of all leading words in string
-    capitaliseString = () => {
-        for (let k = 0; k < this.splitArray.length; k++) {
-            this.splitArray[k] =
-                this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
-
-            //Combine back
-            this.combinedItem = this.splitArray.join(" ");
+    capitaliseString = (str) => {
+        for (let k = 0; k < str.length; k++) {
+            str[k] =
+                str[k][0].toUpperCase() + str[k].substr(1); //Appends everything else from index 1 onwards
         }
+        //Combine back
+        return str.join(" ");
     };
     render() {
         return (
