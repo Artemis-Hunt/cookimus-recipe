@@ -55,6 +55,8 @@ export default class GroceryList extends Component {
     this.handleUnits = this.handleUnits.bind(this);
     this.showModal = this.showModal.bind(this);
     this.sendPortion = this.sendPortion.bind(this);
+    this.forceUpdate = this.forceUpdate.bind(this);
+    this.rebuildCombinedList = this.rebuildCombinedList.bind(this);
   }
 
   //Run combine list on startup
@@ -137,8 +139,8 @@ export default class GroceryList extends Component {
   showModal = () => {
     this.refs.portionModal.renderModal();
   }
-  sendPortion = (portion) => {
-    this.refs.portionModal.receivePortion(portion);
+  sendPortion = (portion, title) => {
+    this.refs.portionModal.receivePortion(portion, title);
   }
 
   //Deletes items from the hashtable to update combined list
@@ -467,7 +469,7 @@ export default class GroceryList extends Component {
                   {(title === "Added to list") ? null : 
                   <TouchableOpacity
                     onPress={() => {
-                      this.sendPortion(portion);
+                      this.sendPortion(portion, title);
                       this.showModal();
                     }}
                   >
@@ -485,7 +487,15 @@ export default class GroceryList extends Component {
               previewOpenDelay={3000}
             />
           )}
-        <PortionModal ref={'portionModal'} />
+        <PortionModal 
+          ref={'portionModal'} 
+          CapitaliseString={this.capitaliseString} 
+          HashFunction={this.hashFunction}
+          CombinedItem={this.combinedItem}
+          MainRefresh={this.forceUpdate}
+          rebuildList={this.rebuildCombinedList}
+          SplitArray={this.splitArray}
+        />
       </View >
     );
   }
@@ -517,6 +527,8 @@ const styles = StyleSheet.create({
     alignContent: "center",
     backgroundColor: "#f8f8f8",
     alignItems: "center",
+    justifyContent: "space-between",
+    marginRight: 10,
   },
   text: {
     fontFamily: "SourceSansPro",
@@ -524,7 +536,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 2,
     backgroundColor: "#E8E8E8",
-    //marginHorizontal: 10,
   },
   hiddenItem: {
     flex: 1,
