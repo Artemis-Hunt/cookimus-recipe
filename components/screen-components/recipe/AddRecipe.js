@@ -2,21 +2,23 @@ import RecipeList from "../../../data/RecipeList.js"
 import SavedRecipes from "../../../data/SavedRecipes.js"
 
 const AddRecipe = (ingredient, name, url) => {
+    alert(SavedRecipes);
     for(const check of SavedRecipes) {
         if( check.link === url) {
             alert("Item Already Added");
             return;
         }
     }
+    const ingredientToAdd = Object.assign({}, ingredient)
+    const nameToAdd = new String(name)
     //Add entire recipe to RecipeList
-    const newObject = { title: name, data: Array.from(ingredient), portion: 1 };
-    alert(Object.entries(newObject.data[0]));
+    const newObject = { title: nameToAdd, data: Object.values(ingredientToAdd), portion: 1 };
     RecipeList.unshift(newObject);
 
     //Keep track of saved recipes
     const saveObject = {title: name, link: url};
     SavedRecipes.push(saveObject);
-    alert("Added to grocery list");
+    // alert("Added to grocery list");
 }
 
 export default AddRecipe
