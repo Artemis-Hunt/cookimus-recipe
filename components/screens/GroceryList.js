@@ -57,6 +57,8 @@ export default class GroceryList extends Component {
     this.sendPortion = this.sendPortion.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
     this.rebuildCombinedList = this.rebuildCombinedList.bind(this);
+    this.capitaliseString = this.capitaliseString.bind(this);
+    this.hashFunction = this.hashFunction.bind(this);
   }
 
   //Run combine list on startup
@@ -271,7 +273,6 @@ export default class GroceryList extends Component {
       total += Multiplier * total + item.charCodeAt(i);
     }
     total %= ArraySize;
-
     return total;
   };
 
@@ -489,12 +490,12 @@ export default class GroceryList extends Component {
           )}
         <PortionModal 
           ref={'portionModal'} 
-          CapitaliseString={this.capitaliseString} 
-          HashFunction={this.hashFunction}
-          CombinedItem={this.combinedItem}
+          //CapitaliseString={this.capitaliseString} 
+          //HashFunction={this.hashFunction}
+          //CombinedItem={this.combinedItem}
           MainRefresh={this.forceUpdate}
           rebuildList={this.rebuildCombinedList}
-          SplitArray={this.splitArray}
+          //SplitArray={this.splitArray}
         />
       </View >
     );

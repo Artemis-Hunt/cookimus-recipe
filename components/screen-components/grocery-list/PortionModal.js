@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { AppRegistry, FlatList, StyleSheet, Text, View, Platform, Dimensions, TouchableOpacity, Button } from 'react-native';
 import Modal from 'react-native-modalbox';
 
-import RecipeList from '../../../data/RecipeList'
-import HashTable from '../../../data/HashTable'
+import RecipeList from '../../../data/RecipeList.js'
+import HashTable from '../../../data/HashTable.js'
 
 let screen = Dimensions.get('window');
 let previous = 0;
@@ -11,15 +11,16 @@ let selected;
 let recipeIndex = 0;
 
 const ArraySize = 100;
+const Multiplier = 37;
 
 const DATA = [
-{ title: 'Triple', value: 3, text: "3" },
-{ title: 'Double', value: 2, text: "2" },
-{ title: 'Original', value: 1, text: "1" },
-{ title: 'Three-Quarter', value: 3/4, text: "3/4"},
-{ title: 'Half', value: 1 / 2, text: "1/2" },
-{ title: 'Third', value: 1 / 3, text: "1/3" },
-{ title: 'Quarter', value: 1 / 4, text: "1/4" }
+    { title: 'Triple', value: 3, text: "3" },
+    { title: 'Double', value: 2, text: "2" },
+    { title: 'Original', value: 1, text: "1" },
+    { title: 'Three-Quarter', value: 3 / 4, text: "3/4" },
+    { title: 'Half', value: 1 / 2, text: "1/2" },
+    { title: 'Third', value: 1 / 3, text: "1/3" },
+    { title: 'Quarter', value: 1 / 4, text: "1/4" }
 ]
 
 //Renders the item for the flatlist
@@ -40,6 +41,8 @@ export default class PortionModal extends Component {
         this.state = {
             refresh: false,
         }
+        this.splitArray = "";
+        this.combinedItem = "";
     }
     forceUpdate() {
         this.setState({ refresh: !this.state.refresh })
@@ -51,8 +54,8 @@ export default class PortionModal extends Component {
         previous = portion;
         selected = previous;
         //Determine Index of recipe
-        for(let i = 0; i < RecipeList.length; i++) {
-            if(title === RecipeList[i].title) {break;}
+        for (let i = 0; i < RecipeList.length; i++) {
+            if (title === RecipeList[i].title) { break; }
             recipeIndex++;
         }
 
@@ -76,20 +79,20 @@ export default class PortionModal extends Component {
             //Set as new amount
             item.amount = newQuantity;
 
-            this.props.SplitArray = item.name.split(" ");
-            this.props.CapitaliseString();
+            this.splitArray = item.name.split(" ");
+            this.capitaliseString();
             this.updateHashValue(diff);
-            this.props.rebuildList();
         }
+        this.props.rebuildList();
     }
     updateHashValue = (diff) => {
-        //alert('Update');
-        let hashKey = this.props.HashFunction(this.props.CombinedItem);
+        let hashKey = this.hashFunction(this.combinedItem);
         let collision = 0;
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
-            if (HashTable[hashIndex].name === this.props.CombinedItem) {
+            if (HashTable[hashIndex].name === this.combinedItem) {
                 HashTable[hashIndex].amount += diff;
+                alert('Changed');
                 break;
             }
             collision++;
@@ -99,19 +102,19 @@ export default class PortionModal extends Component {
     determineMultiplier = (selection) => {
         let value = 0;
         switch (selection) {
-            case 3: value = 1/3;
+            case 3: value = 1 / 3;
                 break;
             case 2: value = 0.5;
                 break;
             case 1: value = 1;
                 break;
-            case 3/4: value = 1/3;
+            case 3 / 4: value = 1 / 3;
                 break;
-            case 1/2: value = 2;
+            case 1 / 2: value = 2;
                 break;
-            case 1/3: value = 3;
+            case 1 / 3: value = 3;
                 break;
-            case 1/4: value = 4;
+            case 1 / 4: value = 4;
                 break;
         }
         return value;
@@ -120,6 +123,25 @@ export default class PortionModal extends Component {
         selected = value;
         this.forceUpdate();
     }
+    hashFunction = (item) => {
+        let total = 0;
+
+        for (let i = 0; i < item.length; i++) {
+            total += Multiplier * total + item.charCodeAt(i);
+        }
+        total %= ArraySize;
+        return total;
+    };
+    //Function to capitalise first letter of all leading words in string
+    capitaliseString = () => {
+        for (let k = 0; k < this.splitArray.length; k++) {
+            this.splitArray[k] =
+                this.splitArray[k][0].toUpperCase() + this.splitArray[k].substr(1); //Appends everything else from index 1 onwards
+
+            //Combine back
+            this.combinedItem = this.splitArray.join(" ");
+        }
+    };
     render() {
         return (
             <Modal
@@ -149,7 +171,7 @@ export default class PortionModal extends Component {
                             this.props.MainRefresh();
                             recipeIndex = 0;
                             this.refs.portionModal.close();
-                        }} 
+                        }}
                         title='Save Portion'
                         color='dodgerblue'
                     />

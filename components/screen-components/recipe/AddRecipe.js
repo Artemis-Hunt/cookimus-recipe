@@ -10,7 +10,6 @@ const AddRecipe = (ingredient, name, url) => {
     }
     //Add entire recipe to RecipeList
     const newObject = { title: name, data: Array.from(ingredient), portion: 1 };
-    alert(Object.entries(newObject.data[0]));
     RecipeList.unshift(newObject);
 
     //Keep track of saved recipes
