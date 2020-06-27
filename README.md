@@ -1,5 +1,20 @@
-## Orbital 2020 Cookimus App
+# Orbital 2020 Cookimus App
 
 Welcome to the team-cookimus app README file!
 
-![MLGFrog](https://user-images.githubusercontent.com/60423568/85917915-d4032a00-b890-11ea-8eb5-97cfa3892e62.gif)
+> Block Quote
+
+# Header 1
+## Header 2
+### Header 3
+#### Header 4
+##### Header 5
+###### Header 6
+
+```javscript
+  function helloWorld() = {
+    console.log('Hello World!');
+  }
+```
+**BOLD**
+*Italic*
