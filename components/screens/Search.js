@@ -9,7 +9,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import SearchCard from "../screen-components/search/SearchCard.js";
 
 //Temp JSON files
 import scrapedList from "../../data/allRecipesScraped.json";
@@ -20,65 +19,50 @@ import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";
 
+export const LoadingAdditionalContext = React.createContext(true);
+
 export default class Search extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      filtered: [],
+      loading: false,
+      loadingAdditional: false,
+      cardData: [],
       searchText: "",
     };
-    this.data = [];
+    this.additionalData = [];
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
+  async fetchSearch(text) {
+    this.setState({ loading: true, loadingAdditional: true });
 
-  fetchData = async () => {
-    for (let object of scrapedList.data) {
-      let tempObject = object;
-      tempObject.additionalInfo =
-        scrapedListAdditional.data[object.id].additionalInfo;
-      tempObject.prepInstructions =
-        scrapedListAdditional.data[object.id].prepInstructions;
-      combinedData.push(tempObject);
-    }
-    this.setState({ loading: false, filtered: combinedData });
-    this.data = combinedData;
+    //Replace spaces with %20, for insertion into search URL
+    text = text.replace(/\s+/g, "%20");
 
-    //Trigger Firebase cloud function
-    
-    // try {
-    //   const response = await functions.httpsCallable("test")();
-    //   alert(response.data);
-    // } catch (err) {
-    //   alert(`Error: ${err}`);
-    // }
-
-    //For testing
-    // for(let i = 0; i < 3 ; i++) {
-    //   firestoreDb.collection("AllRecipes").doc(`${scrapedList.data[i].name}`).set(scrapedList.data[i])
-    // }
-  };
-
-  //Search the array with the specified term
-  filterArray(text) {
-    this.setState({ loading: true });
+    //Scrape card data only
+    const keywordSearch = functions.httpsCallable("allRecipesScraper");
+    const response = await keywordSearch({ type: "search", keyword: text });
     this.setState({
-      filtered: this.data.filter((item) => {
-        const itemName = item.name.toLowerCase();
-        const textName = text.toLowerCase();
-        return itemName.indexOf(textName) !== -1;
-      }),
       loading: false,
+      cardData: response.data.cardData.data,
     });
-    if (this.state.filtered.isEmpty) {
+
+    //Generate array of recipe URLs to scrape
+    const URLarray = [];
+    for (let recipe of this.state.cardData) {
+      URLarray.push(recipe.recipeURL);
     }
+
+    //Scrape additional data
+    const fetchAdditionalData = functions.httpsCallable("allRecipesAdditional");
+    const responseAdditional = await fetchAdditionalData({ URLarray: URLarray });
+    this.additionalData = responseAdditional.data.data;
+    this.setState({ loadingAdditional: false });
+    alert(this.additionalData[0].recipeURL)
   }
 
   clearSearch() {
-    this.setState({ filtered: this.data, searchText: "" });
+    this.setState({ searchText: "" });
   }
 
   render() {
@@ -94,17 +78,25 @@ export default class Search extends React.PureComponent {
               if (text === "") this.clearSearch();
             }}
             onSubmitEditing={({ nativeEvent: { text } }) => {
-              if (text.replace(/\s+/g,"") !== "") {
-                this.filterArray(text);
+              //If not empty string, call search
+              //Else, clear search data
+              if (text.replace(/\s+/g, "") !== "") {
+                this.fetchSearch(text);
+              } else {
+                this.setState({ cardData: [] });
+                this.additionalData = [];
               }
-              alert(this.data[1].ingredient[0].amount)
             }}
             placeholder={"What would you like to eat?"}
             value={this.state.searchText}
           />
 
           {this.state.searchText === "" ? null : (
-            <TouchableWithoutFeedback onPress={() => this.clearSearch()}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                this.clearSearch();
+              }}
+            >
               <Ionicons
                 style={styles.icon}
                 name="ios-close"
@@ -115,13 +107,29 @@ export default class Search extends React.PureComponent {
           )}
         </View>
 
-        {/* List view for search */}
+        {/* List view for search 
+        If fetching card data from Firebase, show loading indicator.
+        If searched empty string or on initial startup, display search hints*/}
         {this.state.loading ? (
-          <View>
+          <View style={styles.center}>
             <ActivityIndicator />
           </View>
+        ) : this.state.cardData.length === 0 ? (
+          <View style={styles.center}>
+            <Text style={styles.searchHint}>
+              Search by recipe or ingredient name
+            </Text>
+          </View>
         ) : (
-          <SearchList data={this.state.filtered} height={150} />
+          <LoadingAdditionalContext.Provider
+            value={this.state.loadingAdditional}
+          >
+            <SearchList
+              data={this.state.cardData}
+              additionalData={this.additionalData}
+              height={150}
+            />
+          </LoadingAdditionalContext.Provider>
         )}
       </View>
     );
@@ -132,6 +140,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {},
   input: {
@@ -146,6 +159,7 @@ const styles = StyleSheet.create({
   searchBar: {
     //size, color
     backgroundColor: "white",
+    borderColor: "#778899",
     borderRadius: 20,
     borderWidth: 1,
     height: 40,
@@ -155,5 +169,9 @@ const styles = StyleSheet.create({
     //box
     marginVertical: 5,
     paddingHorizontal: 10,
+  },
+  searchHint: {
+    color: "#777777",
+    fontSize: 22,
   },
 });

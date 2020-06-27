@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Rating } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import { LoadingAdditionalContext } from "../../screens/Search";
 
 const roundedRadius = 10;
 
@@ -17,43 +18,48 @@ const SearchCard = (props) => {
   const navigation = useNavigation();
   const scaledSize = sizeScaler(18, Window);
   const scaledHeight = Window.height / 7.5;
+
   return (
-    <View style={{height: props.height}}>
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={() =>
-          navigation.navigate("Recipe", {
-            ...props,
-            Window,
-          })
-        }
-        style={styles.card}
-      >
-        <Image
-          style={[styles.image, { width: props.height - 20 }]}
-          source={{ uri: `${props.image}` }}
-        />
-        <View style={styles.descriptionBox}>
-          <Text
-            style={[styles.title, styles.text, { fontSize: scaledSize }]}
-            numberOfLines={3}
+    <LoadingAdditionalContext.Consumer>
+      {(value) => (
+        <View style={{ height: props.height }}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              navigation.navigate("Recipe", {
+                ...props,
+                Window,
+                value
+              });
+            }}
+            style={styles.card}
           >
-            {props.name}
-          </Text>
-          <Text style={[styles.site, styles.text]}>website.com</Text>
-          <View style={styles.extraDetailsBox}>
-            <Text style = {styles.rating}> 
-              Ratings: ({props.review})
-            </Text>
-            <Rating
-              imageSize={scaledSize - 5}
-              readonly={true}
-              startingValue={props.rating}
+            <Image
+              style={[styles.image, { width: props.height - 20 }]}
+              source={{ uri: `${props.image}` }}
             />
-          </View>
+            <View style={styles.descriptionBox}>
+              <Text
+                style={[styles.title, styles.text, { fontSize: scaledSize }]}
+                numberOfLines={3}
+              >
+                {props.name}
+              </Text>
+              <Text style={[styles.site, styles.text]}>website.com</Text>
+              <View style={styles.extraDetailsBox}>
+                <Text style={styles.rating}>Ratings: ({props.review})</Text>
+                <Rating
+                  imageSize={scaledSize - 5}
+                  readonly={true}
+                  startingValue={props.rating}
+                />
+              </View>
+              <Text>{props.recipeURL}</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
-    </View>
+      )}
+    </LoadingAdditionalContext.Consumer>
   );
 };
 
@@ -108,8 +114,7 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSansPro",
     textAlign: "center",
   },
-  title: {
-  },
+  title: {},
   site: {
     color: "grey",
     fontSize: 13,
@@ -119,5 +124,5 @@ const styles = StyleSheet.create({
     color: "grey",
     fontSize: 11,
     fontStyle: "italic",
-  }
+  },
 });
