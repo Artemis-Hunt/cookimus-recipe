@@ -1,6 +1,6 @@
 # Orbital 2020 Cookimus App
 
-
+![OrbitalPoster](https://user-images.githubusercontent.com/60423568/85918703-aa013600-b897-11ea-9a1e-fcfd065d0bbc.png)
 
 ## Motivation
 
@@ -128,3 +128,5 @@ This bifurcation of “main” data fetching (to be shown on the cards) and “a
 In order to build the combined list efficiently when many ingredients are added, we used a hash function to allow for amortized O(1) lookup times. When a new item is added into the grocery list, the ingredient names are processed to ensure consistent capitalisation and formatting. 
 
 The names are then fed into our hashing function, which takes the unicode index of each character in the name and multiplies it by a large prime number to generate hash keys with a minimal chance of duplicates. The ingredient data, which consists of the amount and unit, is then inserted into the hash table according to its hash key. 
+
+![OrbitalFlowchart](https://user-images.githubusercontent.com/60423568/85918704-acfc2680-b897-11ea-8a55-62b838239a0c.png)
