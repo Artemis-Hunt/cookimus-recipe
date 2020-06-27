@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const frac = require('frac');
 
 const Item = ({ title, amounts, units, mark }) => {
-  let fracArray = frac(amounts, 9, true);
+  let fracArray = frac(amounts, 20, true);
   let final = '';
   //Conversion to fractions
   if(fracArray[2] === 1) {
