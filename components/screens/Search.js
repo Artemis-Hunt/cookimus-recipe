@@ -5,10 +5,10 @@ import {
   View,
   TextInput,
   FlatList,
-  ActivityIndicator,
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingIndicator from "../generic/LoadingIndicator"
 
 //Temp JSON files
 import scrapedList from "../../data/allRecipesScraped.json";
@@ -18,15 +18,13 @@ const combinedData = [];
 import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";
-
-export const LoadingAdditionalContext = React.createContext(true);
+import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
 export default class Search extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      loadingAdditional: false,
       cardData: [],
       searchText: "",
     };
@@ -34,9 +32,12 @@ export default class Search extends React.PureComponent {
   }
 
   async fetchSearch(text) {
-    this.setState({ loading: true, loadingAdditional: true });
+    //this.state.loading is the flag for the card data
+    //context stores flag for loading additional data and the actual additional data
+    this.setState({ loading: true });
+    this.context.changeLoadingStatus(true);
 
-    //Replace spaces with %20, for insertion into search URL
+    //Replace spaces with %20, for insertion into search URL string
     text = text.replace(/\s+/g, "%20");
 
     //Scrape card data only
@@ -44,7 +45,7 @@ export default class Search extends React.PureComponent {
     const response = await keywordSearch({ type: "search", keyword: text });
     this.setState({
       loading: false,
-      cardData: response.data.cardData.data,
+      cardData: response.data.data,
     });
 
     //Generate array of recipe URLs to scrape
@@ -55,14 +56,21 @@ export default class Search extends React.PureComponent {
 
     //Scrape additional data
     const fetchAdditionalData = functions.httpsCallable("allRecipesAdditional");
-    const responseAdditional = await fetchAdditionalData({ URLarray: URLarray });
-    this.additionalData = responseAdditional.data.data;
-    this.setState({ loadingAdditional: false });
-    alert(this.additionalData[0].recipeURL)
+    const responseAdditional = await fetchAdditionalData({
+      URLarray: URLarray,
+    });
+
+    //Add additional data to context, set loading additional flag to false.
+    //Important: changeLoadingStatus must be called after changeAdditionalData, else 
+    //it will screw up the rendering of Recipe.js
+    this.context.changeAdditionalData(responseAdditional.data.data);
+    this.context.changeLoadingStatus(false);
+    //alert("Loaded additional info");
   }
 
   clearSearch() {
-    this.setState({ searchText: "" });
+    this.setState({ cardData: [], searchText: "" });
+    this.context.changeAdditionalData([]);
   }
 
   render() {
@@ -75,7 +83,6 @@ export default class Search extends React.PureComponent {
             style={[styles.input, styles.text]}
             onChangeText={(text) => {
               this.setState({ searchText: text });
-              if (text === "") this.clearSearch();
             }}
             onSubmitEditing={({ nativeEvent: { text } }) => {
               //If not empty string, call search
@@ -83,8 +90,7 @@ export default class Search extends React.PureComponent {
               if (text.replace(/\s+/g, "") !== "") {
                 this.fetchSearch(text);
               } else {
-                this.setState({ cardData: [] });
-                this.additionalData = [];
+                this.clearSearch();
               }
             }}
             placeholder={"What would you like to eat?"}
@@ -94,7 +100,8 @@ export default class Search extends React.PureComponent {
           {this.state.searchText === "" ? null : (
             <TouchableWithoutFeedback
               onPress={() => {
-                this.clearSearch();
+                // this.clearSearch();
+                alert(this.additionalData);
               }}
             >
               <Ionicons
@@ -111,9 +118,7 @@ export default class Search extends React.PureComponent {
         If fetching card data from Firebase, show loading indicator.
         If searched empty string or on initial startup, display search hints*/}
         {this.state.loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator />
-          </View>
+          <LoadingIndicator />
         ) : this.state.cardData.length === 0 ? (
           <View style={styles.center}>
             <Text style={styles.searchHint}>
@@ -121,20 +126,13 @@ export default class Search extends React.PureComponent {
             </Text>
           </View>
         ) : (
-          <LoadingAdditionalContext.Provider
-            value={this.state.loadingAdditional}
-          >
-            <SearchList
-              data={this.state.cardData}
-              additionalData={this.additionalData}
-              height={150}
-            />
-          </LoadingAdditionalContext.Provider>
+          <SearchList data={this.state.cardData} height={150} />
         )}
       </View>
     );
   }
 }
+Search.contextType = LoadingAdditionalContext;
 
 const styles = StyleSheet.create({
   container: {

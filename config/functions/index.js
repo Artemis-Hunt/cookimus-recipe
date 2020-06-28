@@ -116,9 +116,7 @@ exports.allRecipesScraper = functions.https.onCall(async (data, context) => {
   /* Note: cardData can be accessed immediately, 
   whereas whenAdditioanlData is a Promise that needs 
   to be awaited */
-  return {
-    cardData: scrapedDataOBJ,
-  };
+  return scrapedDataOBJ;
 });
 
 exports.allRecipesAdditional = functions.https.onCall(async (data, context) => {

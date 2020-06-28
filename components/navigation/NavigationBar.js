@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -9,63 +9,102 @@ import Recipe from "../screens/Recipe";
 import GroceryList from "../screens/GroceryList";
 import Search from "../screens/Search";
 import Settings from "../screens/Settings";
-import RecipeList from "../../data/RecipeList"
+import RecipeList from "../../data/RecipeList";
+import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
 const HomeStack = createStackNavigator();
 
-const HomeScreen = () => {
-  return (
-    <HomeStack.Navigator
-      screenOptions={{
-        headerStatusBarHeight: 0,
-        headerStyle: { ...styles.headerStyle },
-        headerTitleStyle: { ...styles.headerTitle },
-      }}
-    >
-      <HomeStack.Screen
-        name="HomePage"
-        component={HomeScreenList}
-        options={{ header: () => null }}
-      />
-      <HomeStack.Screen
-        name="Recipe"
-        component={Recipe}
-        options={({ route }) => ({ title: route.params.name })}
-      />
-    </HomeStack.Navigator>
-  );
-};
+class HomeScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeLoadingStatus = (boolean) => {
+      this.setState({ loadingAdditional: boolean });
+    };
+    this.changeAdditionalData = (array) => {
+      this.setState({ additionalData: array });
+    };
+    this.state = {
+      loadingAdditional: true,
+      changeLoadingStatus: this.changeLoadingStatus,
+      additionalData: [],
+      changeAdditionalData: this.changeAdditionalData,
+    };
+  }
+
+  render() {
+    return (
+      <LoadingAdditionalContext.Provider value={this.state}>
+        <HomeStack.Navigator
+          screenOptions={{
+            headerStatusBarHeight: 0,
+            headerStyle: { ...styles.headerStyle },
+            headerTitleStyle: { ...styles.headerTitle },
+          }}
+        >
+          <HomeStack.Screen
+            name="HomePage"
+            component={HomeScreenList}
+            options={{ header: () => null }}
+          />
+          <HomeStack.Screen
+            name="Recipe"
+            component={Recipe}
+            options={({ route }) => ({ title: route.params.name })}
+          />
+        </HomeStack.Navigator>
+      </LoadingAdditionalContext.Provider>
+    );
+  }
+}
 
 const SearchStack = createStackNavigator();
 
-const SearchScreen = () => {
-  return (
-    <SearchStack.Navigator
-      screenOptions={{
-        headerStatusBarHeight: 0,
-        headerStyle: { ...styles.headerStyle },
-        headerTitleStyle: { ...styles.headerTitle },
-      }}
-    >
-      <SearchStack.Screen
-        name="Search"
-        component={Search}
-        options={{ headerShown: false }}
-      />
-      <SearchStack.Screen
-        name="Recipe"
-        component={Recipe}
-        options={({ route }) => ({ title: route.params.name })}
-      />
-    </SearchStack.Navigator>
-  );
-};
+class SearchScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeLoadingStatus = (boolean) => {
+      this.setState({ loadingAdditional: boolean });
+    };
+    this.changeAdditionalData = (array) => {
+      this.setState({ additionalData: array });
+    };
+    this.state = {
+      loadingAdditional: true,
+      changeLoadingStatus: this.changeLoadingStatus,
+      additionalData: [],
+      changeAdditionalData: this.changeAdditionalData,
+    };
+  }
+
+  render() {
+    return (
+      <LoadingAdditionalContext.Provider value={this.state}>
+        <SearchStack.Navigator
+          screenOptions={{
+            headerStatusBarHeight: 0,
+            headerStyle: { ...styles.headerStyle },
+            headerTitleStyle: { ...styles.headerTitle },
+          }}
+        >
+          <SearchStack.Screen
+            name="Search"
+            component={Search}
+            options={{ headerShown: false }}
+          />
+          <SearchStack.Screen
+            name="Recipe"
+            component={Recipe}
+            options={({ route }) => ({ title: route.params.name })}
+          />
+        </SearchStack.Navigator>
+      </LoadingAdditionalContext.Provider>
+    );
+  }
+}
 
 const GroceryScreen = () => {
-  return(
-    <GroceryList RecipeList={RecipeList}/>
-  )
-}
+  return <GroceryList RecipeList={RecipeList} />;
+};
 
 const NavBar = createBottomTabNavigator();
 

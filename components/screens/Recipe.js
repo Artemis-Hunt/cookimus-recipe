@@ -10,12 +10,15 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
+import LoadingIndicator from "../generic/LoadingIndicator"
 
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddRecipe from "../screen-components/recipe/AddRecipe.js";
 import SaveRecipe from "../screen-components/recipe/SaveRecipe.js";
+
+import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
 //Render the individual recipe pages when clicked into from the search page
 const Recipe = () => {
@@ -27,68 +30,66 @@ const Recipe = () => {
   const name = route.params.name;
   const url = route.params.url;
   const image = route.params.image;
-  const originalIngredient = route.params.originalIngredient;
-  const ingredient = route.params.ingredient;
-  const additionalInfo = route.params.additionalInfo;
-  const prepInstructions = route.params.prepInstructions;
-  let value = route.params.value;
+  const index = route.params.index;
 
   return (
-    <View style={styles.container}>
-      {value ? (
-        <View style={styles.loading}>
-          <ActivityIndicator />
+    <LoadingAdditionalContext.Consumer>
+      {({ loadingAdditional, additionalData }) => (
+        <View style={styles.container}>
+          {loadingAdditional ? (
+            <LoadingIndicator size={"large"}/>
+          ) : (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Image
+                style={[styles.image, { height: Window.height / 3 }]}
+                source={{ uri: `${image}` }}
+              />
+              {/* Extra info e.g. servings, preparation time*/}
+              <View style={styles.categoryBox}>
+                <View style={styles.subBox}>
+                  <Text style={[styles.text, styles.name]}>{name}</Text>
+                </View>
+                <AdditionalInfo additional={additionalData[index].additionalInfo} />
+              </View>
+
+              <IngredientBox ingredients={additionalData[index].originalIngredient} />
+
+              {/*Add to grocery list*/}
+              <TouchableOpacity
+                onPress={() => {
+                  AddRecipe(additionalData[index].ingredient, name, url);
+                }}
+                style={styles.buttonBox}
+              >
+                <Text style={styles.addButton}>Add to Grocery List </Text>
+                <Entypo name="add-to-list" size={19} color="#1E90FF" />
+              </TouchableOpacity>
+
+              <PrepMethod instructions={additionalData[index].prepInstructions} />
+
+              {/*Store recipe locally*/}
+              <TouchableOpacity
+                onPress={() => {
+                  SaveRecipe(
+                    name,
+                    url,
+                    image,
+                    additionalData[index].originalIngredient,
+                    additionalData[index].ingredient,
+                    additionalData[index].additionalInfo,
+                    additionalData[index].prepInstructions
+                  );
+                }}
+                style={styles.buttonBox}
+              >
+                <Text style={styles.addButton}>Save This Recipe </Text>
+                <Feather name="save" size={19} color="#1E90FF" />
+              </TouchableOpacity>
+            </ScrollView>
+          )}
         </View>
-      ) : (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Image
-            style={[styles.image, { height: Window.height / 3 }]}
-            source={{ uri: `${image}` }}
-          />
-          {/* Extra info e.g. servings, preparation time*/}
-          <View style={styles.categoryBox}>
-            <View style={styles.subBox}>
-              <Text style={[styles.text, styles.name]}>{name}</Text>
-            </View>
-            <AdditionalInfo additional={additionalInfo} />
-          </View>
-
-          <IngredientBox ingredients={originalIngredient} />
-
-          {/*Add to grocery list*/}
-          <TouchableOpacity
-            onPress={() => {
-              AddRecipe(ingredient, name, url);
-            }}
-            style={styles.buttonBox}
-          >
-            <Text style={styles.addButton}>Add to Grocery List </Text>
-            <Entypo name="add-to-list" size={19} color="#1E90FF" />
-          </TouchableOpacity>
-
-          <PrepMethod instructions={prepInstructions} />
-
-          {/*Store recipe locally*/}
-          <TouchableOpacity
-            onPress={() => {
-              SaveRecipe(
-                name,
-                url,
-                image,
-                originalIngredient,
-                ingredient,
-                additionalInfo,
-                prepInstructions
-              );
-            }}
-            style={styles.buttonBox}
-          >
-            <Text style={styles.addButton}>Save This Recipe </Text>
-            <Feather name="save" size={19} color="#1E90FF" />
-          </TouchableOpacity>
-        </ScrollView>
       )}
-    </View>
+    </LoadingAdditionalContext.Consumer>
   );
 };
 

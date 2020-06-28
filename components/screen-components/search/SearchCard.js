@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { Rating } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
-import { LoadingAdditionalContext } from "../../screens/Search";
 
 const roundedRadius = 10;
 
@@ -20,46 +19,40 @@ const SearchCard = (props) => {
   const scaledHeight = Window.height / 7.5;
 
   return (
-    <LoadingAdditionalContext.Consumer>
-      {(value) => (
-        <View style={{ height: props.height }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              navigation.navigate("Recipe", {
-                ...props,
-                Window,
-                value
-              });
-            }}
-            style={styles.card}
+    <View style={{ height: props.height }}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => {
+          navigation.navigate("Recipe", {
+            ...props,
+            Window: Window
+          });
+        }}
+        style={styles.card}
+      >
+        <Image
+          style={[styles.image, { width: props.height - 20 }]}
+          source={{ uri: `${props.image}` }}
+        />
+        <View style={styles.descriptionBox}>
+          <Text
+            style={[styles.title, styles.text, { fontSize: scaledSize }]}
+            numberOfLines={3}
           >
-            <Image
-              style={[styles.image, { width: props.height - 20 }]}
-              source={{ uri: `${props.image}` }}
+            {props.name}
+          </Text>
+          <Text style={[styles.site, styles.text]}>website.com</Text>
+          <View style={styles.extraDetailsBox}>
+            <Text style={styles.rating}>Ratings: ({props.review})</Text>
+            <Rating
+              imageSize={scaledSize - 5}
+              readonly={true}
+              startingValue={props.rating}
             />
-            <View style={styles.descriptionBox}>
-              <Text
-                style={[styles.title, styles.text, { fontSize: scaledSize }]}
-                numberOfLines={3}
-              >
-                {props.name}
-              </Text>
-              <Text style={[styles.site, styles.text]}>website.com</Text>
-              <View style={styles.extraDetailsBox}>
-                <Text style={styles.rating}>Ratings: ({props.review})</Text>
-                <Rating
-                  imageSize={scaledSize - 5}
-                  readonly={true}
-                  startingValue={props.rating}
-                />
-              </View>
-              <Text>{props.recipeURL}</Text>
-            </View>
-          </TouchableOpacity>
+          </View>
         </View>
-      )}
-    </LoadingAdditionalContext.Consumer>
+      </TouchableOpacity>
+    </View>
   );
 };
 
