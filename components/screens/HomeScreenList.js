@@ -7,6 +7,7 @@ import {
   ScrollView,
   FlatList,
   useWindowDimensions,
+  Dimensions,
 } from "react-native";
 import {
   Ionicons,
@@ -24,86 +25,92 @@ import { functions } from "../../config/Firebase/firebaseConfig";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
 const containerMarginHorizontal = 5;
+const Window = Dimensions.get("window");
 
 const ItemSeparator = () => {
   return <View style={styles.separator} />;
 };
 
-const HomeScreenList = () => {
-  const Window = useWindowDimensions();
-  const [loading, setLoading] = useState(true);
-  const [homeScreenList, setHomeScreenList] = useState([]);
-  const context = useContext(LoadingAdditionalContext);
-
-  //Equivalent to componentDidMount for functional components
-  useEffect(() => {
-    const fetchClockRecipe = async () => {
-      //loading is the flag for the card data
-      //context stores flag for loading additional data and the actual additional data
-      setLoading(true);
-      context.changeLoadingStatus(true);
-
-      //Scrape card data only
-      const response = await functions.httpsCallable("allRecipesScraper")({
-        type: "breakfast",
-      });
-      setHomeScreenList(response.data.data);
-      setLoading(false);
-      //Generate array of recipe URLs to scrape
-      const URLarray = [];
-      for (let recipe of homeScreenList) {
-        URLarray.push(recipe.recipeURL);
-      }
-
-      //Scrape additional data
-      const fetchAdditionalData = functions.httpsCallable(
-        "allRecipesAdditional"
-      );
-      const responseAdditional = await fetchAdditionalData({
-        URLarray: URLarray,
-      });
-
-      //Add additional data to context, set loading additional flag to false.
-      //Important: changeLoadingStatus must be called after changeAdditionalData, else
-      //it will screw up the rendering of Recipe.js
-      context.changeAdditionalData(responseAdditional.data.data);
-      context.changeLoadingStatus(false);
-      //alert("Loaded additional info");
+class HomeScreenList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      cardData: [],
     };
+  }
 
-    fetchClockRecipe();
-    //alert(Object.entries(homeScreenList))
-  }, []);
+  componentDidMount() {
+    this.fetchClockRecipe();
+  }
 
-  return (
-    <View style={[styles.container, { width: Window.width - 10 }]}>
-      {loading ? (
-        <LoadingIndicator size={"large"} />
-      ) : (
-        <>
-          <FlavorText name="James" />
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={homeScreenList}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <Card
-                name={item.name}
-                image={item.recipeImageURL}
-                index={index}
-                Window={Window}
-              />
-            )}
-            // renderSectionHeader={({ section }) => (
-            //   <Text style={styles.heading}>{section.heading}</Text>
-            // )}
-            ItemSeparatorComponent={ItemSeparator}
-          />
-        </>
-      )}
-    </View>
-  );
-};
+  async fetchClockRecipe() {
+    //this.state.loading is the flag for the card data
+    //context stores flag for loading additional data and the actual additional data
+    this.setState({ loading: true });
+    this.context.changeLoadingStatus(true);
+
+    //Scrape card data only
+    const fetchCardData = functions.httpsCallable("allRecipesScraper");
+    const response = await fetchCardData({ type: "lunch"});
+    this.setState({
+      loading: false,
+      cardData: response.data.data,
+    });
+
+    //Generate array of recipe URLs to scrape
+    const URLarray = [];
+    for (let recipe of this.state.cardData) {
+      URLarray.push(recipe.recipeURL);
+    }
+
+    //Scrape additional data
+    const fetchAdditionalData = functions.httpsCallable("allRecipesAdditional");
+    const responseAdditional = await fetchAdditionalData({
+      URLarray: URLarray,
+    });
+
+    //Add additional data to context, set loading additional flag to false.
+    //Important: changeLoadingStatus must be called after changeAdditionalData, else
+    //it will screw up the rendering of Recipe.js
+    this.context.changeAdditionalData(responseAdditional.data.data);
+    this.context.changeLoadingStatus(false);
+    //alert(this.context.additionalData)
+    //alert("Loaded additional info");
+  }
+
+  render() {
+    return (
+      <View style={[styles.container, { width: Window.width - 10 }]}>
+        {this.state.loading ? (
+          <LoadingIndicator size={"large"} />
+        ) : (
+          <>
+            <FlavorText name="James" />
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={this.state.cardData}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => (
+                <Card
+                  name={item.name}
+                  image={item.recipeImageURL}
+                  index={index}
+                  Window={Window}
+                />
+              )}
+              // renderSectionHeader={({ section }) => (
+              //   <Text style={styles.heading}>{section.heading}</Text>
+              // )}
+              ItemSeparatorComponent={ItemSeparator}
+            />
+          </>
+        )}
+      </View>
+    );
+  }
+}
+HomeScreenList.contextType = LoadingAdditionalContext;
 
 export default HomeScreenList;
 
