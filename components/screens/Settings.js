@@ -1,30 +1,37 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import UserContext from "../context/UserContext";
-import firebase from "../../config/Firebase/firebaseConfig";
+import firebase, {getUserDataRef} from "../../config/Firebase/firebaseConfig";
+import Button from "../generic/Button"
 
-const onLogOutPress = async () => {
-  const user = firebase.auth().currentUser;
-  if(user.isAnonymous) {
-    const usersRef = firebase.firestore().collection("users")
-    await usersRef.doc(user.id).delete();
-    await user.delete();
-  }
-  else {
-    await firebase.auth().signOut();
-  }
-}
 const Settings = () => {
   const user = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
+
+  const onLogOutPress = async () => {
+    setLoading(true)
+    if(user.isAnonymous) {
+      const usersRef = firebase.firestore().collection("users")
+      await usersRef.doc(user.uid).delete();
+      await user.delete();
+    }
+    else {
+      await firebase.auth().signOut();
+    }
+    setLoading(false)
+  }
 
   return (
     <View style={styles.container}>
-      <Text>
+      <Text style = {styles.text}>
         {`Current user is ${user.firstName}.`}
       </Text>
-      <TouchableOpacity style={styles.logOut} onPress={onLogOutPress}>
-        <Text>Log out</Text>
-      </TouchableOpacity>
+      <Button
+          text={"Sign out"}
+          onPressHandle={onLogOutPress}
+          loading={loading}
+          style={styles.logOut}
+        />
     </View>
   );
 };
@@ -37,9 +44,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  text: {
+    fontFamily: "SourceSansPro",
+    margin: 10,
+  },
   logOut: {
     alignItems: "center",
-    borderWidth: 1,
+    backgroundColor: "#788eec",
     padding: 10,
     width: 100,
   },

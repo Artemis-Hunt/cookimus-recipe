@@ -102,7 +102,7 @@ export default class GroceryList extends Component {
   componentWillUnmount() {
     //Unsubscribe event handler
     this.unsubscribeTabPress();
-    //this.unsubscribeSnapshot(); this.unsubscribeSnapshot = 
+    //this.unsubscribeSnapshot(); this.unsubscribeSnapshot =
   }
 
   //Fetch from Firebase - not in use
@@ -227,21 +227,20 @@ export default class GroceryList extends Component {
 
   renderHiddenItem = (data, rowMap) => {
     return (
-      <View style={styles.hiddenItem}>
-        <TouchableOpacity
-          onPress={() => {
-            this.callDeleteItem(data.item.key);
-            this.closeRow(rowMap, data.item.key);
-            this.forceUpdate();
-          }}
-        >
-          <MaterialCommunityIcons
-            name="trash-can-outline"
-            size={27}
-            color="white"
-          />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.hiddenItem}
+        onPress={() => {
+          this.callDeleteItem(data.item.key);
+          this.closeRow(rowMap, data.item.key);
+          this.forceUpdate();
+        }}
+      >
+        <MaterialCommunityIcons
+          name="trash-can-outline"
+          size={27}
+          color="white"
+        />
+      </TouchableOpacity>
     );
   };
 
@@ -320,19 +319,19 @@ export default class GroceryList extends Component {
             renderSectionHeader={({
               section: { title, portion, portionText },
             }) => (
-              <View style={styles.titleCard}>
+              <View style={[styles.titleCard, styles.cardBorder]}>
                 <TouchableOpacity
+                  style={{ flex: 10 }}
                   onPress={() => {
                     this.callDeleteSection(title);
                     this.forceUpdate();
                   }}
                 >
-                  <View style={styles.cardBorder}>
-                    <Text style={[styles.header]}>{title}</Text>
-                  </View>
+                  <Text style={styles.header}>{title}</Text>
                 </TouchableOpacity>
                 {title === "Added to list" ? null : (
                   <TouchableOpacity
+                    style={{ flex: 1, alignItems: "flex-end" }}
                     onPress={() => {
                       this.sendPortion(portion, title);
                       this.showModal();
@@ -377,7 +376,7 @@ const styles = StyleSheet.create({
   },
   //Recipe Names
   header: {
-    padding: 10,
+    margin: 10,
     fontSize: 24,
     color: "#708090",
   },
@@ -393,10 +392,8 @@ const styles = StyleSheet.create({
   titleCard: {
     flex: 1,
     flexDirection: "row",
-    alignContent: "center",
     backgroundColor: "#f8f8f8",
     alignItems: "center",
-    justifyContent: "space-between",
     marginRight: 10,
   },
   text: {

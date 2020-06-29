@@ -21,7 +21,7 @@ import FlavorText from "../screen-components/homescreen-list/FlavorText.js";
 import HomeScreenRecipe from "../../data/HomeScreenRecipe.js";
 import LoadingIndicator from "../generic/LoadingIndicator";
 
-import { functions } from "../../config/Firebase/firebaseConfig";
+import { functions, getUserDataRef } from "../../config/Firebase/firebaseConfig";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
 const containerMarginHorizontal = 5;
@@ -38,6 +38,7 @@ class HomeScreenList extends React.Component {
       loading: true,
       cardData: [],
     };
+    this.user = "";
   }
 
   componentDidMount() {
@@ -45,6 +46,10 @@ class HomeScreenList extends React.Component {
   }
 
   async fetchClockRecipe() {
+    this.user = (await getUserDataRef().get()).data().firstName
+    if(this.user === "Guest") {
+      this.user = ""
+    }
     //this.state.loading is the flag for the card data
     //context stores flag for loading additional data and the actual additional data
     this.setState({ loading: true });
@@ -52,7 +57,7 @@ class HomeScreenList extends React.Component {
 
     //Scrape card data only
     const fetchCardData = functions.httpsCallable("allRecipesScraper");
-    const response = await fetchCardData({ type: "lunch"});
+    const response = await fetchCardData({ type: "afternoon"});
     this.setState({
       loading: false,
       cardData: response.data.data,
@@ -86,7 +91,7 @@ class HomeScreenList extends React.Component {
           <LoadingIndicator size={"large"} />
         ) : (
           <>
-            <FlavorText name="James" />
+            <FlavorText name={this.user} />
             <FlatList
               showsVerticalScrollIndicator={false}
               data={this.state.cardData}
