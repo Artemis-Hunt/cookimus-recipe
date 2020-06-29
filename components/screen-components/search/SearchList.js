@@ -7,11 +7,12 @@ import {
   LayoutProvider,
 } from "recyclerlistview";
 import SearchCard from "./SearchCard";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Window = Dimensions.get("window");
 const dataProvider = new DataProvider((r1, r2) => r1 !== r2);
 
-export default class SearchList extends React.PureComponent {
+export default class SearchList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -34,7 +35,7 @@ export default class SearchList extends React.PureComponent {
     }
   }
 
-  rowRenderer(type, item) {
+  rowRenderer(type, item, index) {
     return (
       <SearchCard
         name={item.name}
@@ -42,10 +43,7 @@ export default class SearchList extends React.PureComponent {
         image={item.recipeImageURL}
         rating={Number(item.ratings)}
         review={item.reviewCount}
-        ingredients={item.originalIngredient}
-        modIngredient={item.ingredient}
-        extraInfo={item.additionalInfo}
-        prep={item.prepInstructions}
+        index={index}
         height={this.props.height}
       />
     );

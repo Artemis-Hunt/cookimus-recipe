@@ -17,16 +17,17 @@ const SearchCard = (props) => {
   const navigation = useNavigation();
   const scaledSize = sizeScaler(18, Window);
   const scaledHeight = Window.height / 7.5;
+
   return (
-    <View style={{height: props.height}}>
+    <View style={{ height: props.height }}>
       <TouchableOpacity
         activeOpacity={1}
-        onPress={() =>
+        onPress={() => {
           navigation.navigate("Recipe", {
             ...props,
-            Window,
-          })
-        }
+            Window: Window
+          });
+        }}
         style={styles.card}
       >
         <Image
@@ -42,9 +43,7 @@ const SearchCard = (props) => {
           </Text>
           <Text style={[styles.site, styles.text]}>website.com</Text>
           <View style={styles.extraDetailsBox}>
-            <Text style = {styles.rating}> 
-              Ratings: ({props.review})
-            </Text>
+            <Text style={styles.rating}>Ratings: ({props.review})</Text>
             <Rating
               imageSize={scaledSize - 5}
               readonly={true}
@@ -108,8 +107,7 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSansPro",
     textAlign: "center",
   },
-  title: {
-  },
+  title: {},
   site: {
     color: "grey",
     fontSize: 13,
@@ -119,5 +117,5 @@ const styles = StyleSheet.create({
     color: "grey",
     fontSize: 11,
     fontStyle: "italic",
-  }
+  },
 });

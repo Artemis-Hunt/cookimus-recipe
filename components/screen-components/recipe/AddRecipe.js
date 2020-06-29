@@ -1,18 +1,19 @@
 import RecipeList from "../../../data/RecipeList.js"
 import SavedRecipes from "../../../data/SavedRecipes.js"
+import {firestoreDb, groceryListPush} from "../../../config/Firebase/firebaseConfig"
 
-const AddRecipe = (ingredient, name, url) => {
+const AddRecipe = async (ingredient, name, url) => {
     for(const check of SavedRecipes) {
         if( check.link === url) {
             alert("Item Already Added");
             return;
         }
     }
-    const ingredientToAdd = Object.assign({}, ingredient)
-    const nameToAdd = String(name)
     //Add entire recipe to RecipeList
-    const newObject = { title: nameToAdd, data: Object.values(ingredientToAdd), portion: 1, portionText: '1' };
+    const newObject = Object.assign({}, {title: name, data: Array.from(ingredient), portion: 1, portionText: '1' });
     RecipeList.unshift(newObject);
+    //Push to firebase - not in use
+    //await groceryListPush(newObject);
 
     //Keep track of saved recipes
     const saveObject = {title: name, link: url};

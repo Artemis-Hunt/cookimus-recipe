@@ -5,11 +5,10 @@ import {
   View,
   TextInput,
   FlatList,
-  ActivityIndicator,
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import SearchCard from "../screen-components/search/SearchCard.js";
+import LoadingIndicator from "../generic/LoadingIndicator"
 
 //Temp JSON files
 import scrapedList from "../../data/allRecipesScraped.json";
@@ -19,66 +18,59 @@ const combinedData = [];
 import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";
+import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
 export default class Search extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      filtered: [],
+      loading: false,
+      cardData: [],
       searchText: "",
     };
-    this.data = [];
+    this.additionalData = [];
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData = async () => {
-    for (let object of scrapedList.data) {
-      let tempObject = object;
-      tempObject.additionalInfo =
-        scrapedListAdditional.data[object.id].additionalInfo;
-      tempObject.prepInstructions =
-        scrapedListAdditional.data[object.id].prepInstructions;
-      combinedData.push(tempObject);
-    }
-    this.setState({ loading: false, filtered: combinedData });
-    this.data = combinedData;
-
-    //Trigger Firebase cloud function
-    
-    // try {
-    //   const response = await functions.httpsCallable("test")();
-    //   alert(response.data);
-    // } catch (err) {
-    //   alert(`Error: ${err}`);
-    // }
-
-    //For testing
-    // for(let i = 0; i < 3 ; i++) {
-    //   firestoreDb.collection("AllRecipes").doc(`${scrapedList.data[i].name}`).set(scrapedList.data[i])
-    // }
-  };
-
-  //Search the array with the specified term
-  filterArray(text) {
+  async fetchSearch(text) {
+    //this.state.loading is the flag for the card data
+    //context stores flag for loading additional data and the actual additional data
     this.setState({ loading: true });
+    this.context.changeLoadingStatus(true);
+
+    //Replace spaces with %20, for insertion into search URL string
+    text = text.replace(/\s+/g, "%20");
+
+    //Scrape card data only
+    const keywordSearch = functions.httpsCallable("allRecipesScraper");
+    const response = await keywordSearch({ type: "search", keyword: text });
     this.setState({
-      filtered: this.data.filter((item) => {
-        const itemName = item.name.toLowerCase();
-        const textName = text.toLowerCase();
-        return itemName.indexOf(textName) !== -1;
-      }),
       loading: false,
+      cardData: response.data.data,
     });
-    if (this.state.filtered.isEmpty) {
+
+    //Generate array of recipe URLs to scrape
+    const URLarray = [];
+    for (let recipe of this.state.cardData) {
+      URLarray.push(recipe.recipeURL);
     }
+
+    //Scrape additional data
+    const fetchAdditionalData = functions.httpsCallable("allRecipesAdditional");
+    const responseAdditional = await fetchAdditionalData({
+      URLarray: URLarray,
+    });
+
+    //Add additional data to context, set loading additional flag to false.
+    //Important: changeLoadingStatus must be called after changeAdditionalData, else 
+    //it will screw up the rendering of Recipe.js
+    this.context.changeAdditionalData(responseAdditional.data.data);
+    this.context.changeLoadingStatus(false);
+    //alert("Loaded additional info");
   }
 
   clearSearch() {
-    this.setState({ filtered: this.data, searchText: "" });
+    this.setState({ cardData: [], searchText: "" });
+    this.context.changeAdditionalData([]);
   }
 
   render() {
@@ -91,20 +83,27 @@ export default class Search extends React.PureComponent {
             style={[styles.input, styles.text]}
             onChangeText={(text) => {
               this.setState({ searchText: text });
-              if (text === "") this.clearSearch();
             }}
             onSubmitEditing={({ nativeEvent: { text } }) => {
-              if (text.replace(/\s+/g,"") !== "") {
-                this.filterArray(text);
+              //If not empty string, call search
+              //Else, clear search data
+              if (text.replace(/\s+/g, "") !== "") {
+                this.fetchSearch(text);
+              } else {
+                this.clearSearch();
               }
-              alert(this.data[1].ingredient[0].amount)
             }}
             placeholder={"What would you like to eat?"}
             value={this.state.searchText}
           />
 
           {this.state.searchText === "" ? null : (
-            <TouchableWithoutFeedback onPress={() => this.clearSearch()}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                // this.clearSearch();
+                alert(this.additionalData);
+              }}
+            >
               <Ionicons
                 style={styles.icon}
                 name="ios-close"
@@ -115,23 +114,35 @@ export default class Search extends React.PureComponent {
           )}
         </View>
 
-        {/* List view for search */}
+        {/* List view for search 
+        If fetching card data from Firebase, show loading indicator.
+        If searched empty string or on initial startup, display search hints*/}
         {this.state.loading ? (
-          <View>
-            <ActivityIndicator />
+          <LoadingIndicator />
+        ) : this.state.cardData.length === 0 ? (
+          <View style={styles.center}>
+            <Text style={styles.searchHint}>
+              Search by recipe or ingredient name
+            </Text>
           </View>
         ) : (
-          <SearchList data={this.state.filtered} height={150} />
+          <SearchList data={this.state.cardData} height={150} />
         )}
       </View>
     );
   }
 }
+Search.contextType = LoadingAdditionalContext;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {},
   input: {
@@ -146,6 +157,7 @@ const styles = StyleSheet.create({
   searchBar: {
     //size, color
     backgroundColor: "white",
+    borderColor: "#778899",
     borderRadius: 20,
     borderWidth: 1,
     height: 40,
@@ -155,5 +167,9 @@ const styles = StyleSheet.create({
     //box
     marginVertical: 5,
     paddingHorizontal: 10,
+  },
+  searchHint: {
+    color: "#777777",
+    fontSize: 22,
   },
 });

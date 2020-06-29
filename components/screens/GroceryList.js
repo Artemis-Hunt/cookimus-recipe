@@ -17,13 +17,20 @@ import PortionModal from "../screen-components/grocery-list/PortionModal.js";
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
-import scrapedList from "../../data/allRecipesScraped.json"
+import scrapedList from "../../data/allRecipesScraped.json";
 import Animated, { diff } from "react-native-reanimated";
-import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
-import { SwipeListView } from 'react-native-swipe-list-view';
+import { SwipeListView } from "react-native-swipe-list-view";
 
 import HashFunctions from "../screen-components/grocery-list/HashFunctions.js";
+
+import {
+  groceryListPush,
+  groceryListDelete,
+  firestoreDb,
+  getUserDataRef,
+} from "../../config/Firebase/firebaseConfig";
 
 //Size of hash table
 const ArraySize = 100;
@@ -44,6 +51,7 @@ export default class GroceryList extends Component {
       incompleteField: "",
       refresh: false,
       combine: false,
+      groceryList: [],
     };
     this.showAddItem = this.showAddItem.bind(this);
     this.hideAddItem = this.hideAddItem.bind(this);
@@ -65,12 +73,18 @@ export default class GroceryList extends Component {
 
   //Run combine list on startup
   componentDidMount() {
+    //Fetch from Firebase - not in use
+    //this.fetchGroceryList();
+
     this.callCombineFunction(RecipeList.length);
     this.callBulkGenerate(0);
     //Trigger a re-render whenever the grocery list tab is pressed
-    this.unsubscribe = this.props.navigation.addListener("tabPress", (e) => {
-      this.forceUpdate();
-    });
+    this.unsubscribeTabPress = this.props.navigation.addListener(
+      "tabPress",
+      (e) => {
+        this.forceUpdate();
+      }
+    );
   }
 
   componentDidUpdate() {
@@ -87,8 +101,20 @@ export default class GroceryList extends Component {
 
   componentWillUnmount() {
     //Unsubscribe event handler
-    //this.unsubscribe();
+    this.unsubscribeTabPress();
+    //this.unsubscribeSnapshot(); this.unsubscribeSnapshot = 
   }
+
+  //Fetch from Firebase - not in use
+  // async fetchGroceryList() {
+  //   return getUserDataRef().onSnapshot(
+  //     (snapshot) => {
+  //       //alert("Received snapshot" + snapshot.get("groceryList"))
+  //       this.setState({ groceryList: snapshot.get("groceryList") });
+  //     },
+  //     (err) => alert(err)
+  //   );
+  // }
 
   showAddItem() {
     this.setState({
@@ -109,7 +135,7 @@ export default class GroceryList extends Component {
   }
 
   forceUpdate() {
-    this.setState({ refresh: !this.state.refresh })
+    this.setState({ refresh: !this.state.refresh });
   }
 
   handleName = (text) => {
@@ -127,32 +153,32 @@ export default class GroceryList extends Component {
   //Functions for modal
   showModal = () => {
     this.refs.portionModal.renderModal();
-  }
+  };
   sendPortion = (portion, title) => {
     this.refs.portionModal.receivePortion(portion, title);
-  }
+  };
 
   //Functions to call hashFunctions
   callCombineFunction = (index) => {
     this.refs.hashFunctions.combineFunction(index);
-  }
+  };
   callBulkGenerate = (startIndex) => {
     this.refs.hashFunctions.bulkGenerateKey(startIndex);
-  }
+  };
   callgenerateKey = (recipeIndex, itemIndex) => {
     this.refs.hashFunctions.generateKey(recipeIndex, itemIndex);
-  }
+  };
   callhandleSingleItem = (name, index) => {
     this.refs.hashFunctions.handleSingleItem(name, index);
-  }
+  };
   callDeleteItem = (key) => {
     let newLength = this.refs.hashFunctions.deleteItem(key);
     this.oldLength = newLength;
-  }
+  };
   callDeleteSection = (title) => {
     let newLength = this.refs.hashFunctions.deleteSection(title);
     this.oldLength = newLength;
-  }
+  };
 
   //Check if entered is valid
   _verifyInfo = (name, quantity, units) => {
@@ -197,7 +223,7 @@ export default class GroceryList extends Component {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
-  }
+  };
 
   renderHiddenItem = (data, rowMap) => {
     return (
@@ -209,20 +235,21 @@ export default class GroceryList extends Component {
             this.forceUpdate();
           }}
         >
-          <MaterialCommunityIcons name="trash-can-outline" size={27} color="white" />
+          <MaterialCommunityIcons
+            name="trash-can-outline"
+            size={27}
+            color="white"
+          />
         </TouchableOpacity>
       </View>
-    )
-  }
+    );
+  };
 
   render() {
     return (
       <View style={styles.container}>
         {/* Menu Bar */}
-        <MenuBar
-          buttonClick={this.showAddItem}
-          togglemenu={this.toggleMenu}
-        />
+        <MenuBar buttonClick={this.showAddItem} togglemenu={this.toggleMenu} />
 
         {/* Toggle menu for add item */}
         {this.state.showComponent ? (
@@ -248,7 +275,7 @@ export default class GroceryList extends Component {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
-                  item.mark = (item.mark === undefined) ? true : !item.mark;
+                  item.mark = item.mark === undefined ? true : !item.mark;
                   this.forceUpdate();
                 }}
               >
@@ -268,73 +295,77 @@ export default class GroceryList extends Component {
             ItemSeparatorComponent={ItemSeparator}
           />
         ) : (
-            <SwipeListView
-              useSectionList
-              stickySectionHeadersEnabled={true}
-              sections={RecipeList}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({ item }) => (
+          <SwipeListView
+            useSectionList
+            stickySectionHeadersEnabled={true}
+            sections={RecipeList}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  item.mark = item.mark === undefined ? true : !item.mark;
+                  this.forceUpdate();
+                }}
+              >
+                <Item
+                  title={item.name}
+                  amounts={item.amount}
+                  // units={item.unit}
+                  units={item.unit}
+                  mark={item.mark}
+                />
+              </TouchableOpacity>
+            )}
+            renderSectionHeader={({
+              section: { title, portion, portionText },
+            }) => (
+              <View style={styles.titleCard}>
                 <TouchableOpacity
-                  activeOpacity={1}
                   onPress={() => {
-                    item.mark = (item.mark === undefined) ? true : !item.mark;
+                    this.callDeleteSection(title);
                     this.forceUpdate();
                   }}
                 >
-                  <Item
-                    title={item.name}
-                    amounts={item.amount}
-                    // units={item.unit}
-                    units={scrapedList.data[1].ingredient[0].amount}
-                    mark={item.mark}
-                  />
+                  <View style={styles.cardBorder}>
+                    <Text style={[styles.header]}>{title}</Text>
+                  </View>
                 </TouchableOpacity>
-              )
-              }
-              renderSectionHeader={({ section: { title, portion, portionText } }) => (
-                <View style={styles.titleCard}>
+                {title === "Added to list" ? null : (
                   <TouchableOpacity
                     onPress={() => {
-                      this.callDeleteSection(title);
-                      this.forceUpdate();
+                      this.sendPortion(portion, title);
+                      this.showModal();
                     }}
                   >
-                    <View style={styles.cardBorder}>
-                      <Text style={[styles.header]}>{title}</Text>
-                    </View>
+                    <Text style={[styles.portionText, styles.text]}>
+                      <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
+                      {portionText}
+                    </Text>
                   </TouchableOpacity>
-                  {(title === "Added to list") ? null :
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.sendPortion(portion, title);
-                        this.showModal();
-                      }}
-                    >
-                      <Text style={[styles.portionText, styles.text]}><Entypo name="bowl" size={17} color="cornflowerblue" />: {portionText}</Text>
-                    </TouchableOpacity>
-                  }
-                </View>
-              )}
-              renderHiddenItem={this.renderHiddenItem}
-              ItemSeparatorComponent={ItemSeparator}
-              disableRightSwipe
-              rightOpenValue={-75}
-              previewRowKey={'0'}
-              previewOpenValue={-40}
-              previewOpenDelay={3000}
-            />
-          )}
+                )}
+              </View>
+            )}
+            renderHiddenItem={this.renderHiddenItem}
+            ItemSeparatorComponent={ItemSeparator}
+            disableRightSwipe
+            rightOpenValue={-75}
+            previewRowKey={"0"}
+            previewOpenValue={-40}
+            previewOpenDelay={3000}
+          />
+        )}
         <PortionModal
-          ref={'portionModal'}
+          ref={"portionModal"}
           MainRefresh={this.forceUpdate}
           rebuildList={this.rebuildCombinedList}
         />
         <HashFunctions
-          ref={'hashFunctions'}
+          ref={"hashFunctions"}
           rebuildList={this.rebuildCombinedList}
           OldLength={this.oldLength}
         />
-      </View >
+      </View>
     );
   }
 }
@@ -396,5 +427,5 @@ const styles = StyleSheet.create({
   portionText: {
     color: "cornflowerblue",
     fontSize: 17,
-  }
+  },
 });

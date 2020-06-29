@@ -116,13 +116,10 @@ exports.allRecipesScraper = functions.https.onCall(async (data, context) => {
   /* Note: cardData can be accessed immediately, 
   whereas whenAdditioanlData is a Promise that needs 
   to be awaited */
-  return {
-    cardData: scrapedDataOBJ,
-    whenAdditionalData: allRecipesExtraData(scrapedDataOBJ),
-  };
+  return scrapedDataOBJ;
 });
 
-const allRecipesExtraData = async (scrapedDataOBJ) => {
+exports.allRecipesAdditional = functions.https.onCall(async (data, context) => {
   //////Constants for text processing//////
   const cookingUnits = [
     "teaspoon",
@@ -244,8 +241,7 @@ const allRecipesExtraData = async (scrapedDataOBJ) => {
 
   //Load each individual recipe page in parallel
   const whenRecipeLoad = [];
-  for (let recipeCard of scrapedDataOBJ.data) {
-    let url = recipeCard.recipeURL;
+  for (let url of data.URLarray) {
     whenRecipeLoad.push(got(url));
   }
   const recipePages = await Promise.all(whenRecipeLoad);
@@ -254,10 +250,10 @@ const allRecipesExtraData = async (scrapedDataOBJ) => {
   let recipeIndex = 0;
 
   //Scrape detailed info from each recipe
-  for (let recipe of scrapedDataOBJ.data) {
+  for (let recipe of recipePages) {
     try {
       let stepIndex = 1;
-      const $ = cheerio.load(recipePages[recipeIndex].body);
+      const $ = cheerio.load(recipe.body);
 
       $(".ingredients-section li").each((i, article) => {
         let indexArray = [];
@@ -440,8 +436,8 @@ const allRecipesExtraData = async (scrapedDataOBJ) => {
       });
       //Adding onto object
       scrapedAdditional.data.push({
-        id: recipe.id,
-        recipeURL: recipe.recipeURL,
+        id: recipeIndex,
+        recipeURL: data.URLarray[recipeIndex],
         additionalInfo: extraInfoArray,
         prepInstructions: prepItemArray,
         ingredient: ingredientArray,
@@ -459,4 +455,4 @@ const allRecipesExtraData = async (scrapedDataOBJ) => {
   }
 
   return scrapedAdditional;
-};
+});
