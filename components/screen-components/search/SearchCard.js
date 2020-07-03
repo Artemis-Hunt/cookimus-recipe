@@ -41,7 +41,7 @@ const SearchCard = (props) => {
           >
             {props.name}
           </Text>
-          <Text style={[styles.site, styles.text]}>website.com</Text>
+          <Text style={[styles.site, styles.text]}>AllRecipes.com</Text>
           <View style={styles.extraDetailsBox}>
             <Text style={styles.rating}>Ratings: ({props.review})</Text>
             <Rating

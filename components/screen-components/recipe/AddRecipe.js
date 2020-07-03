@@ -18,7 +18,7 @@ const AddRecipe = async (ingredient, name, url) => {
     //Keep track of saved recipes
     const saveObject = {title: name, link: url};
     SavedRecipes.push(saveObject);
-    alert("Added to grocery list");
+    //alert("Added to grocery list");
 }
 
 export default AddRecipe

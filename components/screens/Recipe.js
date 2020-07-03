@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   StyleSheet,
   Text,
@@ -24,6 +24,8 @@ import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 const Recipe = () => {
   const route = useRoute();
   const navigation = useNavigation();
+
+  const [addedToList, setAddedToList] = useState(false);
 
   //Props from SearchList.js, passed through SearchCard.js
   const Window = route.params.Window;
@@ -58,17 +60,18 @@ const Recipe = () => {
               <TouchableOpacity
                 onPress={() => {
                   AddRecipe(additionalData[index].ingredient, name, url);
+                  setAddedToList(true)
                 }}
                 style={styles.buttonBox}
               >
                 <Text style={styles.addButton}>Add to Grocery List </Text>
                 <Entypo name="add-to-list" size={19} color="#1E90FF" />
               </TouchableOpacity>
-
+              {addedToList ? <Text style={styles.addedText}>Added to Grocery list!</Text> : null}
               <PrepMethod instructions={additionalData[index].prepInstructions} />
-
+              <View style={{height: 50}}></View>
               {/*Store recipe locally*/}
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => {
                   SaveRecipe(
                     name,
@@ -84,7 +87,7 @@ const Recipe = () => {
               >
                 <Text style={styles.addButton}>Save This Recipe </Text>
                 <Feather name="save" size={19} color="#1E90FF" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </ScrollView>
           )}
         </View>
@@ -131,6 +134,11 @@ const styles = StyleSheet.create({
   addButton: {
     fontSize: 17,
     color: "#1E90FF",
+  },
+  addedText: {
+    color: "green",
+    textAlign: "center",
+    fontSize: 17
   },
   buttonBox: {
     flexDirection: "row",

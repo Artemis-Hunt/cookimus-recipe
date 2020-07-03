@@ -78,7 +78,7 @@ export default class Search extends React.PureComponent {
       <View style={styles.container}>
         {/* Search Bar */}
         <View style={styles.searchBar}>
-          <Ionicons style={styles.icon} name="ios-search" size={18} />
+          <Ionicons style={styles.icon} name="ios-search" size={18} color={"rgba(0,0,0,0.6)"}/>
           <TextInput
             style={[styles.input, styles.text]}
             onChangeText={(text) => {
@@ -100,8 +100,8 @@ export default class Search extends React.PureComponent {
           {this.state.searchText === "" ? null : (
             <TouchableWithoutFeedback
               onPress={() => {
-                // this.clearSearch();
-                alert(this.additionalData);
+                this.clearSearch();
+                //alert(this.additionalData);
               }}
             >
               <Ionicons
@@ -121,7 +121,7 @@ export default class Search extends React.PureComponent {
           <LoadingIndicator />
         ) : this.state.cardData.length === 0 ? (
           <View style={styles.center}>
-            <Text style={styles.searchHint}>
+            <Text style={[styles.text, styles.searchHint]}>
               Search by recipe or ingredient name
             </Text>
           </View>
@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 18,
-    height: 50,
     paddingHorizontal: 8,
   },
   text: {
@@ -157,10 +156,10 @@ const styles = StyleSheet.create({
   searchBar: {
     //size, color
     backgroundColor: "white",
-    borderColor: "#778899",
-    borderRadius: 20,
+    borderColor: "#BBBBBB",
+    borderRadius: 25,
     borderWidth: 1,
-    height: 40,
+    height: 45,
     //flex
     flexDirection: "row",
     alignItems: "center",
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   searchHint: {
-    color: "#777777",
+    color: "#888888",
     fontSize: 22,
   },
 });

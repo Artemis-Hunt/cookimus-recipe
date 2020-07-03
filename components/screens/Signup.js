@@ -58,7 +58,10 @@ export default function Signup({ navigation }) {
         style={{ flex: 1, width: "100%" }}
         keyboardShouldPersistTaps="always"
       >
-        <Image style={styles.logo} source={require("../../assets/icon.png")} />
+        <Image
+          style={styles.logo}
+          source={require("../../assets/images/Logo.png")}
+        />
         <View style={styles.name}>
           <TextInput
             style={styles.input}
@@ -136,8 +139,7 @@ const styles = StyleSheet.create({
   title: {},
   logo: {
     flex: 1,
-    height: 120,
-    width: 90,
+    width: 100,
     alignSelf: "center",
     margin: 30,
   },

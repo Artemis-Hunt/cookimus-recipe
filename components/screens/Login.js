@@ -37,6 +37,8 @@ export default function LoginScreen({ navigation }) {
     } catch (err) {
       switch (err.code) {
         case "auth/user-not-found":
+          alert("User does not exist");
+          break;
         case "auth/wrong-password":
           alert("Incorrect username or password");
           break;
@@ -47,9 +49,10 @@ export default function LoginScreen({ navigation }) {
           alert(err.code);
           break;
       }
-    } finally {
-      setLoading(false);
     }
+    setEmail("");
+    setPassword("");
+    setLoading(false);
   };
 
   const onAnonLoginPress = async () => {
@@ -68,9 +71,8 @@ export default function LoginScreen({ navigation }) {
       await usersRef.doc(uid).set(data);
     } catch (err) {
       alert(err.message);
-    } finally {
-      setAnonLoading(false);
     }
+    setAnonLoading(false);
   };
 
   return (
@@ -81,7 +83,7 @@ export default function LoginScreen({ navigation }) {
       >
         <Image
           style={styles.logo}
-          source={require("../../assets/splash.png")}
+          source={require("../../assets/images/Logo.png")}
         />
         <TextInput
           style={styles.input}
@@ -116,8 +118,10 @@ export default function LoginScreen({ navigation }) {
             </Text>
             {`
 
-            Or continue as Guest
-            `}
+
+
+
+            Or continue as Guest`}
           </Text>
         </View>
         <Button
@@ -140,8 +144,8 @@ const styles = StyleSheet.create({
   title: {},
   logo: {
     flex: 1,
+    margin: 30,
     width: 100,
-    height: 200,
     alignSelf: "center",
   },
   input: {
