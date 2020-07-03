@@ -166,8 +166,8 @@ export default class GroceryList extends Component {
     this.refs.hashFunctions.bulkGenerateKey(startIndex);
   };
   callgenerateKey = (recipeIndex, itemIndex) => {
-    this.refs.hashFunctions.generateKey(recipeIndex, itemIndex);
-  };
+    return this.refs.hashFunctions.generateKey(recipeIndex, itemIndex);
+  }
   callhandleSingleItem = (name, index) => {
     this.refs.hashFunctions.handleSingleItem(name, index);
   };
@@ -215,7 +215,7 @@ export default class GroceryList extends Component {
     for (let i = 0; i < ArraySize; i++) {
       if (HashTable[i].name !== null) {
         CombinedList[0].data.push(HashTable[i]);
-        if(HashTable[i].alternate !== false) {
+        if (HashTable[i].alternate !== false) {
           CombinedList[0].data.push(HashTable[i].alternate);
         }
       }
@@ -297,66 +297,65 @@ export default class GroceryList extends Component {
             ItemSeparatorComponent={ItemSeparator}
           />
         ) : (
-          <SwipeListView
-            useSectionList
-            stickySectionHeadersEnabled={true}
-            sections={RecipeList}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => {
-                  item.mark = item.mark === undefined ? true : !item.mark;
-                  this.forceUpdate();
-                }}
-              >
-                <Item
-                  title={item.name}
-                  amounts={item.amount}
-                  // units={item.unit}
-                  units={item.unit}
-                  mark={item.mark}
-                />
-              </TouchableOpacity>
-            )}
-            renderSectionHeader={({
-              section: { title, portion, portionText },
-            }) => (
-              <View style={[styles.titleCard, styles.cardBorder]}>
+            <SwipeListView
+              useSectionList
+              stickySectionHeadersEnabled={true}
+              sections={RecipeList}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={{ flex: 7 }}
+                  activeOpacity={1}
                   onPress={() => {
-                    this.callDeleteSection(title);
+                    item.mark = item.mark === undefined ? true : !item.mark;
                     this.forceUpdate();
                   }}
                 >
-                  <Text style={styles.header}>{title}</Text>
+                  <Item
+                    title={item.name}
+                    amounts={item.amount}
+                    units={item.unit}
+                    mark={item.mark}
+                  />
                 </TouchableOpacity>
-                {title === "Added to list" ? null : (
-                  <TouchableOpacity
-                    style={{ flex: 1, alignItems: "flex-end" }}
-                    onPress={() => {
-                      this.sendPortion(portion, title);
-                      this.showModal();
-                    }}
-                  >
-                    <Text style={[styles.portionText, styles.text]}>
-                      <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
-                      {portionText}
-                    </Text>
-                  </TouchableOpacity>
+              )}
+              renderSectionHeader={({
+                section: { title, portion, portionText },
+              }) => (
+                  <View style={[styles.titleCard, styles.cardBorder]}>
+                    <TouchableOpacity
+                      style={{ flex: 7 }}
+                      onPress={() => {
+                        this.callDeleteSection(title);
+                        this.forceUpdate();
+                      }}
+                    >
+                      <Text style={styles.header}>{title}</Text>
+                    </TouchableOpacity>
+                    {title === "Added to list" ? null : (
+                      <TouchableOpacity
+                        style={{ flex: 1, alignItems: "flex-end" }}
+                        onPress={() => {
+                          this.sendPortion(portion, title);
+                          this.showModal();
+                        }}
+                      >
+                        <Text style={[styles.portionText, styles.text]}>
+                          <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
+                          {portionText}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 )}
-              </View>
-            )}
-            renderHiddenItem={this.renderHiddenItem}
-            ItemSeparatorComponent={ItemSeparator}
-            disableRightSwipe
-            rightOpenValue={-75}
-            previewRowKey={"0"}
-            previewOpenValue={-40}
-            previewOpenDelay={3000}
-          />
-        )}
+              renderHiddenItem={this.renderHiddenItem}
+              ItemSeparatorComponent={ItemSeparator}
+              disableRightSwipe
+              rightOpenValue={-75}
+              previewRowKey={"0"}
+              previewOpenValue={-40}
+              previewOpenDelay={3000}
+            />
+          )}
         <PortionModal
           ref={"portionModal"}
           MainRefresh={this.forceUpdate}
