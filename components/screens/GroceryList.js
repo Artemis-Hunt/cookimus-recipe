@@ -25,11 +25,14 @@ import { SwipeListView } from "react-native-swipe-list-view";
 
 import HashFunctions from "../screen-components/grocery-list/HashFunctions.js";
 
+import UserContext from "../context/UserContext";
+
 import {
   groceryListPush,
   groceryListDelete,
   firestoreDb,
   getUserDataRef,
+  fetchGroceryList,
 } from "../../config/Firebase/firebaseConfig";
 
 //Size of hash table
@@ -183,18 +186,18 @@ export default class GroceryList extends Component {
   //Check if entered is valid
   _verifyInfo = (name, quantity, units) => {
     if (name && quantity) {
-      let newObject = { name: "", amount: "", unit: "" };
-
-      newObject.name = this.state.name;
-      newObject.amount = this.state.quantity;
-      newObject.unit = this.state.units;
-
-      //Recipe Index
+      //Index of last item
       let RecipeIndex = RecipeList.length - 1;
+
+      //If added to list section doesn't exist, create it
+      if(RecipeList[RecipeIndex].title !== "Added to list") {
+        RecipeList.push({ title: "Added to list"})
+        RecipeIndex++;
+      }
       //itemIndex
       let itemIndex = RecipeList[RecipeIndex].data.length;
 
-      RecipeList[RecipeIndex].data.push(newObject);
+      RecipeList[RecipeIndex].data.push({name: name, amount: quantity, unit: units});
       RecipeList[RecipeIndex].data[itemIndex].key = this.callgenerateKey(
         RecipeIndex,
         itemIndex
@@ -368,6 +371,7 @@ export default class GroceryList extends Component {
     );
   }
 }
+GroceryList.contextType = UserContext;
 
 //StyleSheets
 const styles = StyleSheet.create({

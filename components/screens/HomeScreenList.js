@@ -21,7 +21,10 @@ import FlavorText from "../screen-components/homescreen-list/FlavorText.js";
 import HomeScreenRecipe from "../../data/HomeScreenRecipe.js";
 import LoadingIndicator from "../generic/LoadingIndicator";
 
-import { functions, getUserDataRef } from "../../config/Firebase/firebaseConfig";
+import {
+  functions,
+  getUserDataRef,
+} from "../../config/Firebase/firebaseConfig";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
 const containerMarginHorizontal = 5;
@@ -37,27 +40,64 @@ class HomeScreenList extends React.Component {
     this.state = {
       loading: true,
       cardData: [],
+      timeSegment: "",
     };
     this.user = "";
+    this.timeoutID;
   }
 
+  //Fetch time-appropriate recipes
   componentDidMount() {
+    this.getTime();
     this.fetchClockRecipe();
+  }
+  //Clean up timeouts to prevent memory leak
+  componentWillUnmount() {
+    clearTimeout(this.timeoutID)
+  }
+
+  //Gets the current time and sets the appropriate time segment
+  //Also sets a timeout to update the time segment automatically
+  getTime() {
+    let time = new Date()
+    let hours = time.getHours();
+    let minutes = time.getMinutes();
+    if (hours <= 4) {
+      this.setState({timeSegment: "evening"});
+      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 5))
+    } else if (hours >= 5 && hours <= 10) {
+      this.setState({timeSegment: "morning"});
+      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 11))
+    } else if (hours >= 11 && hours <= 13) {
+      this.setState({timeSegment: "noon"});
+      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 14))
+    } else if (hours >= 14 && hours <= 16) {
+      this.setState({timeSegment: "afternoon"});
+      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 17))
+    } else if (hours >= 17) {
+      this.setState({timeSegment: "evening"});
+      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 29))
+    }
+  }
+
+  //calculates the interval, in milliseconds, before the app should change the time segment
+  calculateInterval(hours, minutes, changeTime) {
+    return ((changeTime - hours) * 60 - minutes) * 60 * 1000;
   }
 
   async fetchClockRecipe() {
-    this.user = (await getUserDataRef().get()).data().firstName
-    if(this.user === "Guest") {
-      this.user = ""
+    this.user = (await getUserDataRef().get()).data().firstName;
+    if (this.user === "Guest") {
+      this.user = "";
     }
     //this.state.loading is the flag for the card data
     //context stores flag for loading additional data and the actual additional data
     this.setState({ loading: true });
     this.context.changeLoadingStatus(true);
 
-    //Scrape card data only
+    //Scrape card data first
     const fetchCardData = functions.httpsCallable("allRecipesScraper");
-    const response = await fetchCardData({ type: "afternoon"});
+    const response = await fetchCardData({ type: this.state.timeSegment });
     this.setState({
       loading: false,
       cardData: response.data.data,
@@ -80,8 +120,6 @@ class HomeScreenList extends React.Component {
     //it will screw up the rendering of Recipe.js
     this.context.changeAdditionalData(responseAdditional.data.data);
     this.context.changeLoadingStatus(false);
-    //alert(this.context.additionalData)
-    //alert("Loaded additional info");
   }
 
   render() {
@@ -91,7 +129,7 @@ class HomeScreenList extends React.Component {
           <LoadingIndicator size={"large"} />
         ) : (
           <>
-            <FlavorText name={this.user} />
+            <FlavorText name={this.user} time={this.state.timeSegment}/>
             <FlatList
               showsVerticalScrollIndicator={false}
               data={this.state.cardData}
@@ -99,6 +137,7 @@ class HomeScreenList extends React.Component {
               renderItem={({ item, index }) => (
                 <Card
                   name={item.name}
+                  url={item.recipeURL}
                   image={item.recipeImageURL}
                   index={index}
                   Window={Window}

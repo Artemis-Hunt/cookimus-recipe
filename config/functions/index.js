@@ -40,18 +40,18 @@ exports.allRecipesScraper = functions.https.onCall(async (data, context) => {
       //Search by ingredient name
       //   loadPage.push(got(baseURL + ingSearchURL + data.keyword + "&" + typeURL));
       break;
-    case "breakfast":
+    case "morning":
       loadPage.push(
         got("https://www.allrecipes.com/recipes/78/breakfast-and-brunch/")
       );
       break;
-    case "lunch":
+    case "noon":
       loadPage.push(got("https://www.allrecipes.com/recipes/17561/lunch/"));
       break;
     case "afternoon":
       loadPage.push(got("https://www.allrecipes.com/recipes/79/desserts/"));
       break;
-    case "dinner":
+    case "evening":
       loadPage.push(got("https://www.allrecipes.com/recipes/17562/dinner/"));
       break;
     case "frontpage":
