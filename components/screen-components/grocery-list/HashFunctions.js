@@ -27,13 +27,13 @@ export default class HashFunctions extends Component {
     //This function will determin if the current unit measures in volume or in weight 
     determineClass = (item) => {
         //Pass in full item object, detect the current unit and convert into target unit
-        //Add classes: Volume (Class 1)/Weight (Class 2)
+        //Add classes: Volume (Class 1)/Weight (Class 2)/Ounce (Class 3)
         const cookingUnits = [
             { name: 'teaspoon', unit: 'teaspoon', multiplier: 48, class: 1 },
             { name: 'tablespoon', unit: 'tablespoon', multiplier: 16, class: 1 },
             { name: 'cup', unit: 'cup', multiplier: 1, class: 1 },
             { name: 'quart', unit: 'quart', multiplier: 0.25, class: 1 },
-            { name: 'ounce', unit: 'ounce', multiplier: 8 },
+            { name: 'ounce', unit: 'ounce', multiplier: 8, class: 3},
             { name: 'pound', unit: 'pound', multiplier: 0.5, class: 2 },
             { name: 'gram', unit: 'gram', multiplier: 227, class: 2 },
             { name: 'kilogram', unit: 'kilogram', multiplier: 0.227, class: 2 },
@@ -54,8 +54,8 @@ export default class HashFunctions extends Component {
             { name: 'tbsp.', unit: 'tablespoon', multiplier: 16, class: 1 },
             { name: 'Tsp', unit: 'teaspoon', multiplier: 48, class: 1 },
             { name: 'tsp.', unit: 'teaspoon', multiplier: 48, class: 1 },
-            { name: 'oz.', unit: 'ounce', multiplier: 8 },
-            { name: 'oz', unit: 'ounce', multiplier: 8 },
+            { name: 'oz.', unit: 'ounce', multiplier: 8, class: 3 },
+            { name: 'oz', unit: 'ounce', multiplier: 8, class: 3 },
             { name: 'g', unit: 'gram', multiplier: 227, class: 2 },
             { name: 'kg', unit: 'kilogram', multiplier: 0.227, class: 2 },
             { name: 'ml', unit: 'millilitre', multiplier: 250, class: 1 },
@@ -66,21 +66,26 @@ export default class HashFunctions extends Component {
         if (item === '' || item === ' ' || item === null) {
             return unit;
         }
+
         //Checking units
-        for (let i of cookingUnits) {
-            if (item.includes(i.name)) {
-                unit = i;
+        for (let value of cookingUnits) {
+            if (item.includes(value.name)) {
+                unit = value;
                 return unit;
             }
         }
+
         //Checking of specificUnits
-        for (let i of specificUnits) {
-            if (item === i.name) {
-                unit = i;
+        for (let value of specificUnits) {
+            if (item === value.name) {
+                unit = value;
                 return unit;
             }
         }
+
+        return unit;
     }
+
     //This function will convert the cooking units from one to another
     //Conversion are based off 8 quarts as base
     convertFunction = (itemMultiplier, itemQuantity, targetMultiplier) => {
