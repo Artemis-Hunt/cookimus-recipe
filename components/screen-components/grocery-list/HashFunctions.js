@@ -33,7 +33,7 @@ export default class HashFunctions extends Component {
             { name: 'tablespoon', unit: 'tablespoon', multiplier: 16, class: 1 },
             { name: 'cup', unit: 'cup', multiplier: 1, class: 1 },
             { name: 'quart', unit: 'quart', multiplier: 0.25, class: 1 },
-            { name: 'ounce', unit: 'ounce', multiplier: 8 },
+            { name: 'ounce', unit: 'ounce', multiplier: 8, class: 3 },
             { name: 'pound', unit: 'pound', multiplier: 0.5, class: 2 },
             { name: 'gram', unit: 'gram', multiplier: 227, class: 2 },
             { name: 'kilogram', unit: 'kilogram', multiplier: 0.227, class: 2 },
@@ -54,8 +54,8 @@ export default class HashFunctions extends Component {
             { name: 'tbsp.', unit: 'tablespoon', multiplier: 16, class: 1 },
             { name: 'Tsp', unit: 'teaspoon', multiplier: 48, class: 1 },
             { name: 'tsp.', unit: 'teaspoon', multiplier: 48, class: 1 },
-            { name: 'oz.', unit: 'ounce', multiplier: 8 },
-            { name: 'oz', unit: 'ounce', multiplier: 8 },
+            { name: 'oz.', unit: 'ounce', multiplier: 8, class: 3 },
+            { name: 'oz', unit: 'ounce', multiplier: 8, class: 3 },
             { name: 'g', unit: 'gram', multiplier: 227, class: 2 },
             { name: 'kg', unit: 'kilogram', multiplier: 0.227, class: 2 },
             { name: 'ml', unit: 'millilitre', multiplier: 250, class: 1 },
@@ -80,6 +80,7 @@ export default class HashFunctions extends Component {
                 return unit;
             }
         }
+        return unit;
     }
     //This function will convert the cooking units from one to another
     //Conversion are based off 8 quarts as base

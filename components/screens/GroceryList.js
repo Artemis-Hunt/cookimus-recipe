@@ -170,7 +170,7 @@ export default class GroceryList extends Component {
   };
   callgenerateKey = (recipeIndex, itemIndex) => {
     return this.refs.hashFunctions.generateKey(recipeIndex, itemIndex);
-  }
+  };
   callhandleSingleItem = (name, index) => {
     this.refs.hashFunctions.handleSingleItem(name, index);
   };
@@ -191,7 +191,7 @@ export default class GroceryList extends Component {
 
       //If added to list section doesn't exist, create it
       if(RecipeList[RecipeIndex].title !== "Added to list") {
-        RecipeList.push({ title: "Added to list"})
+        RecipeList.push({ title: "Added to list", data: []})
         RecipeIndex++;
       }
       //itemIndex
@@ -203,7 +203,7 @@ export default class GroceryList extends Component {
         itemIndex
       );
 
-      this.callhandleSingleItem(newObject.name, itemIndex);
+      this.callhandleSingleItem(name, itemIndex);
 
       //Clear fields
       this.setState({ name: "", quantity: "", units: "", incompleteField: "" });
