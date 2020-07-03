@@ -29,58 +29,76 @@ export default class combineList extends Component {
     }
 
     //This function will convert the cooking units from one to another
+    //Conversion are based off 8 quarts as base
     convertFunction = (itemUnit, itemQuantity, targetUnit) => {
-        //Pass in full item object, detect the current unit and convert into target unit
-        const cookingUnits = ["teaspoon", "tablespoon", "cup", "quart", "ounce", "pound", "gram", "kilogram", "pint"];
-        const specificUnits = ["lb", "lbs", "lb.", "lbs.", "Tbsp", "Tbsp.", "tsp", "tsp.", "tbsp", "tbsp.", "Tsp", "tsp.", "oz.", "oz", "g", "kg"];
+        let convertedQuantity = itemQuantity;
 
-        const weights = ["pound", "gram", "kilogram"];
-        const volumes = ["teaspoon", "tablespoon", "cup", "quart", "pint"];
-
-        let unit = false;
-        let flag = false;
-        let convertedQuantity = false;
-        for (let i of cookingUnits) {
-            if (itemUnit.includes(i)) {
-                unit = i;
-                break;
-            }
-            //Converting specific units to fit larger category
-            for (let j of specificUnits) {
-                if (itemUnit === j) {
-                    unit = j;
-                    if (unit === 'lb' || unit === 'lbs' || unit === 'lb.' || unit === 'lbs.') { unit = 'pound' }
-                    else if (unit === 'Tbsp' || unit === 'Tbsp.' || unit === 'tbsp' || unit === 'tbsp.') { unit = 'tablespoon' }
-                    else if (unit === 'tsp' || unit === 'tsp.' || unit === 'Tsp' || unit === 'Tsp.') { unit = 'tablespoon' }
-                    else if (unit === 'oz.' || unit === 'oz') { unit = 'ounce' }
-                    else if (unit === 'g') { unit = 'gram' }
-                    else if (unit === 'kg') { unit = 'kilogram' }
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag === true) {
-                break;
-            }
-        }
-        //No common units found, just add the quantities together
-        if (unit === false) {
+        //No units, just add the quantities together
+        if (itemUnit === '' || itemUnit === ' ' || itemUnit === null || itemUnit === targetUnit) {
             return convertedQuantity;
         }
-        //Target is in ounces
-        if (unit === 'ounce') {
-            for (let i of weights) {
-                if (targetUnit === i) {
-                    unit += '.weight';
-                    break;
-                }
-            }
-        }
-        //Converting if weight measurements
-        if (unit === 'gram' || unit === 'kilogram' || unit === 'pound') {
+        //Determine original object unit
+        let itemObject = determineObject(itemUnit);
+        //Determine target object unit
+        let targetObject = determineObject(targetUnit);
 
-        }
+        let conversionMultiplier = itemQuantity / itemObject.multiplier;
+        //Determine converted quantity
+        let convertedQuantity = targetObject.multiplier * conversionMultiplier;
 
         return convertedQuantity;
+    }
+    determineObject = (item) => {
+        //Pass in full item object, detect the current unit and convert into target unit
+        //Add classes: Volume (Class 1)/Weight (Class 2)
+        const cookingUnits = [
+            { name: 'teaspoon', unit: 'teaspoon', multiplier: 48, class: 1 },
+            { name: 'tablespoon', unit: 'tablespoon', multiplier: 16, class: 1 },
+            { name: 'cup', unit: 'cup', multiplier: 1, class: 1 },
+            { name: 'quart', unit: 'quart', multiplier: 0.25, class: 1 },
+            { name: 'ounce', unit: 'ounce', multiplier: 8 },
+            { name: 'pound', unit: 'pound', multiplier: 0.5, class: 2 },
+            { name: 'gram', unit: 'gram', multiplier: 227, class: 2 },
+            { name: 'kilogram', unit: 'kilogram', multiplier: 0.227, class: 2 },
+            { name: 'pint', unit: 'pint', multiplier: 0.5, class: 1 },
+            { name: 'millilitre', unit: 'millilitre', multiplier: 250, class: 1 },
+            { name: 'litre', unit: 'litre', multiplier: 0.25, class: 1 },
+        ];
+        const specificUnits = [
+            { name: 'lb', unit: 'pound', multiplier: 0.5, class: 2 },
+            { name: 'lbs', unit: 'pound', multiplier: 0.5, class: 2 },
+            { name: 'lb.', unit: 'pound', multiplier: 0.5, class: 2 },
+            { name: 'lbs.', unit: 'pound', multiplier: 0.5, class: 2 },
+            { name: 'Tbsp', unit: 'tablespoon', multiplier: 16, class: 1 },
+            { name: 'Tbsp.', unit: 'tablespoon', multiplier: 16, class: 1 },
+            { name: 'tsp', unit: 'teaspoon', multiplier: 48, class: 1 },
+            { name: 'tsp.', unit: 'teaspoon', multiplier: 48, class: 1 },
+            { name: 'tbsp', unit: 'tablespoon', multiplier: 16, class: 1 },
+            { name: 'tbsp.', unit: 'tablespoon', multiplier: 16, class: 1 },
+            { name: 'Tsp', unit: 'teaspoon', multiplier: 48, class: 1 },
+            { name: 'tsp.', unit: 'teaspoon', multiplier: 48, class: 1 },
+            { name: 'oz.', unit: 'ounce', multiplier: 8 },
+            { name: 'oz', unit: 'ounce', multiplier: 8 },
+            { name: 'g', unit: 'gram', multiplier: 227, class: 2 },
+            { name: 'kg', unit: 'kilogram', multiplier: 0.227, class: 2 },
+            { name: 'ml', unit: 'millilitre', multiplier: 250, class: 1 },
+            { name: 'l', unit: 'litre', multiplier: 0.25, class: 1 },
+        ];
+
+        let unit;
+        //Checking units
+        for (let i of cookingUnits) {
+            if (item.includes(i.name)) {
+                unit = i;
+                return unit;
+            }
+        }
+        //Checking of specificUnits
+        for (let i of specificUnits) {
+            if (item === i.name) {
+                unit = i;
+                return unit;
+            }
+        }
     }
 } 
