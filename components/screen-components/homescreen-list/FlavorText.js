@@ -1,50 +1,42 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  Feather
-} from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { Row } from "native-base";
-
-//Track timing
-let time = <Ionicons name="md-moon" size={29} color="gold" />;
 
 const Greetings = {
   early: "Fancy some late-night supper, ",
-  morning: "Good morning, ",
-  lunch: "It's lunchtime, ",
+  morning: "Good morning",
+  lunch: "It's lunchtime",
   tea: "Afternoon tea, perhaps?",
-  evening: "Good evening, ",
+  evening: "Good evening",
 };
 
-const timeGreeting = (name) => {
-  let hours = new Date().getHours();
-  let greeting = Greetings.evening + name + ".";
-  if (hours >= 22 || hours <= 4) {
-    greeting = Greetings.early + name + "?";
-  } else if (hours >= 5 && hours <= 10) {
-    greeting = Greetings.morning + name + "!";
-    time = <Feather name="sun" size={29} color="gold" />;
-  } else if (hours >= 11 && hours <= 14) {
-    greeting = Greetings.lunch + name + ".";
-    time = <MaterialCommunityIcons name="food" size={29} color="crimson" />;
-  } else if (hours >= 15 && hours <= 17) {
+const timeGreeting = (name, time) => {
+  let newName = name === "Guest" ? "" : ", " + name;
+  let icon, greeting;
+  if (time === "morning") {
+    greeting = Greetings.morning + newName + "!";
+    icon = <Feather name="sun" size={29} color="gold" />;
+  } else if (time === "noon") {
+    greeting = Greetings.lunch + newName + ".";
+    icon = <MaterialCommunityIcons name="food" size={29} color="crimson" />;
+  } else if (time === "afternoon") {
     greeting = Greetings.tea;
-    time = <MaterialCommunityIcons name="tea" size={29} color="indianred" />;
+    icon = <MaterialCommunityIcons name="tea" size={29} color="indianred" />;
+  } else if (time === "evening") {
+    greeting = Greetings.evening + newName + ".";
+    icon = <Ionicons name="md-moon" size={29} color="gold" />;
   }
 
-  return greeting;
+  return { greeting, icon };
 };
 
-const FlavorText = ({ name }) => {
-  const greeting = timeGreeting(name);
+const FlavorText = ({ name, time }) => {
+  const { greeting, icon } = timeGreeting(name, time);
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>{greeting} </Text>
-      <View style={styles.icon}>
-        {time}
-      </View>
+      <View style={styles.icon}>{icon}</View>
     </View>
   );
 };
@@ -63,5 +55,5 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: 15,
     marginLeft: 5,
-  }
+  },
 });

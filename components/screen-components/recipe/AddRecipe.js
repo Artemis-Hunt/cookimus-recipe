@@ -4,16 +4,16 @@ import {firestoreDb, groceryListPush} from "../../../config/Firebase/firebaseCon
 
 const AddRecipe = async (ingredient, name, url) => {
     for(const check of SavedRecipes) {
-        if( check.link === url) {
+        if(check.link === url) {
             alert("Item Already Added");
             return;
         }
     }
     //Add entire recipe to RecipeList
-    const newObject = Object.assign({}, {title: name, data: Array.from(ingredient), portion: 1, portionText: '1' });
-    RecipeList.unshift(newObject);
+    const newObject = Object.assign({}, {title: name, data: Array.from(ingredient), portion: 1, portionText: '1', url: url });
+    RecipeList.push(newObject);
     //Push to firebase - not in use
-    //await groceryListPush(newObject);
+    await groceryListPush(newObject);
 
     //Keep track of saved recipes
     const saveObject = {title: name, link: url};
