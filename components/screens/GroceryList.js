@@ -239,8 +239,14 @@ export default class GroceryList extends Component {
     return (
       <TouchableOpacity
         style={styles.hiddenItem}
-        onPress={() => {
+        onPress={async () => {
+          //Delete from local cache
           this.callDeleteItem(data.item.key);
+
+          //Delete from Firebase
+          //section.title is the recipe name, item.name is ingredient name
+          await groceryListDelete(data.section.title, data.item.name);
+          
           this.closeRow(rowMap, data.item.key);
           this.forceUpdate();
         }}
@@ -331,8 +337,10 @@ export default class GroceryList extends Component {
               <View style={[styles.titleCard, styles.cardBorder]}>
                 <TouchableOpacity
                   style={{ flex: 7 }}
-                  onPress={() => {
+                  onPress={async () => {
                     this.callDeleteSection(title);
+                    //Delete entire recipe from Firebase
+                    await groceryListDelete(title);
                     this.forceUpdate();
                   }}
                 >
