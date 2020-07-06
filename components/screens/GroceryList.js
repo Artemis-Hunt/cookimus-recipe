@@ -30,9 +30,8 @@ import UserContext from "../context/UserContext";
 import {
   groceryListPush,
   groceryListDelete,
-  firestoreDb,
+  groceryListCustomPush,
   getUserDataRef,
-  fetchGroceryList,
 } from "../../config/Firebase/firebaseConfig";
 
 //Size of hash table
@@ -184,24 +183,28 @@ export default class GroceryList extends Component {
   };
 
   //Check if entered is valid
-  _verifyInfo = (name, quantity, units) => {
+  _verifyInfo = async (name, quantity, units) => {
     if (name && quantity) {
       //Index of last item
       let RecipeIndex = RecipeList.length - 1;
 
       //If added to list section doesn't exist, create it
-      if (RecipeList[RecipeIndex].title !== "Added to list") {
+      if (
+        RecipeList.length === 0 ||
+        RecipeList[RecipeIndex].title !== "Added to list"
+      ) {
         RecipeList.push({ title: "Added to list", data: [] });
         RecipeIndex++;
       }
       //itemIndex
       let itemIndex = RecipeList[RecipeIndex].data.length;
-
-      RecipeList[RecipeIndex].data.push({
+      ingredientToAdd = {
         name: name,
         amount: quantity,
         unit: units,
-      });
+      };
+      RecipeList[RecipeIndex].data.push(ingredientToAdd);
+      await groceryListCustomPush({ [name]: ingredientToAdd });
       RecipeList[RecipeIndex].data[itemIndex].key = this.callgenerateKey(
         RecipeIndex,
         itemIndex
@@ -243,7 +246,7 @@ export default class GroceryList extends Component {
           //Delete from Firebase
           //section.title is the recipe name, item.name is ingredient name
           await groceryListDelete(data.section.title, data.item.name);
-          
+
           this.closeRow(rowMap, data.item.key);
           this.forceUpdate();
         }}
