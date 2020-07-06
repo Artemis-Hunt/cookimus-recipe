@@ -256,7 +256,8 @@ export default class HashFunctions extends Component {
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
             if (HashTable[hashIndex].name === newName && alternateFlag === HashTable[hashIndex].class) {
-                HashTable[hashIndex].amount -= this.convertFunction(toDelete.unitDetails.multiplier, toDelete.amount, HashTable[hashIndex].unitDetails.multiplier);
+                HashTable[hashIndex].amount -= toDelete.amount;
+                //this.convertFunction(toDelete.unitDetails.multiplier, toDelete.amount, HashTable[hashIndex].unitDetails.multiplier);
                 if (HashTable[hashIndex].amount <= 0) {
                     HashTable[hashIndex].name = null;
                     HashTable[hashIndex].amount = "";
@@ -267,6 +268,7 @@ export default class HashFunctions extends Component {
                     HashTable[hashIndex].class = 9;
                     break;
                 }
+                break;
             }
             collision++;
             hashIndex = (hashKey + collision) % ArraySize;
