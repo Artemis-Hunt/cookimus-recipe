@@ -222,9 +222,6 @@ export default class GroceryList extends Component {
     for (let i = 0; i < ArraySize; i++) {
       if (HashTable[i].name !== null) {
         CombinedList[0].data.push(HashTable[i]);
-        if (HashTable[i].alternate !== false) {
-          CombinedList[0].data.push(HashTable[i].alternate);
-        }
       }
     }
   };
