@@ -35,6 +35,7 @@ const Recipe = () => {
   const index = route.params.index;
 
   return (
+    //Additional data for the recipe comes from the context
     <LoadingAdditionalContext.Consumer>
       {({ loadingAdditional, additionalData }) => (
         <View style={styles.container}>

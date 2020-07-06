@@ -6,9 +6,10 @@ import {
   SectionList,
   View,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   TextInput,
-  TouchableHighlight,
 } from "react-native";
+import { SwipeListView } from "react-native-swipe-list-view";
 
 import DropMenu from "../screen-components/grocery-list/DropMenu.js";
 import MenuBar from "../screen-components/grocery-list/MenuBar.js";
@@ -17,11 +18,7 @@ import PortionModal from "../screen-components/grocery-list/PortionModal.js";
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
-import scrapedList from "../../data/allRecipesScraped.json";
-import Animated, { diff } from "react-native-reanimated";
 import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
-
-import { SwipeListView } from "react-native-swipe-list-view";
 
 import HashFunctions from "../screen-components/grocery-list/HashFunctions.js";
 
@@ -96,7 +93,9 @@ export default class GroceryList extends Component {
       alert("COMPONENT UPDATE");
       let index = newLength - this.oldLength;
       this.oldLength = newLength;
-      this.callCombineFunction(index);
+      if (RecipeList[newLength - 1].title !== "Added to list") {
+        this.callCombineFunction(index);
+      }
       this.callBulkGenerate(0);
       this.forceUpdate();
     }
@@ -205,7 +204,9 @@ export default class GroceryList extends Component {
         unit: units,
       };
       RecipeList[RecipeIndex].data.push(ingredientToAdd);
+      //Push the ingredient to "Added to list"
       await groceryListCustomPush({ [name]: ingredientToAdd });
+
       RecipeList[RecipeIndex].data[itemIndex].key = this.callgenerateKey(
         RecipeIndex,
         itemIndex
@@ -289,7 +290,7 @@ export default class GroceryList extends Component {
             sections={CombinedList}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => (
-              <TouchableOpacity
+              <TouchableWithoutFeedback
                 onPress={() => {
                   item.mark = item.mark === undefined ? true : !item.mark;
                   this.forceUpdate();
@@ -301,10 +302,10 @@ export default class GroceryList extends Component {
                   units={item.unit}
                   mark={item.mark}
                 />
-              </TouchableOpacity>
+              </TouchableWithoutFeedback>
             )}
             renderSectionHeader={({ section: { title } }) => (
-              <View style={styles.combineBorder}>
+              <View style={styles.combinedHeader}>
                 <Text style={[styles.header, styles.text]}>{title}</Text>
               </View>
             )}
@@ -317,49 +318,48 @@ export default class GroceryList extends Component {
             sections={RecipeList}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                activeOpacity={1}
+              <TouchableWithoutFeedback
                 onPress={() => {
                   item.mark = item.mark === undefined ? true : !item.mark;
                   this.forceUpdate();
                 }}
               >
-                <Item
-                  title={item.name}
-                  amounts={item.amount}
-                  units={item.unit}
-                  mark={item.mark}
-                />
-              </TouchableOpacity>
+                <View>
+                  <Item
+                    title={item.name}
+                    amounts={item.amount}
+                    units={item.unit}
+                    mark={item.mark}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
             )}
             renderSectionHeader={({
               section: { title, portion, portionText },
             }) => (
-              <View style={[styles.titleCard, styles.cardBorder]}>
-                <TouchableOpacity
-                  style={{ flex: 7 }}
+              <View style={styles.titleCard}>
+                <Text
                   onPress={async () => {
                     this.callDeleteSection(title);
                     //Delete entire recipe from Firebase
                     await groceryListDelete(title);
                     this.forceUpdate();
                   }}
+                  style={styles.header}
                 >
-                  <Text style={styles.header}>{title}</Text>
-                </TouchableOpacity>
+                  {title}
+                </Text>
                 {title === "Added to list" ? null : (
-                  <TouchableOpacity
-                    style={{ flex: 1, alignItems: "flex-end" }}
+                  <Text
                     onPress={() => {
                       this.sendPortion(portion, title);
                       this.showModal();
                     }}
+                    style={[styles.portionText, styles.text]}
                   >
-                    <Text style={[styles.portionText, styles.text]}>
-                      <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
-                      {portionText}
-                    </Text>
-                  </TouchableOpacity>
+                    <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
+                    {portionText}
+                  </Text>
                 )}
               </View>
             )}
@@ -395,25 +395,20 @@ const styles = StyleSheet.create({
   },
   //Recipe Names
   header: {
-    margin: 10,
     fontSize: 24,
     color: "#708090",
+    flex: 1,
   },
-  //Main Top Bar Text
-  title: {
-    fontSize: 38,
-    color: "#FFF",
-    paddingTop: 0,
-    paddingLeft: 170,
-    position: "absolute",
-  },
-  //Main Top Bar Background
+  //Recipe headers
   titleCard: {
+    backgroundColor: "#f8f8f8",
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "#f8f8f8",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginRight: 10,
+    borderLeftWidth: 6,
+    borderLeftColor: "steelblue",
+    padding: 10,
   },
   text: {
     fontFamily: "SourceSansPro",
@@ -424,21 +419,18 @@ const styles = StyleSheet.create({
   },
   hiddenItem: {
     flex: 1,
-    alignItems: "flex-end",
-    paddingHorizontal: 25,
-    paddingTop: 7,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     backgroundColor: "red",
+    padding: 15,
   },
-  cardBorder: {
-    borderLeftWidth: 6,
-    borderLeftColor: "steelblue",
-    borderTopRightRadius: 5,
-  },
-  combineBorder: {
+  combinedHeader: {
     borderLeftWidth: 6,
     borderLeftColor: "tomato",
     borderTopRightRadius: 5,
     backgroundColor: "#f8f8f8",
+    padding: 10,
   },
   portionText: {
     color: "cornflowerblue",
