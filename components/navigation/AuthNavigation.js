@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 
 const AuthNavigation = () => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(emptyUser);
   const emptyUser = {
     id: null,
     email: "",
@@ -28,12 +28,27 @@ const AuthNavigation = () => {
     RecipeList.splice(0, RecipeList.length)
     SavedRecipes.splice(0, SavedRecipes.length)
     const list = await fetchGroceryList();
+    //Variable for added to list, if it exists
+    let addedToList;
+    //Populate local cache with results from Firebase
     list.forEach((item) => {
+      //Get the list of ingredients in each recipe
       let itemData = item.data();
+
+      if(item.id ===  "Added to list") {
+        addedToList = {
+          title: item.id,
+          data: Object.values(itemData)
+        }
+        return;
+      }
+
+      //Remove the extra information that is not supposed to be rendered in the list of ingredients
       let { portion, portionText, url } = itemData;
       delete itemData.portion;
       delete itemData.portionText;
       delete itemData.url;
+
       RecipeList.push({
         title: item.id,
         data: Object.values(itemData),
@@ -42,6 +57,11 @@ const AuthNavigation = () => {
       });
       SavedRecipes.push({ title: item.id, link: url });
     });
+
+    //Append "Added to list" at the end
+    if(addedToList) {
+      RecipeList.push(addedToList);
+    }
   }
 
   //Equivalent to componentDidMount, due to empty array supplied as dependency
@@ -66,10 +86,11 @@ const AuthNavigation = () => {
       }
     });
 
-    //Unsubscribe on dismount
+    //Unsubscribe on unmount
     return subscriber;
   }, []);
 
+  //Loading screen after login, while awaiting for user data retrieval
   if (loading) {
     return <Loading />;
   }

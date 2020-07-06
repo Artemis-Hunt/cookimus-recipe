@@ -29,7 +29,7 @@ const DropMenu = ({
   verifyinfo,
   incomplete,
 }) => {
-  const [changed, setChanged] = useState(0);
+  const [changed, setChanged] = useState(false);
   return (
     <View
       style={[styles.dropMenu, { height: dropDownHeight }]}
@@ -88,11 +88,11 @@ const DropMenu = ({
           dropDownStyle={{ backgroundColor: "#fafafa", position: "absolute" }}
           onOpen={() => {
             dropDownHeight += 130;
-            setChanged(changed + 1);
+            setChanged(!changed);
           }}
           onClose={() => {
             dropDownHeight -= 130;
-            setChanged(changed - 1);
+            setChanged(!changed);
           }}
           onChangeItem={(item) => handleunits(item.value)}
         />
