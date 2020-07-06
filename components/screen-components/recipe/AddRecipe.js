@@ -13,7 +13,7 @@ const AddRecipe = async (ingredient, name, url) => {
     const recipeToAdd = Object.assign({}, {title: name, data: Array.from(ingredient), portion: 1, portionText: '1', url: url });
     //Sort the ingredient names by alphabetical order
     recipeToAdd.data.sort((a, b) => a.name.localeCompare(b.name));
-    RecipeList.push(recipeToAdd);
+    RecipeList.unshift(recipeToAdd);
     //Push to firebase
     await groceryListPush(recipeToAdd);
 

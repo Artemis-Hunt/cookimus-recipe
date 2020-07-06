@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 
 const AuthNavigation = () => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(emptyUser);
   const emptyUser = {
     id: null,
     email: "",
