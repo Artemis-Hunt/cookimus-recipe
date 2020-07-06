@@ -27,7 +27,7 @@ export default class HashFunctions extends Component {
     //This function will determin if the current unit measures in volume or in weight 
     determineClass = (item) => {
         //Pass in full item object, detect the current unit and convert into target unit
-        //Add classes: Volume (Class 1)/Weight (Class 2)
+        //Add classes: Volume (Class 1)/Weight (Class 2)/ Ounce (Class 3) *Special/ Undefined (Class 9)/ Default (Class 0)
         const cookingUnits = [
             { name: 'teaspoon', unit: 'teaspoon', multiplier: 48, class: 1 },
             { name: 'tablespoon', unit: 'tablespoon', multiplier: 16, class: 1 },
@@ -154,7 +154,8 @@ export default class HashFunctions extends Component {
             if (
                 (HashTable[hashIndex].name === null ||
                     HashTable[hashIndex].deleted === 1) &&
-                HashTable[hashIndex].name !== itemName
+                HashTable[hashIndex].name !== itemName &&
+                HashTable[hashIndex].class !== classIndex
             ) {
                 //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
                 HashTable[hashIndex].name = itemName;
@@ -162,29 +163,19 @@ export default class HashFunctions extends Component {
                 HashTable[hashIndex].unit = RecipeList[i].data[j].unit;
                 HashTable[hashIndex].deleted = 0;
                 HashTable[hashIndex].unitDetails = RecipeList[i].data[j].unitDetails;
-                HashTable[hashIndex].alternate = false;
+                HashTable[hashIndex].class = classIndex;
                 //Flag to pass into delete functions to tell if is looking at alternate
                 return;
-            } else if (HashTable[hashIndex].name === itemName) {
+            } else if (HashTable[hashIndex].name === itemName && HashTable[hashIndex].class === classIndex) {
                 //Same Item, convert and add amounts
-                if (classIndex === HashTable[hashIndex].unitDetails.class) {
-                    let itemMultiplier = RecipeList[i].data[j].unitDetails.multiplier;
-                    HashTable[hashIndex].amount += this.convertFunction(itemMultiplier, Number(RecipeList[i].data[j].amount), HashTable[hashIndex].unitDetails.multiplier);
-                    return;
-                } else if (HashTable[hashIndex].alternate === false) {
-                    //Non-Matching class types: Weight VS Volumes, create as new member
-                    let altObject = { name: itemName, unit: RecipeList[i].data[j].unit, deleted: 0, amount: Number(RecipeList[i].data[j].amount), unitDetails: RecipeList[i].data[j].unitDetails };
-                    HashTable[hashIndex].alternate = altObject;
-                    return;
-                } else {
-                    HashTable[hashIndex].alternate.amount += Number(RecipeList[i].data[j].amount);
-                }
+                let itemMultiplier = RecipeList[i].data[j].unitDetails.multiplier;
+                HashTable[hashIndex].amount += this.convertFunction(itemMultiplier, Number(RecipeList[i].data[j].amount), HashTable[hashIndex].unitDetails.multiplier);
                 return;
             }
             collision++;
             hashIndex = (key + collision) % ArraySize;
         }
-        if (collision === ArraySize) alert("Error, array full");
+        if (collision === ArraySize) { alert("Error, array full") };
     };
 
     //Delte function for list
@@ -260,31 +251,25 @@ export default class HashFunctions extends Component {
         let collision = 0;
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
-            if (HashTable[hashIndex].name === newName || HashTable[hashIndex].alternate.name === newName) {
-                if (alternateFlag === HashTable[hashIndex].unitDetails.class) {
-                    HashTable[hashIndex].amount -= toDelete.amount;
-                    if (HashTable[hashIndex].amount <= 0) {
-                        HashTable[hashIndex].name = null;
-                        HashTable[hashIndex].amount = "";
-                        HashTable[hashIndex].unit = "";
-                        HashTable[hashIndex].deleted = 1;
-                        HashTable[hashIndex].mark = false;
-                        HashTable[hashIndex].unitDetails = {};
-                    }
+            if (HashTable[hashIndex].name === newName && alternateFlag === HashTable[hashIndex].class) {
+                HashTable[hashIndex].amount -= this.convertFunction(toDelete.unitDetails.multiplier, toDelete.amount, HashTable[hashIndex].unitDetails.multiplier);
+                if (HashTable[hashIndex].amount <= 0) {
+                    HashTable[hashIndex].name = null;
+                    HashTable[hashIndex].amount = "";
+                    HashTable[hashIndex].unit = "";
+                    HashTable[hashIndex].deleted = 1;
+                    HashTable[hashIndex].mark = false;
+                    HashTable[hashIndex].unitDetails = {};
+                    HashTable[hashIndex].class = 9;
                     break;
-                } else if (alternateFlag === HashTable[hashIndex].alternate.unitDetails.class) {
-                    HashTable[hashIndex].alternate.amount -= toDelete.amount;
-                    if (HashTable[hashIndex].alternate.amount <= 0) {
-                        HashTable[hashIndex].alternate = false;
-                    }
                 }
             }
             collision++;
             hashIndex = (hashKey + collision) % ArraySize;
         }
-
         if (rebuildFlag === true) {
             this.props.rebuildList();
+            return;
         } else {
             return;
         }

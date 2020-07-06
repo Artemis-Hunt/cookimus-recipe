@@ -80,16 +80,17 @@ export default class PortionModal extends Component {
 
             let splitArray = item.name.split(" ");
             let newName = this.capitaliseString(splitArray);
-            this.updateHashValue(diff, newName);
+            let itemClass = item.unitDetails.class;
+            this.updateHashValue(diff, newName, itemClass);
         }
         this.props.rebuildList();
     }
-    updateHashValue = (diff, newName) => {
+    updateHashValue = (diff, newName, classFlag) => {
         let hashKey = this.hashFunction(newName);
         let collision = 0;
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
-            if (HashTable[hashIndex].name === newName) {
+            if (HashTable[hashIndex].name === newName && HashTable[hashIndex].class === classFlag) {
                 HashTable[hashIndex].amount += diff;
                 break;
             }
