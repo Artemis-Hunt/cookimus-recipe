@@ -74,7 +74,7 @@ export default class GroceryList extends Component {
   componentDidMount() {
     //Fetch from Firebase - not in use
     //this.fetchGroceryList();
-
+    alert("COMPONENT MOUNT");
     this.callCombineFunction(RecipeList.length);
     this.callBulkGenerate(0);
     //Trigger a re-render whenever the grocery list tab is pressed
@@ -89,6 +89,8 @@ export default class GroceryList extends Component {
   componentDidUpdate() {
     let newLength = RecipeList.length;
     if (newLength > this.oldLength) {
+      //Update new table, add to combined list
+      alert("COMPONENT UPDATE");
       let index = newLength - this.oldLength;
       this.oldLength = newLength;
       if (RecipeList[newLength - 1].title !== "Added to list") {
@@ -213,7 +215,7 @@ export default class GroceryList extends Component {
       this.callhandleSingleItem(name, itemIndex);
 
       //Clear fields
-      this.setState({ name: "", quantity: "", units: "", incompleteField: "" });
+      this.setState({ name: "", quantity: "", incompleteField: "" });
     } else this.setState({ incompleteField: "Please fill in all fields" });
   };
 

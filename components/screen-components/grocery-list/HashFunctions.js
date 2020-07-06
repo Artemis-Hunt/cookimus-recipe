@@ -82,7 +82,6 @@ export default class HashFunctions extends Component {
                 return unit;
             }
         }
-
         return unit;
     }
 
@@ -90,6 +89,7 @@ export default class HashFunctions extends Component {
     //Conversion are based off 8 quarts as base
     convertFunction = (itemMultiplier, itemQuantity, targetMultiplier) => {
         let convertedQuantity = itemQuantity;
+        //alert("CONVERTED" + convertedQuantity);
 
         //No units, just add the quantities together
         if (itemMultiplier === null || itemMultiplier === targetMultiplier) {
@@ -99,7 +99,6 @@ export default class HashFunctions extends Component {
         let conversionMultiplier = itemQuantity / itemMultiplier;
         //Determine converted quantity
         convertedQuantity = targetMultiplier * conversionMultiplier;
-
         return convertedQuantity;
     }
 
@@ -128,8 +127,7 @@ export default class HashFunctions extends Component {
                 let key = this.hashFunction(newName);
                 RecipeList[i].data[j].unitDetails = this.determineClass(RecipeList[i].data[j].unit);
                 let classIndex = RecipeList[i].data[j].unitDetails.class;
-                //Add item into hash table
-                this.insertIntoHash(i, j, newName, key, classIndex);
+                this.hashSearchInsert(i, j, newName, key, classIndex);
             }
         }
         //Move all items from hash table into the combined list
@@ -145,9 +143,42 @@ export default class HashFunctions extends Component {
         //UnitDetails will store the object with the details for the ingredients unit
         RecipeList[recipeIndex].data[itemIndex].unitDetails = this.determineClass(RecipeList[recipeIndex].data[itemIndex].unit);
         let classIndex = RecipeList[recipeIndex].data[itemIndex].unitDetails.class;
-        this.insertIntoHash(recipeIndex, itemIndex, newName, key, classIndex);
+        this.hashSearchInsert(recipeIndex, itemIndex, newName, key, classIndex);
         this.props.rebuildList();
     };
+
+    //This function will handle the search and insert of the hash table
+    hashSearchInsert = (recipeIndex, itemIndex, newName, key, classIndex) => {
+        let hashIndex = this.findHashItem(newName, key, classIndex);
+        if (hashIndex === -1) {
+            this.insertIntoHash(recipeIndex, itemIndex, newName, key, classIndex);
+            alert("ADDED");
+        } else {
+            this.sumHashItem(recipeIndex, itemIndex, hashIndex);
+            alert("ADDED 2");
+        }
+    }
+
+    //This function will add the item into the existing
+    sumHashItem = (i, j, hashIndex) => {
+        //Same Item, convert and add amounts
+        let itemMultiplier = RecipeList[i].data[j].unitDetails.multiplier;
+        HashTable[hashIndex].amount += this.convertFunction(itemMultiplier, Number(RecipeList[i].data[j].amount), HashTable[hashIndex].unitDetails.multiplier);
+    }
+
+    //This function will find if item already exists and adds onto
+    findHashItem = (newName, key, classIndex) => {
+        let collision = 0;
+        let hashIndex = (key + collision) % ArraySize;
+        while (collision !== ArraySize && (HashTable[hashIndex].name || HashTable[hashIndex].deleted)) {
+            if ((HashTable[hashIndex].name === newName) && (HashTable[hashIndex].class === classIndex)) {
+                return hashIndex;
+            }
+            collision++;
+            hashIndex = (key + collision) % ArraySize;
+        }
+        return -1;
+    }
 
     //This function will handle the item added to the combined list
     insertIntoHash = (i, j, itemName, key, classIndex) => {
@@ -156,24 +187,15 @@ export default class HashFunctions extends Component {
         let hashIndex = (key + collision) % ArraySize;
         while (collision !== ArraySize) {
             if (
-                (HashTable[hashIndex].name === null ||
-                    HashTable[hashIndex].deleted === 1) &&
-                HashTable[hashIndex].name !== itemName &&
-                HashTable[hashIndex].class !== classIndex
+                (HashTable[hashIndex].name === null || HashTable[hashIndex].deleted)
             ) {
-                //Space in hashtable is empty, set as new object in hashTable - Currently dosent attend to different units
+                //Space in hashtable is empty, set as new object in hashTable
                 HashTable[hashIndex].name = itemName;
                 HashTable[hashIndex].amount = Number(RecipeList[i].data[j].amount);
                 HashTable[hashIndex].unit = RecipeList[i].data[j].unit;
-                HashTable[hashIndex].deleted = 0;
+                HashTable[hashIndex].deleted = false;
                 HashTable[hashIndex].unitDetails = RecipeList[i].data[j].unitDetails;
                 HashTable[hashIndex].class = classIndex;
-                //Flag to pass into delete functions to tell if is looking at alternate
-                return;
-            } else if (HashTable[hashIndex].name === itemName && HashTable[hashIndex].class === classIndex) {
-                //Same Item, convert and add amounts
-                let itemMultiplier = RecipeList[i].data[j].unitDetails.multiplier;
-                HashTable[hashIndex].amount += this.convertFunction(itemMultiplier, Number(RecipeList[i].data[j].amount), HashTable[hashIndex].unitDetails.multiplier);
                 return;
             }
             collision++;
@@ -195,8 +217,7 @@ export default class HashFunctions extends Component {
         }
         //Remove Title from RecipeList
         if (
-            RecipeList[recipeIndex].data.length === 0 &&
-            RecipeList[recipeIndex].title !== "Added to list"
+            RecipeList[recipeIndex].data.length === 0
         ) {
             //Clear Savedrecipe
             for (let i = 0; i < SavedRecipes.length; i++) {
@@ -244,7 +265,7 @@ export default class HashFunctions extends Component {
         return this.updatedLength;
     }
     //Deletes items from the hashtable to update combined list
-    hashDelete = (recipeIndex, ingrIndex, rebuildFlag, alternateFlag) => {
+    hashDelete = (recipeIndex, ingrIndex, rebuildFlag, classIndex) => {
         //Reference the item to be deleted
         let toDelete = RecipeList[recipeIndex].data[ingrIndex];
         let splitName = toDelete.name.split(" ");
@@ -255,18 +276,17 @@ export default class HashFunctions extends Component {
         let collision = 0;
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
-            if (HashTable[hashIndex].name === newName && alternateFlag === HashTable[hashIndex].class) {
+            if (HashTable[hashIndex].name === newName && classIndex === HashTable[hashIndex].class) {
                 HashTable[hashIndex].amount -= toDelete.amount;
                 //this.convertFunction(toDelete.unitDetails.multiplier, toDelete.amount, HashTable[hashIndex].unitDetails.multiplier);
                 if (HashTable[hashIndex].amount <= 0) {
                     HashTable[hashIndex].name = null;
                     HashTable[hashIndex].amount = "";
                     HashTable[hashIndex].unit = "";
-                    HashTable[hashIndex].deleted = 1;
+                    HashTable[hashIndex].deleted = true;
                     HashTable[hashIndex].mark = false;
                     HashTable[hashIndex].unitDetails = {};
                     HashTable[hashIndex].class = 9;
-                    break;
                 }
                 break;
             }
