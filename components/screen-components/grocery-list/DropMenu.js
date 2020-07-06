@@ -96,11 +96,9 @@ const DropMenu = ({
           }}
           onChangeItem={(item) => handleunits(item.value)}
         />
-        <Button
-          title="Add +"
-          color="#841584"
-          onPress={() => verifyinfo(name, quantity, unit)}
-        />
+        <TouchableOpacity onPress={() => verifyinfo(name, quantity, unit)}>
+          <Text style={styles.addButton}>Add +</Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.errorText}> {incomplete} </Text>
@@ -110,18 +108,23 @@ const DropMenu = ({
 
 //StyleSheets
 const styles = StyleSheet.create({
+  addButton: {
+    color: "#1E90FF",
+    fontSize: 18,
+    margin: 5,
+  },
   //Text on menu
   menuText: {
     fontSize: 18,
     padding: 5,
-    color: "black"
+    color: "black",
   },
   //Outermost container
   dropMenu: {
     //backgroundColor: "mediumaquamarine",
     padding: 10,
     borderBottomWidth: 2,
-    borderBottomColor: "forestgreen"
+    borderBottomColor: "forestgreen",
   },
   //Text input box style
   textInput: {

@@ -66,22 +66,26 @@ export default class HashFunctions extends Component {
         if (item === '' || item === ' ' || item === null) {
             return unit;
         }
+
         //Checking units
-        for (let i of cookingUnits) {
-            if (item.includes(i.name)) {
-                unit = i;
+        for (let value of cookingUnits) {
+            if (item.includes(value.name)) {
+                unit = value;
                 return unit;
             }
         }
+
         //Checking of specificUnits
-        for (let i of specificUnits) {
-            if (item === i.name) {
-                unit = i;
+        for (let value of specificUnits) {
+            if (item === value.name) {
+                unit = value;
                 return unit;
             }
         }
+
         return unit;
     }
+
     //This function will convert the cooking units from one to another
     //Conversion are based off 8 quarts as base
     convertFunction = (itemMultiplier, itemQuantity, targetMultiplier) => {

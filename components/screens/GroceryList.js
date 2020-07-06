@@ -190,14 +190,18 @@ export default class GroceryList extends Component {
       let RecipeIndex = RecipeList.length - 1;
 
       //If added to list section doesn't exist, create it
-      if(RecipeList[RecipeIndex].title !== "Added to list") {
-        RecipeList.push({ title: "Added to list", data: []})
+      if (RecipeList[RecipeIndex].title !== "Added to list") {
+        RecipeList.push({ title: "Added to list", data: [] });
         RecipeIndex++;
       }
       //itemIndex
       let itemIndex = RecipeList[RecipeIndex].data.length;
 
-      RecipeList[RecipeIndex].data.push({name: name, amount: quantity, unit: units});
+      RecipeList[RecipeIndex].data.push({
+        name: name,
+        amount: quantity,
+        unit: units,
+      });
       RecipeList[RecipeIndex].data[itemIndex].key = this.callgenerateKey(
         RecipeIndex,
         itemIndex
@@ -232,8 +236,14 @@ export default class GroceryList extends Component {
     return (
       <TouchableOpacity
         style={styles.hiddenItem}
-        onPress={() => {
+        onPress={async () => {
+          //Delete from local cache
           this.callDeleteItem(data.item.key);
+
+          //Delete from Firebase
+          //section.title is the recipe name, item.name is ingredient name
+          await groceryListDelete(data.section.title, data.item.name);
+          
           this.closeRow(rowMap, data.item.key);
           this.forceUpdate();
         }}
@@ -297,65 +307,67 @@ export default class GroceryList extends Component {
             ItemSeparatorComponent={ItemSeparator}
           />
         ) : (
-            <SwipeListView
-              useSectionList
-              stickySectionHeadersEnabled={true}
-              sections={RecipeList}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({ item }) => (
+          <SwipeListView
+            useSectionList
+            stickySectionHeadersEnabled={true}
+            sections={RecipeList}
+            keyExtractor={(item, index) => item + index}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => {
+                  item.mark = item.mark === undefined ? true : !item.mark;
+                  this.forceUpdate();
+                }}
+              >
+                <Item
+                  title={item.name}
+                  amounts={item.amount}
+                  units={item.unit}
+                  mark={item.mark}
+                />
+              </TouchableOpacity>
+            )}
+            renderSectionHeader={({
+              section: { title, portion, portionText },
+            }) => (
+              <View style={[styles.titleCard, styles.cardBorder]}>
                 <TouchableOpacity
-                  activeOpacity={1}
-                  onPress={() => {
-                    item.mark = item.mark === undefined ? true : !item.mark;
+                  style={{ flex: 7 }}
+                  onPress={async () => {
+                    this.callDeleteSection(title);
+                    //Delete entire recipe from Firebase
+                    await groceryListDelete(title);
                     this.forceUpdate();
                   }}
                 >
-                  <Item
-                    title={item.name}
-                    amounts={item.amount}
-                    units={item.unit}
-                    mark={item.mark}
-                  />
+                  <Text style={styles.header}>{title}</Text>
                 </TouchableOpacity>
-              )}
-              renderSectionHeader={({
-                section: { title, portion, portionText },
-              }) => (
-                  <View style={[styles.titleCard, styles.cardBorder]}>
-                    <TouchableOpacity
-                      style={{ flex: 7 }}
-                      onPress={() => {
-                        this.callDeleteSection(title);
-                        this.forceUpdate();
-                      }}
-                    >
-                      <Text style={styles.header}>{title}</Text>
-                    </TouchableOpacity>
-                    {title === "Added to list" ? null : (
-                      <TouchableOpacity
-                        style={{ flex: 1, alignItems: "flex-end" }}
-                        onPress={() => {
-                          this.sendPortion(portion, title);
-                          this.showModal();
-                        }}
-                      >
-                        <Text style={[styles.portionText, styles.text]}>
-                          <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
-                          {portionText}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
+                {title === "Added to list" ? null : (
+                  <TouchableOpacity
+                    style={{ flex: 1, alignItems: "flex-end" }}
+                    onPress={() => {
+                      this.sendPortion(portion, title);
+                      this.showModal();
+                    }}
+                  >
+                    <Text style={[styles.portionText, styles.text]}>
+                      <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
+                      {portionText}
+                    </Text>
+                  </TouchableOpacity>
                 )}
-              renderHiddenItem={this.renderHiddenItem}
-              ItemSeparatorComponent={ItemSeparator}
-              disableRightSwipe
-              rightOpenValue={-75}
-              previewRowKey={"0"}
-              previewOpenValue={-40}
-              previewOpenDelay={3000}
-            />
-          )}
+              </View>
+            )}
+            renderHiddenItem={this.renderHiddenItem}
+            ItemSeparatorComponent={ItemSeparator}
+            disableRightSwipe
+            rightOpenValue={-75}
+            previewRowKey={"0"}
+            previewOpenValue={-40}
+            previewOpenDelay={3000}
+          />
+        )}
         <PortionModal
           ref={"portionModal"}
           MainRefresh={this.forceUpdate}
