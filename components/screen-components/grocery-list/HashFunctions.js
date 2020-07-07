@@ -89,7 +89,6 @@ export default class HashFunctions extends Component {
     //Conversion are based off 8 quarts as base
     convertFunction = (itemMultiplier, itemQuantity, targetMultiplier) => {
         let convertedQuantity = itemQuantity;
-        //alert("CONVERTED" + convertedQuantity);
 
         //No units, just add the quantities together
         if (itemMultiplier === null || itemMultiplier === targetMultiplier) {
@@ -152,10 +151,8 @@ export default class HashFunctions extends Component {
         let hashIndex = this.findHashItem(newName, key, classIndex);
         if (hashIndex === -1) {
             this.insertIntoHash(recipeIndex, itemIndex, newName, key, classIndex);
-            alert("ADDED");
         } else {
             this.sumHashItem(recipeIndex, itemIndex, hashIndex);
-            alert("ADDED 2");
         }
     }
 
@@ -277,8 +274,7 @@ export default class HashFunctions extends Component {
         let hashIndex = (hashKey + collision) % ArraySize;
         while (collision !== ArraySize) {
             if (HashTable[hashIndex].name === newName && classIndex === HashTable[hashIndex].class) {
-                HashTable[hashIndex].amount -= toDelete.amount;
-                //this.convertFunction(toDelete.unitDetails.multiplier, toDelete.amount, HashTable[hashIndex].unitDetails.multiplier);
+                HashTable[hashIndex].amount -= this.convertFunction(toDelete.unitDetails.multiplier, toDelete.amount, HashTable[hashIndex].unitDetails.multiplier);
                 if (HashTable[hashIndex].amount <= 0) {
                     HashTable[hashIndex].name = null;
                     HashTable[hashIndex].amount = "";
