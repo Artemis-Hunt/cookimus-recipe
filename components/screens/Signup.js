@@ -41,7 +41,6 @@ export default function Signup({ navigation }) {
         email: email,
         firstName: firstName,
         lastName: lastName,
-        groceryList: [],
       };
       const usersRef = firestoreDb.collection("users");
       await usersRef.doc(uid).set(data);

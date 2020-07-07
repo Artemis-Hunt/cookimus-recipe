@@ -152,10 +152,8 @@ export default class HashFunctions extends Component {
         let hashIndex = this.findHashItem(newName, key, classIndex);
         if (hashIndex === -1) {
             this.insertIntoHash(recipeIndex, itemIndex, newName, key, classIndex);
-            alert("ADDED");
         } else {
             this.sumHashItem(recipeIndex, itemIndex, hashIndex);
-            alert("ADDED 2");
         }
     }
 
