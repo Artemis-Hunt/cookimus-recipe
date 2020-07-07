@@ -203,7 +203,8 @@ export default class GroceryList extends Component {
       };
       RecipeList[RecipeIndex].data.push(ingredientToAdd);
       //Push the ingredient to "Added to list"
-      await groceryListCustomPush({ [name]: ingredientToAdd });
+      //Don't await the promise to ensure UI fluidity
+      groceryListCustomPush({ [name]: ingredientToAdd });
 
       RecipeList[RecipeIndex].data[itemIndex].key = this.callgenerateKey(
         RecipeIndex,
@@ -245,7 +246,8 @@ export default class GroceryList extends Component {
 
           //Delete from Firebase
           //section.title is the recipe name, item.name is ingredient name
-          await groceryListDelete(data.section.title, data.item.name);
+          //Don't await the promise to ensure UI fluidity
+          groceryListDelete(data.section.title, data.item.name);
 
           this.closeRow(rowMap, data.item.key);
           this.forceUpdate();
@@ -294,12 +296,14 @@ export default class GroceryList extends Component {
                   this.forceUpdate();
                 }}
               >
-                <Item
-                  title={item.name}
-                  amounts={item.amount}
-                  units={item.unit}
-                  mark={item.mark}
-                />
+                <View>
+                  <Item
+                    title={item.name}
+                    amounts={item.amount}
+                    units={item.unit}
+                    mark={item.mark}
+                  />
+                </View>
               </TouchableWithoutFeedback>
             )}
             renderSectionHeader={({ section: { title } }) => (
@@ -421,7 +425,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     backgroundColor: "red",
-    padding: 15,
+    paddingHorizontal: 10,
   },
   combinedHeader: {
     borderLeftWidth: 6,
