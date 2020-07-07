@@ -50,11 +50,13 @@ export default class GroceryList extends Component {
       incompleteField: "",
       refresh: false,
       combine: false,
+      editMode: false,
       groceryList: [],
     };
     this.showAddItem = this.showAddItem.bind(this);
     this.hideAddItem = this.hideAddItem.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
+    this.toggleEdit = this.toggleEdit.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
@@ -132,6 +134,16 @@ export default class GroceryList extends Component {
     this.setState({
       combine: !this.state.combine,
     });
+  }
+
+  toggleEdit() {
+    this.setState({
+      editMode: !this.state.editMode,
+    });
+    //Auto switch to non-combined menu when edit mode is selected
+    if(this.state.combine) {
+      this.toggleMenu();
+    }
   }
 
   forceUpdate() {
@@ -266,7 +278,7 @@ export default class GroceryList extends Component {
     return (
       <View style={styles.container}>
         {/* Menu Bar */}
-        <MenuBar buttonClick={this.showAddItem} togglemenu={this.toggleMenu} />
+        <MenuBar buttonClick={this.showAddItem} togglemenu={this.toggleMenu} toggleedit={this.toggleEdit} editState={this.state.editMode}/>
 
         {/* Toggle menu for add item */}
         {this.state.showComponent ? (
