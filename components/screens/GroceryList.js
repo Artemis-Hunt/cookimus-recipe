@@ -314,6 +314,7 @@ export default class GroceryList extends Component {
                     amounts={item.amount}
                     units={item.unit}
                     mark={item.mark}
+                    editState={this.state.editMode}
                   />
                 </View>
               </TouchableWithoutFeedback>
@@ -334,7 +335,7 @@ export default class GroceryList extends Component {
             renderItem={({ item }) => (
               <TouchableWithoutFeedback
                 onPress={() => {
-                  item.mark = item.mark === undefined ? true : !item.mark;
+                  item.mark = (item.mark === undefined) ? true : !item.mark;
                   this.forceUpdate();
                 }}
               >
@@ -344,6 +345,7 @@ export default class GroceryList extends Component {
                     amounts={item.amount}
                     units={item.unit}
                     mark={item.mark}
+                    editState={this.state.editMode}
                   />
                 </View>
               </TouchableWithoutFeedback>
