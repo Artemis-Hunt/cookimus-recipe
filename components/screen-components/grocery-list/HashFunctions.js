@@ -5,7 +5,7 @@ import HashTable from '../../../data/HashTable.js'
 import SavedRecipes from "../../../data/SavedRecipes.js"
 
 //Size of hash table
-const ArraySize = 100;
+const ArraySize = 200;
 const Multiplier = 37;
 
 export default class HashFunctions extends Component {
@@ -311,6 +311,18 @@ export default class HashFunctions extends Component {
         let key = `${RecipeList[i].data[j].name}.${i}.${j}`;
         return key;
     };
+
+    clearHashTable = () => {
+        for(let i = 0; i < ArraySize; i++) {
+            HashTable[i].name = null;
+            HashTable[i].amount = "";
+            HashTable[i].unit = "";
+            HashTable[i].deleted = true;
+            HashTable[i].mark = false;
+            HashTable[i].unitDetails = {};
+            HashTable[i].class = 9;
+        }
+    }
 
     render() {
         return (null);

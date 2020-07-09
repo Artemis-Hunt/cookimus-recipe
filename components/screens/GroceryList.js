@@ -32,7 +32,7 @@ import {
 } from "../../config/Firebase/firebaseConfig";
 
 //Size of hash table
-const ArraySize = 100;
+const ArraySize = 200;
 
 const ItemSeparator = () => {
   return <View style={styles.separator} />;
@@ -72,7 +72,8 @@ export default class GroceryList extends Component {
     this.callhandleSingleItem = this.callhandleSingleItem.bind(this);
     this.callDeleteItem = this.callDeleteItem.bind(this);
     this.callDeleteSection = this.callDeleteSection.bind(this);
-  }
+    this.callClearHashTable = this.callClearHashTable.bind(this);
+  };
 
   //Run combine list on startup
   componentDidMount() {
@@ -150,6 +151,7 @@ export default class GroceryList extends Component {
       //Edits were made
       if(this.state.editList.length > 0) {
         //Redo combine function, regenerate all keys (May need to clear hashtable first)
+        this.callClearHashTable();
         this.callCombineFunction(RecipeList.length);
         this.callBulkGenerate(0);
         //Reset EditList
@@ -212,6 +214,9 @@ export default class GroceryList extends Component {
     let newLength = this.refs.hashFunctions.deleteSection(title);
     this.oldLength = newLength;
   };
+  callClearHashTable = () => {
+    this.refs.hashFunctions.clearHashTable();
+  }
 
   //Handle Updating of names in edit mode
   handleNameUpdate = (text, itemKey) => {

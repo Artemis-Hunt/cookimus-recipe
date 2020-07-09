@@ -11,7 +11,7 @@ let selected;
 let selectedText='';
 let recipeIndex = 0;
 
-const ArraySize = 100;
+const ArraySize = 200;
 const Multiplier = 37;
 
 const DATA = [

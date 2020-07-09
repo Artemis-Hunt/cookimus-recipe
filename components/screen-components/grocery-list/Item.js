@@ -61,6 +61,7 @@ const editCard = (icon, title, amounts, units, itemKey, handleUpdate) => {
   )
 }
 
+//Render card with add item functionality on press
 const addItemCard = (icon, title) => {
   return (
     <TouchableOpacity>
