@@ -135,13 +135,24 @@ export default class GroceryList extends Component {
       combine: !this.state.combine,
     });
   }
-
+  //Toggles edit mode when toggle button is pressed
   toggleEdit() {
     this.setState({
       editMode: !this.state.editMode,
     });
+    //Append new row into the RecipeList array / Remove temp rows
+    if (this.state.editMode) {
+      for (let item of RecipeList) {
+        item.data.splice(item.data.length - 1, 1);
+      }
+    } else {
+      for (let item of RecipeList) {
+        let addItemObject = { name: "Add Item..." }
+        item.data.push(addItemObject);
+      }
+    }
     //Auto switch to non-combined menu when edit mode is selected
-    if(this.state.combine) {
+    if (this.state.combine) {
       this.toggleMenu();
     }
   }
@@ -278,7 +289,7 @@ export default class GroceryList extends Component {
     return (
       <View style={styles.container}>
         {/* Menu Bar */}
-        <MenuBar buttonClick={this.showAddItem} togglemenu={this.toggleMenu} toggleedit={this.toggleEdit} editState={this.state.editMode}/>
+        <MenuBar buttonClick={this.showAddItem} togglemenu={this.toggleMenu} toggleedit={this.toggleEdit} editState={this.state.editMode} />
 
         {/* Toggle menu for add item */}
         {this.state.showComponent ? (
@@ -295,99 +306,126 @@ export default class GroceryList extends Component {
           />
         ) : null}
 
-        {/* Determine whether to render combined list or individual list */}
-        {this.state.combine ? (
+        {/* Determine whether to render edit mode, combined list or individual list */}
+        {(this.state.editMode) ? (
+          // Render Edit Mode
           <SectionList
-            stickySectionHeadersEnabled={true}
-            sections={CombinedList}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  item.mark = item.mark === undefined ? true : !item.mark;
-                  this.forceUpdate();
-                }}
-              >
-                <View>
-                  <Item
-                    title={item.name}
-                    amounts={item.amount}
-                    units={item.unit}
-                    mark={item.mark}
-                    editState={this.state.editMode}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-              <View style={styles.combinedHeader}>
-                <Text style={[styles.header, styles.text]}>{title}</Text>
-              </View>
-            )}
-            ItemSeparatorComponent={ItemSeparator}
-          />
-        ) : (
-          <SwipeListView
-            useSectionList
             stickySectionHeadersEnabled={true}
             sections={RecipeList}
             keyExtractor={(item, index) => item + index}
             renderItem={({ item }) => (
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  item.mark = (item.mark === undefined) ? true : !item.mark;
-                  this.forceUpdate();
-                }}
-              >
-                <View>
-                  <Item
-                    title={item.name}
-                    amounts={item.amount}
-                    units={item.unit}
-                    mark={item.mark}
-                    editState={this.state.editMode}
-                  />
-                </View>
-              </TouchableWithoutFeedback>
-            )}
-            renderSectionHeader={({
-              section: { title, portion, portionText },
-            }) => (
-              <View style={styles.titleCard}>
-                <Text
-                  onPress={async () => {
-                    this.callDeleteSection(title);
-                    //Delete entire recipe from Firebase
-                    await groceryListDelete(title);
-                    this.forceUpdate();
-                  }}
-                  style={styles.header}
-                >
-                  {title}
-                </Text>
-                {title === "Added to list" ? null : (
-                  <Text
-                    onPress={() => {
-                      this.sendPortion(portion, title);
-                      this.showModal();
-                    }}
-                    style={[styles.portionText, styles.text]}
-                  >
-                    <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
-                    {portionText}
-                  </Text>
-                )}
+              <View>
+                <Item
+                  title={item.name}
+                  amounts={item.amount}
+                  units={item.unit}
+                  mark={item.mark}
+                  editState={this.state.editMode}
+                />
               </View>
             )}
-            renderHiddenItem={this.renderHiddenItem}
+            renderSectionHeader={({ section: { title } }) => (
+              <View style={[styles.combinedHeader, styles.editHeaderColor]}>
+                <Text style={[styles.header]}>{title}</Text>
+              </View>
+            )}
             ItemSeparatorComponent={ItemSeparator}
-            disableRightSwipe
-            rightOpenValue={-75}
-            previewRowKey={"0"}
-            previewOpenValue={-40}
-            previewOpenDelay={3000}
           />
-        )}
+        ) :
+          (this.state.combine) ? (
+            //Render Combined Item Cards
+            <SectionList
+              stickySectionHeadersEnabled={true}
+              sections={CombinedList}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    item.mark = item.mark === undefined ? true : !item.mark;
+                    this.forceUpdate();
+                  }}
+                >
+                  <View>
+                    <Item
+                      title={item.name}
+                      amounts={item.amount}
+                      units={item.unit}
+                      mark={item.mark}
+                      editState={this.state.editMode}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
+              renderSectionHeader={({ section: { title } }) => (
+                <View style={[styles.combinedHeader, styles.combinedHeaderColor]}>
+                  <Text style={[styles.header, styles.text]}>{title}</Text>
+                </View>
+              )}
+              ItemSeparatorComponent={ItemSeparator}
+            />
+          ) : (
+              //Render normal item cards
+              <SwipeListView
+                useSectionList
+                stickySectionHeadersEnabled={true}
+                sections={RecipeList}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({ item }) => (
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      item.mark = (item.mark === undefined) ? true : !item.mark;
+                      this.forceUpdate();
+                    }}
+                  >
+                    <View>
+                      <Item
+                        title={item.name}
+                        amounts={item.amount}
+                        units={item.unit}
+                        mark={item.mark}
+                        editState={this.state.editMode}
+                      />
+                    </View>
+                  </TouchableWithoutFeedback>
+                )}
+                renderSectionHeader={({
+                  section: { title, portion, portionText },
+                }) => (
+                    <View style={styles.titleCard}>
+                      <Text
+                        onPress={async () => {
+                          this.callDeleteSection(title);
+                          //Delete entire recipe from Firebase
+                          await groceryListDelete(title);
+                          this.forceUpdate();
+                        }}
+                        style={styles.header}
+                      >
+                        {title}
+                      </Text>
+                      {title === "Added to list" ? null : (
+                        <Text
+                          onPress={() => {
+                            this.sendPortion(portion, title);
+                            this.showModal();
+                          }}
+                          style={[styles.portionText, styles.text]}
+                        >
+                          <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
+                          {portionText}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                renderHiddenItem={this.renderHiddenItem}
+                ItemSeparatorComponent={ItemSeparator}
+                disableRightSwipe
+                rightOpenValue={-75}
+                previewRowKey={"0"}
+                previewOpenValue={-40}
+                previewOpenDelay={3000}
+              />
+            )}
         <PortionModal
           ref={"portionModal"}
           MainRefresh={this.forceUpdate}
@@ -443,7 +481,6 @@ const styles = StyleSheet.create({
   },
   combinedHeader: {
     borderLeftWidth: 6,
-    borderLeftColor: "tomato",
     borderTopRightRadius: 5,
     backgroundColor: "#f8f8f8",
     padding: 10,
@@ -452,4 +489,10 @@ const styles = StyleSheet.create({
     color: "cornflowerblue",
     fontSize: 17,
   },
+  combinedHeaderColor: {
+    borderLeftColor: "tomato",
+  },
+  editHeaderColor: {
+    borderLeftColor: "rebeccapurple",
+  }
 });
