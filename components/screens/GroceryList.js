@@ -52,12 +52,14 @@ export default class GroceryList extends Component {
       combine: false,
       editMode: false,
       groceryList: [],
+      editList: [],
     };
     this.showAddItem = this.showAddItem.bind(this);
     this.hideAddItem = this.hideAddItem.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.handleName = this.handleName.bind(this);
+    this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
     this.showModal = this.showModal.bind(this);
@@ -145,6 +147,14 @@ export default class GroceryList extends Component {
       for (let item of RecipeList) {
         item.data.splice(item.data.length - 1, 1);
       }
+      //Edits were made
+      if(this.state.editList.length > 0) {
+        //Redo combine function, regenerate all keys (May need to clear hashtable first)
+        this.callCombineFunction(RecipeList.length);
+        this.callBulkGenerate(0);
+        //Reset EditList
+        this.setState({ editList: []});
+      }
     } else {
       for (let item of RecipeList) {
         let addItemObject = { name: "Add Item..." }
@@ -202,6 +212,16 @@ export default class GroceryList extends Component {
     let newLength = this.refs.hashFunctions.deleteSection(title);
     this.oldLength = newLength;
   };
+
+  //Handle Updating of names in edit mode
+  handleNameUpdate = (text, itemKey) => {
+    let [name, recipeIndex, ingrIndex] = itemKey.split(".");
+    RecipeList[recipeIndex].data[ingrIndex].name = text;
+    let tempEditArray = this.state.editList;
+    tempEditArray.push(itemKey);
+    //Set it as state
+    this.setState({ editList: tempEditArray});
+  }
 
   //Check if entered is valid
   _verifyInfo = async (name, quantity, units) => {
@@ -321,6 +341,8 @@ export default class GroceryList extends Component {
                   units={item.unit}
                   mark={item.mark}
                   editState={this.state.editMode}
+                  itemKey={item.key}
+                  handleUpdate={this.handleNameUpdate}
                 />
               </View>
             )}
@@ -352,6 +374,8 @@ export default class GroceryList extends Component {
                       units={item.unit}
                       mark={item.mark}
                       editState={this.state.editMode}
+                      itemKey={item.key}
+                      handleUpdate={this.handleNameUpdate}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -384,6 +408,8 @@ export default class GroceryList extends Component {
                         units={item.unit}
                         mark={item.mark}
                         editState={this.state.editMode}
+                        itemKey={item.key}
+                        handleUpdate={this.handleNameUpdate}
                       />
                     </View>
                   </TouchableWithoutFeedback>
