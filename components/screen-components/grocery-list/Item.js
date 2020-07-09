@@ -1,7 +1,10 @@
 import React, { Component, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from "react-native";
 import { FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
+import DropDownPicker from "react-native-dropdown-picker";
 const frac = require('frac');
+
+let dropDownHeight = null;
 
 const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate }) => {
   let fracArray = frac(amounts, 20, true);
@@ -48,9 +51,14 @@ const itemCard = (icon, checkStyle, title, final, units) => {
 
 //Render edit mode item card
 const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate) => {
-  const [newValue, setNewValue] = useState(amounts)
+  const [newValue, setNewValue] = useState(amounts);
+  const [changed, setChanged] = useState(false);
   return (
-    < View style={styles.editMode} >
+    < View style={[styles.editMode, { height: dropDownHeight }]}
+      onLayout={(event) => {
+      dropDownHeight = event.nativeEvent.layout.height;
+    }}
+    >
       {icon}
       <TextInput
         style={styles.textInput}
@@ -69,9 +77,33 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
           handlequantityupdate(text, itemKey);
         }} 
       />
-      <Text style={[styles.ingredientValueText, styles.text]}>
-        {units}
-      </Text>
+      <DropDownPicker
+          items={[
+            { label: units, value: units },
+            { label: "No Units", value: "" },
+            { label: "Gram", value: "grams" },
+            { label: "Kilogram", value: "kg" },
+            { label: "Cups", value: "cups" },
+            { label: "Tablespoon", value: "tbsp" },
+            { label: "Teaspoon", value: "tsp" },
+            { label: "Millilitres", value: "ml" },
+            { label: "Litres", value: "litres" },
+          ]}
+          defaultNull
+          placeholder={units}
+          containerStyle={{ height: 30, width: 100 }}
+          style={{ paddingVertical: 5 }}
+          dropDownStyle={{ backgroundColor: "#fafafa", position: "absolute" }}
+          onOpen={() => {
+            dropDownHeight += 130;
+            setChanged(!changed);
+          }}
+          onClose={() => {
+            dropDownHeight -= 130;
+            setChanged(!changed);
+          }}
+          //onChangeItem={(item) => handleunits(item.value)}
+        />
     </View >
   )
 }
@@ -125,6 +157,7 @@ const styles = StyleSheet.create({
   },
   editMode: {
     flexDirection: "row",
+    justifyContent: "space-between",
     padding: 10,
     backgroundColor: "white",
   }

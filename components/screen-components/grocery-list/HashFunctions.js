@@ -27,7 +27,7 @@ export default class HashFunctions extends Component {
     //This function will determin if the current unit measures in volume or in weight 
     determineClass = (item) => {
         //Pass in full item object, detect the current unit and convert into target unit
-        //Add classes: Volume (Class 1)/Weight (Class 2)/ Ounce (Class 3) *Special/ Undefined (Class 9)/ Default (Class 0)
+        //Add classes: Volume (Class 1)/Weight (Class 2)/ Ounce (Class 3) *Special/ Undefined (Class 9)/ Default - Everything else (Class 0)
         const cookingUnits = [
             { name: 'teaspoon', unit: 'teaspoon', multiplier: 48, class: 1 },
             { name: 'tablespoon', unit: 'tablespoon', multiplier: 16, class: 1 },
@@ -62,7 +62,7 @@ export default class HashFunctions extends Component {
             { name: 'l', unit: 'litre', multiplier: 0.25, class: 1 },
         ];
 
-        let unit = { class: 0 };
+        let unit = { unit: item, class: 0 };
         if (item === '' || item === ' ' || item === null) {
             return unit;
         }

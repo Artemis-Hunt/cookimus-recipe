@@ -360,7 +360,6 @@ export default class GroceryList extends Component {
                   itemKey={item.key}
                   handlenameupdate={this.handleNameUpdate}
                   handlequantityupdate={this.handleQuantityUpdate}
-
                 />
               </View>
             )}
