@@ -5,7 +5,7 @@ import HashTable from '../../../data/HashTable.js'
 import SavedRecipes from "../../../data/SavedRecipes.js"
 
 //Size of hash table
-const ArraySize = 100;
+const ArraySize = 200;
 const Multiplier = 37;
 
 export default class HashFunctions extends Component {
@@ -27,7 +27,7 @@ export default class HashFunctions extends Component {
     //This function will determin if the current unit measures in volume or in weight 
     determineClass = (item) => {
         //Pass in full item object, detect the current unit and convert into target unit
-        //Add classes: Volume (Class 1)/Weight (Class 2)/ Ounce (Class 3) *Special/ Undefined (Class 9)/ Default (Class 0)
+        //Add classes: Volume (Class 1)/Weight (Class 2)/ Ounce (Class 3) *Special/ Undefined (Class 9)/ Default - Everything else (Class 0)
         const cookingUnits = [
             { name: 'teaspoon', unit: 'teaspoon', multiplier: 48, class: 1 },
             { name: 'tablespoon', unit: 'tablespoon', multiplier: 16, class: 1 },
@@ -62,7 +62,7 @@ export default class HashFunctions extends Component {
             { name: 'l', unit: 'litre', multiplier: 0.25, class: 1 },
         ];
 
-        let unit = { class: 0 };
+        let unit = { unit: item, class: 0 };
         if (item === '' || item === ' ' || item === null) {
             return unit;
         }
@@ -119,6 +119,11 @@ export default class HashFunctions extends Component {
             for (let j = 0; j < RecipeList[i].data.length; j++) {
                 //Split ingredient into different parts if more than 1 word and capitalise all starting
                 let newItem = RecipeList[i].data[j].name;
+                //Error Handling for blank strings
+                if(newItem === "" || newItem === " ") {
+                    RecipeList[i].data[j].name = "No Name Found"
+                    continue;
+                }
                 let splitName = newItem.split(" ");
                 let newName = this.capitaliseString(splitName);
 
@@ -311,6 +316,19 @@ export default class HashFunctions extends Component {
         let key = `${RecipeList[i].data[j].name}.${i}.${j}`;
         return key;
     };
+
+    //Clears entire hashtable
+    clearHashTable = () => {
+        for(let i = 0; i < ArraySize; i++) {
+            HashTable[i].name = null;
+            HashTable[i].amount = "";
+            HashTable[i].unit = "";
+            HashTable[i].deleted = true;
+            HashTable[i].mark = false;
+            HashTable[i].unitDetails = {};
+            HashTable[i].class = 9;
+        }
+    }
 
     render() {
         return (null);
