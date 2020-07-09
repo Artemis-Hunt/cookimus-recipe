@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from "react-native";
 import { FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
 const frac = require('frac');
 
-const Item = ({ title, amounts, units, mark, editState, itemKey, handleUpdate }) => {
+const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate }) => {
   let fracArray = frac(amounts, 20, true);
   let final = '';
   //Conversion to fractions
@@ -19,7 +19,7 @@ const Item = ({ title, amounts, units, mark, editState, itemKey, handleUpdate })
     }
   }
   let icon =
-    (editState) ? <MaterialIcons name="edit" size={14} color="lightcoral" /> :
+    (editState) ? <MaterialIcons name="edit" size={24} color="cornflowerblue" /> :
       (mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="#ccc" /> : <FontAwesome name="check" size={14} color="green" />;
   let checkStyle = (mark === undefined || mark === false) ? [styles.ingredientText, styles.text] : [styles.ingredientValueText, styles.text];
 
@@ -27,12 +27,15 @@ const Item = ({ title, amounts, units, mark, editState, itemKey, handleUpdate })
     let addIcon = <Entypo name="plus" size={22} color="mediumseagreen" />;
     return addItemCard(addIcon, title);
   } else {
-    return (editState) ? editCard(icon, title, amounts, units, itemKey, handleUpdate) : itemCard(icon, checkStyle, title, final, units);
+    return (editState) ? editCard(icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate) : itemCard(icon, checkStyle, title, final, units);
   }
 };
 
 //Render normal item card
 const itemCard = (icon, checkStyle, title, final, units) => {
+  if (title === "No Name Found") {
+    checkStyle = [styles.ingredientText, styles.text, styles.errorText];
+  }
   return (
     < View style={styles.ingredientEntry} >
       <Text style={checkStyle}>{icon}  {title}</Text>
@@ -44,18 +47,30 @@ const itemCard = (icon, checkStyle, title, final, units) => {
 }
 
 //Render edit mode item card
-const editCard = (icon, title, amounts, units, itemKey, handleUpdate) => {
+const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate) => {
+  const [newValue, setNewValue] = useState(amounts)
   return (
-    < View style={styles.ingredientEntry} >
+    < View style={styles.editMode} >
       {icon}
       <TextInput
         style={styles.textInput}
         placeholder={title}
         value={title}
-        onChangeText={(text) => handleUpdate(text, itemKey)}
+        onChangeText={(text) => handlenameupdate(text, itemKey)}
+      />
+      <TextInput
+        style={styles.textInput}
+        keyboardType={"numeric"}
+        numeric
+        //placeholder={amounts.toString()}
+        value={`${newValue}`}
+        onChangeText={(text) => {
+          setNewValue(text);
+          handlequantityupdate(text, itemKey);
+        }} 
       />
       <Text style={[styles.ingredientValueText, styles.text]}>
-        {amounts} {units}
+        {units}
       </Text>
     </View >
   )
@@ -87,6 +102,9 @@ const styles = StyleSheet.create({
   ingredientText: {
     fontSize: 18,
   },
+  errorText: {
+    color: "red",
+  },
   ingredientValueText: {
     fontSize: 18,
     color: "#A9A9A9",
@@ -105,6 +123,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "white",
   },
+  editMode: {
+    flexDirection: "row",
+    padding: 10,
+    backgroundColor: "white",
+  }
 });
 
 export default Item;

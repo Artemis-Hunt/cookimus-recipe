@@ -119,6 +119,11 @@ export default class HashFunctions extends Component {
             for (let j = 0; j < RecipeList[i].data.length; j++) {
                 //Split ingredient into different parts if more than 1 word and capitalise all starting
                 let newItem = RecipeList[i].data[j].name;
+                //Error Handling for blank strings
+                if(newItem === "" || newItem === " ") {
+                    RecipeList[i].data[j].name = "No Name Found"
+                    continue;
+                }
                 let splitName = newItem.split(" ");
                 let newName = this.capitaliseString(splitName);
 
@@ -312,6 +317,7 @@ export default class HashFunctions extends Component {
         return key;
     };
 
+    //Clears entire hashtable
     clearHashTable = () => {
         for(let i = 0; i < ArraySize; i++) {
             HashTable[i].name = null;
