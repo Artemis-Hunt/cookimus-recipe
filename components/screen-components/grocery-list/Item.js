@@ -75,7 +75,7 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
         }}
       />
       <TouchableOpacity
-        onPress={() => selectUnitModal()}
+        onPress={() => selectUnitModal(itemKey)}
       >
         <View style={[styles.textInput, styles.unitBox]}>
           <Text>{units}</Text>

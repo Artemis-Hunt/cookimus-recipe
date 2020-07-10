@@ -62,6 +62,7 @@ export default class GroceryList extends Component {
     this.handleName = this.handleName.bind(this);
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
+    this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
     this.showModal = this.showModal.bind(this);
@@ -196,8 +197,8 @@ export default class GroceryList extends Component {
     this.refs.portionModal.receivePortion(portion, title);
   };
   //Function to call unit selection modal
-  showUnitSelectModal = () => {
-    this.refs.unitselectmodal.renderModal();
+  showUnitSelectModal = (itemKey) => {
+    this.refs.unitselectmodal.renderModal(itemKey);
   };
 
   //Functions to call hashFunctions
@@ -229,21 +230,29 @@ export default class GroceryList extends Component {
   handleNameUpdate = (text, itemKey) => {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     RecipeList[recipeIndex].data[ingrIndex].name = text;
-    let tempEditArray = this.state.editList;
-    tempEditArray.push(itemKey);
-    //Set it as state
-    this.setState({ editList: tempEditArray });
+    this.updateEditArray(itemKey);
   }
   handleQuantityUpdate = (text, itemKey) => {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     //Number has to be in decimal for this function to work
     RecipeList[recipeIndex].data[ingrIndex].amount = Number(text);
+    this.updateEditArray(itemKey);
+  }
+  handleUnitUpdate = (newUnit, itemKey) => {
+    let unit = newUnit;
+    if(unit === "No Units") {
+      unit = "";
+    }
+    let [name, recipeIndex, ingrIndex] = itemKey.split(".");
+    RecipeList[recipeIndex].data[ingrIndex].unit = unit;
+    this.updateEditArray(itemKey);
+  }
+  updateEditArray = (itemKey) => {
     let tempEditArray = this.state.editList;
     tempEditArray.push(itemKey);
     //Set it as state
     this.setState({ editList: tempEditArray });
   }
-
 
   //Check if entered is valid
   _verifyInfo = async (name, quantity, units) => {
@@ -492,6 +501,7 @@ export default class GroceryList extends Component {
         />
         <UnitSelectModal
           ref={"unitselectmodal"}
+          unitUpdate={this.handleUnitUpdate}
         />
         <HashFunctions
           ref={"hashFunctions"}
