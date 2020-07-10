@@ -4,9 +4,7 @@ import { FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
 import DropDownPicker from "react-native-dropdown-picker";
 const frac = require('frac');
 
-let dropDownHeight = null;
-
-const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate }) => {
+const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal }) => {
   let fracArray = frac(amounts, 20, true);
   let final = '';
   //Conversion to fractions
@@ -30,7 +28,7 @@ const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdat
     let addIcon = <Entypo name="plus" size={22} color="mediumseagreen" />;
     return addItemCard(addIcon, title);
   } else {
-    return (editState) ? editCard(icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate) : itemCard(icon, checkStyle, title, final, units);
+    return (editState) ? editCard(icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal) : itemCard(icon, checkStyle, title, final, units);
   }
 };
 
@@ -50,24 +48,23 @@ const itemCard = (icon, checkStyle, title, final, units) => {
 }
 
 //Render edit mode item card
-const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate) => {
+const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal) => {
   const [newValue, setNewValue] = useState(amounts);
-  const [changed, setChanged] = useState(false);
   return (
-    < View style={[styles.editMode, { height: dropDownHeight }]}
-      onLayout={(event) => {
-      dropDownHeight = event.nativeEvent.layout.height;
-    }}
+    < View
+      style={[styles.editMode]}
     >
       {icon}
       <TextInput
         style={styles.textInput}
+        width={140}
         placeholder={title}
         value={title}
         onChangeText={(text) => handlenameupdate(text, itemKey)}
       />
       <TextInput
         style={styles.textInput}
+        width={50}
         keyboardType={"numeric"}
         numeric
         //placeholder={amounts.toString()}
@@ -75,35 +72,15 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
         onChangeText={(text) => {
           setNewValue(text);
           handlequantityupdate(text, itemKey);
-        }} 
+        }}
       />
-      <DropDownPicker
-          items={[
-            { label: units, value: units },
-            { label: "No Units", value: "" },
-            { label: "Gram", value: "grams" },
-            { label: "Kilogram", value: "kg" },
-            { label: "Cups", value: "cups" },
-            { label: "Tablespoon", value: "tbsp" },
-            { label: "Teaspoon", value: "tsp" },
-            { label: "Millilitres", value: "ml" },
-            { label: "Litres", value: "litres" },
-          ]}
-          defaultNull
-          placeholder={units}
-          containerStyle={{ height: 30, width: 100 }}
-          style={{ paddingVertical: 5 }}
-          dropDownStyle={{ backgroundColor: "#fafafa", position: "absolute" }}
-          onOpen={() => {
-            dropDownHeight += 130;
-            setChanged(!changed);
-          }}
-          onClose={() => {
-            dropDownHeight -= 130;
-            setChanged(!changed);
-          }}
-          //onChangeItem={(item) => handleunits(item.value)}
-        />
+      <TouchableOpacity
+        onPress={() => selectUnitModal()}
+      >
+        <View style={[styles.textInput, styles.unitBox]}>
+          <Text>{units}</Text>
+        </View>
+      </TouchableOpacity>
     </View >
   )
 }
@@ -160,6 +137,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 10,
     backgroundColor: "white",
+  },
+  nameInput: {
+    width: 130,
+  },
+  unitBox: {
+    width: 100,
   }
 });
 
