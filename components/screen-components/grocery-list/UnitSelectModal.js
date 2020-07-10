@@ -22,7 +22,6 @@ const DATA = [
     { title: "litre", value: "l" },
 ]
 let selected = '';
-let noUnitFlag = true;
 let itemKey;
 
 //Render items of flatlist
@@ -42,6 +41,7 @@ export default class UnitSelectModal extends Component {
         super(props);
         this.state = {
             refresh: false,
+            tempUnit: "",
         }
     }
     forceUpdate() {
@@ -61,24 +61,28 @@ export default class UnitSelectModal extends Component {
                     break;
                 }
             }
-            if (selected === '') {
-                //Will input into text box in here
-            }
         }
         this.refs.unitselectmodal.open();
     }
+    //Resets variables in modal
     clearData = () => {
-        if (noUnitFlag === false) {
-            DATA.splice(0, 1);
-        }
-        noUnitFlag = true;
         selected = '';
+        this.setState({ tempUnit: "" });
     }
+    //Handles when an item in the flatlist is selected
     handlePress = (title) => {
         selected = title;
         this.forceUpdate();
         //Change units in recipeList
         this.props.unitUpdate(title, itemKey);
+    }
+    handleCustomUnit = (text) => {
+        this.setState({ tempUnit: text })
+    }
+    //Update unit to be new custom unit
+    submitCustomUnit = () => {
+        let customUnit = this.state.tempUnit;
+        this.props.unitUpdate(customUnit, itemKey)
     }
     render() {
         return (
@@ -87,7 +91,9 @@ export default class UnitSelectModal extends Component {
                 style={styles.container}
                 postion='center'
                 backdrop={true}
-                onClosed={() => this.clearData()}
+                onClosed={() => {
+                    this.clearData();
+                }}
             >
                 <View style={styles.contents}>
                     <View style={styles.headerBar}>
@@ -108,10 +114,23 @@ export default class UnitSelectModal extends Component {
                         keyExtractor={item => item.title}
                     />
                     <Text style={styles.subHeading}>Enter Custom Unit</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder={"Enter Units"}
-                    />
+                    <View style={styles.customUnitContainer}>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder={"Enter Unit"}
+                            value={this.tempUnit}
+                            onChangeText={(text) => { this.handleCustomUnit(text) }}
+                        />
+                        <TouchableOpacity
+                            style={styles.saveButton}
+                            onPress={() => {
+                                this.submitCustomUnit();
+                                this.refs.unitselectmodal.close();
+                            }}
+                        >
+                            <Text style={styles.saveButtonText}>Save</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </Modal>
         )
@@ -190,5 +209,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: "white",
         width: 150,
-      },
+    },
+    customUnitContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
+    saveButton: {
+        marginHorizontal: 15,
+        paddingTop: 4
+    },
+    saveButtonText: {
+        fontSize: 17,
+        color: "dodgerblue"
+    }
 })

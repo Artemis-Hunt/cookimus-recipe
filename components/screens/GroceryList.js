@@ -240,7 +240,7 @@ export default class GroceryList extends Component {
   }
   handleUnitUpdate = (newUnit, itemKey) => {
     let unit = newUnit;
-    if(unit === "No Units") {
+    if (unit === "No Units") {
       unit = "";
     }
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
@@ -361,9 +361,9 @@ export default class GroceryList extends Component {
         {(this.state.editMode) ? (
           // Render Edit Mode
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "position" : "position"}
-            style={styles.editView} //Temp fix for bottom border being half rendered
-          >  
+            behavior={Platform.OS == "ios" ? "height" : "height"}
+            style={styles.editView}
+          >
             <SectionList
               stickySectionHeadersEnabled={true}
               sections={RecipeList}
