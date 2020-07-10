@@ -8,19 +8,19 @@ let screen = Dimensions.get('window');
 
 const DATA = [
     { title: 'No Units', value: "" },
-    { title: "Gram", value: "grams" },
-    { title: "Kilogram", value: "kg" },
-    { title: "Pound", value: "pound" },
-    { title: "Ounce", value: "ounce" },
-    { title: "Quart", value: "quart" },
-    { title: "Pint", value: "pint" },
-    { title: "Cups", value: "cups" },
-    { title: "Tablespoon", value: "tbsp" },
-    { title: "Teaspoon", value: "tsp" },
-    { title: "Millilitres", value: "ml" },
-    { title: "Litres", value: "litres" },
+    { title: "gram", value: "grams" },
+    { title: "kilogram", value: "kg" },
+    { title: "pound", value: "pound" },
+    { title: "ounce", value: "ounce" },
+    { title: "quart", value: "quart" },
+    { title: "pint", value: "pint" },
+    { title: "cups", value: "cups" },
+    { title: "tablespoon", value: "tbsp" },
+    { title: "teaspoon", value: "tsp" },
+    { title: "millilitres", value: "ml" },
+    { title: "litres", value: "litres" },
 ]
-let selected;
+let selected = '';
 let noUnitFlag = true;
 let itemKey;
 
@@ -49,15 +49,19 @@ export default class UnitSelectModal extends Component {
         itemKey = key;
         let [name, recipeIndex, ingrIndex] = itemKey.split(".");
         let itemUnit = RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit;
+        alert(itemUnit);
         //Determine current selected Unit
         if(itemUnit === '') {
             selected = 'No Units';
         } else {
-            for(let unitTitle of DATA) {
-                if(itemUnit.includes(unitTitle)) {
-                    selected = unitTitle;
+            for(let item of DATA) {
+                if(item.title.includes(itemUnit)) {
+                    selected = item.title;
                     break;
                 }
+            }
+            if(selected === '') {
+                //Will input into text box in here
             }
         }
         selected = DATA[0].title;
@@ -68,6 +72,7 @@ export default class UnitSelectModal extends Component {
             DATA.splice(0, 1);
         }
         noUnitFlag = true;
+        selected = '';
     }
     handlePress = (title) => {
         selected = title;
