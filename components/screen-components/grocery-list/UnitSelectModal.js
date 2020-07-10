@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { FlatList, StyleSheet, Text, View, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Dimensions, TouchableOpacity, Button, TextInput } from 'react-native';
 import Modal from 'react-native-modalbox';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import RecipeList from '../../../data/RecipeList.js'
 
@@ -8,17 +9,17 @@ let screen = Dimensions.get('window');
 
 const DATA = [
     { title: 'No Units', value: "" },
-    { title: "gram", value: "grams" },
+    { title: "gram", value: "g" },
     { title: "kilogram", value: "kg" },
-    { title: "pound", value: "pound" },
-    { title: "ounce", value: "ounce" },
-    { title: "quart", value: "quart" },
+    { title: "pound", value: "lb." },
+    { title: "ounce", value: "oz." },
+    { title: "quart", value: "qt." },
     { title: "pint", value: "pint" },
-    { title: "cups", value: "cups" },
+    { title: "cup", value: "cup" },
     { title: "tablespoon", value: "tbsp" },
     { title: "teaspoon", value: "tsp" },
-    { title: "millilitres", value: "ml" },
-    { title: "litres", value: "litres" },
+    { title: "millilitre", value: "ml" },
+    { title: "litre", value: "l" },
 ]
 let selected = '';
 let noUnitFlag = true;
@@ -31,6 +32,7 @@ const Item = ({ title, value }) => {
     return (
         <View style={cardStyle}>
             <Text style={cardTextStyle}>{title}</Text>
+            {(title === "No Units") ? null : <Text style={styles.unitText}>{value}</Text>}
         </View>
     )
 }
@@ -49,26 +51,24 @@ export default class UnitSelectModal extends Component {
         itemKey = key;
         let [name, recipeIndex, ingrIndex] = itemKey.split(".");
         let itemUnit = RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit;
-        alert(itemUnit);
         //Determine current selected Unit
-        if(itemUnit === '') {
+        if (itemUnit === '') {
             selected = 'No Units';
         } else {
-            for(let item of DATA) {
-                if(item.title.includes(itemUnit)) {
+            for (let item of DATA) {
+                if (itemUnit.includes(item.title)) {
                     selected = item.title;
                     break;
                 }
             }
-            if(selected === '') {
+            if (selected === '') {
                 //Will input into text box in here
             }
         }
-        selected = DATA[0].title;
         this.refs.unitselectmodal.open();
     }
     clearData = () => {
-        if(noUnitFlag === false) {
+        if (noUnitFlag === false) {
             DATA.splice(0, 1);
         }
         noUnitFlag = true;
@@ -90,7 +90,12 @@ export default class UnitSelectModal extends Component {
                 onClosed={() => this.clearData()}
             >
                 <View style={styles.contents}>
-                    <Text style={styles.headerText}>Edit Units</Text>
+                    <View style={styles.headerBar}>
+                        <Text style={styles.headerText}>Edit Units </Text>
+                        <View style={styles.iconStyle}>
+                            <MaterialCommunityIcons name="scale" size={24} color="black" />
+                        </View>
+                    </View>
                     <FlatList
                         data={DATA}
                         renderItem={({ item }) => (
@@ -101,6 +106,11 @@ export default class UnitSelectModal extends Component {
                             </TouchableOpacity>
                         )}
                         keyExtractor={item => item.title}
+                    />
+                    <Text style={styles.subHeading}>Enter Custom Unit</Text>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder={"Enter Units"}
                     />
                 </View>
             </Modal>
@@ -125,7 +135,12 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 25,
-        marginBottom: 10,
+        marginBottom: 5,
+        color: '#778899',
+    },
+    subHeading: {
+        fontSize: 20,
+        marginVertical: 5,
         color: '#778899',
     },
     itemCard: {
@@ -153,4 +168,27 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "SourceSansPro",
     },
+    headerBar: {
+        flexDirection: "row",
+        borderBottomWidth: 2,
+        borderBottomColor: "gold",
+    },
+    iconStyle: {
+        paddingTop: 3,
+    },
+    unitText: {
+        fontSize: 15,
+        margin: 10,
+        textAlign: 'center',
+        color: '#ccc'
+    },
+    textInput: {
+        height: 30,
+        padding: 5,
+        borderColor: "#CCC",
+        borderWidth: 1,
+        borderRadius: 5,
+        backgroundColor: "white",
+        width: 150,
+      },
 })
