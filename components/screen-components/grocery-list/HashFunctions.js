@@ -138,6 +138,7 @@ export default class HashFunctions extends Component {
         this.props.rebuildList();
     };
 
+    //THIS FUNCTION HAS BEEN REDACTED
     //This function will add to combined list single items - No need to loop entire list
     handleSingleItem = (newSingleItem, itemIndex) => {
         let recipeIndex = RecipeList.length - 1;
@@ -150,6 +151,7 @@ export default class HashFunctions extends Component {
         this.hashSearchInsert(recipeIndex, itemIndex, newName, key, classIndex);
         this.props.rebuildList();
     };
+    //THIS FUNCTION HAS BEEN REDACTED
 
     //This function will handle the search and insert of the hash table
     hashSearchInsert = (recipeIndex, itemIndex, newName, key, classIndex) => {

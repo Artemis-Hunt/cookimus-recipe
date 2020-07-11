@@ -22,14 +22,11 @@ const DropMenu = ({
   close,
   name,
   quantity,
-  unit,
   handlename,
   handlequantity,
-  handleunits,
   verifyinfo,
-  incomplete,
+  incompletefield,
 }) => {
-  const [changed, setChanged] = useState(false);
   return (
     <View
       style={[styles.dropMenu, { height: dropDownHeight }]}
@@ -39,9 +36,9 @@ const DropMenu = ({
     >
       {/* Some styles currently inline as only font size changed */}
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ fontSize: 24 }}>
+        <Text style={styles.headerText}>
           {" "}
-          <Entypo name="add-to-list" size={24} color="black" /> Add Item{" "}
+          Add New Recipe{" "} <Entypo name="add-to-list" size={24} color="gray" /> 
         </Text>
         <TouchableOpacity onPress={close}>
           <Text style={styles.menuText}>
@@ -56,52 +53,26 @@ const DropMenu = ({
       </View>
       <TextInput
         style={styles.textInput}
-        placeholder=" Enter ingredient name"
+        placeholder=" Enter Recipe name"
         value={name}
         onChangeText={(text) => handlename(text)}
       />
-      <Text style={styles.menuText}>
-        Quantity <FontAwesome5 name="weight" size={18} color="#2F4F4F" />
+      <Text style={[styles.menuText, styles.subHeading]}>
+        Ingredient Quantity
       </Text>
       <View style={styles.quantityBox}>
         <TextInput
           style={[styles.textInput, { width: 150 }]}
           placeholder=" Enter quantity"
-          value={quantity}
+          keyboardType={"numeric"}
+          numeric
+          value={`${quantity}`}
           onChangeText={(text) => handlequantity(text)}
         />
-        <DropDownPicker
-          items={[
-            { label: "No Units", value: "" },
-            { label: "Gram", value: "grams" },
-            { label: "Kilogram", value: "kg" },
-            { label: "Cups", value: "cups" },
-            { label: "Tablespoon", value: "tbsp" },
-            { label: "Teaspoon", value: "tsp" },
-            { label: "Millilitres", value: "ml" },
-            { label: "Litres", value: "litres" },
-          ]}
-          defaultNull
-          placeholder="No units"
-          containerStyle={{ height: 30, width: 100 }}
-          style={{ paddingVertical: 5 }}
-          dropDownStyle={{ backgroundColor: "#fafafa", position: "absolute" }}
-          onOpen={() => {
-            dropDownHeight += 130;
-            setChanged(!changed);
-          }}
-          onClose={() => {
-            dropDownHeight -= 130;
-            setChanged(!changed);
-          }}
-          onChangeItem={(item) => handleunits(item.value)}
-        />
-        <TouchableOpacity onPress={() => verifyinfo(name, quantity, unit)}>
-          <Text style={styles.addButton}>Add +</Text>
+        <TouchableOpacity onPress={() => verifyinfo(name, quantity)}>
+          <Text style={styles.addButton}>Add New Recipe +</Text>
         </TouchableOpacity>
       </View>
-
-      <Text style={styles.errorText}> {incomplete} </Text>
     </View>
   );
 };
@@ -117,11 +88,11 @@ const styles = StyleSheet.create({
   menuText: {
     fontSize: 18,
     padding: 5,
-    color: "black",
+    color: "dimgray",
   },
   //Outermost container
   dropMenu: {
-    //backgroundColor: "mediumaquamarine",
+    backgroundColor: "white",
     padding: 10,
     borderBottomWidth: 2,
     borderBottomColor: "forestgreen",
@@ -137,15 +108,19 @@ const styles = StyleSheet.create({
   },
   quantityBox: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
-  },
-  errorText: {
-    color: "crimson",
   },
   text: {
     fontFamily: "SourceSansPro",
   },
+  headerText: {
+    color: "dimgray",
+    fontSize: 24,
+  },
+  subHeading: {
+    fontSize: 20,
+  }
 });
 
 export default DropMenu;
