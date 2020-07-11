@@ -1,10 +1,10 @@
 import React, { Component, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from "react-native";
 import { FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
-import DropDownPicker from "react-native-dropdown-picker";
+import RecipeList from '../../../data/RecipeList'
 const frac = require('frac');
 
-const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal }) => {
+const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal, index, forceRefresh, updateeditarray }) => {
   let fracArray = frac(amounts, 20, true);
   let final = '';
   //Conversion to fractions
@@ -26,7 +26,7 @@ const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdat
 
   if (title === "Add Item...") {
     let addIcon = <Entypo name="plus" size={22} color="mediumseagreen" />;
-    return addItemCard(addIcon, title);
+    return addItemCard(addIcon, title, index, forceRefresh, updateeditarray);
   } else {
     return (editState) ? editCard(icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal) : itemCard(icon, checkStyle, title, final, units);
   }
@@ -86,14 +86,29 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
 }
 
 //Render card with add item functionality on press
-const addItemCard = (icon, title) => {
+const addItemCard = (icon, title, index, forceRefresh, updateeditarray) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        handleAddItem(index, updateeditarray);
+        forceRefresh();
+      }}
+    >
       < View style={[styles.ingredientEntry, styles.addItemBackGround]} >
         <Text style={[styles.ingredientText, styles.text, styles.addItemText]}>{icon}  {title}</Text>
       </View >
     </TouchableOpacity>
   )
+}
+
+//Adds another row into the recipe list
+const handleAddItem = (index, updateeditarray) => {
+  //Add item into second last slot of array before add item card
+  let slotIndex = RecipeList[index].data.length - 1;
+  let newItemObject = {name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 }};
+  newItemObject.key = `${newItemObject.name}.${index}.${slotIndex}`;
+  RecipeList[index].data.splice(slotIndex, 0, newItemObject);
+  updateeditarray(newItemObject.key);
 }
 
 const styles = StyleSheet.create({

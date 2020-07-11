@@ -63,6 +63,7 @@ export default class GroceryList extends Component {
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
+    this.updateEditArray = this.updateEditArray.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
     this.showModal = this.showModal.bind(this);
@@ -154,7 +155,21 @@ export default class GroceryList extends Component {
       }
       //Edits were made
       if (this.state.editList.length > 0) {
-        //Redo combine function, regenerate all keys (May need to clear hashtable first)
+        //Redo combine function, regenerate all keys
+        let deleteArray = [];
+        for (let itemKey of this.state.editList) {
+          //New Item Added, check if all blank
+          let [name, i, j] = itemKey.split(".");
+          if (RecipeList[i].data[j].name === "" && RecipeList[i].data[j].amount === "" && RecipeList[i].data[j].unit === "") {
+            let deleteIndex = { recipeIndex: i, ingrIndex: j };
+            deleteArray.unshift(deleteIndex);
+          }
+        }
+        for (let todelete of deleteArray) {
+          let i = todelete.recipeIndex;
+          let j = todelete.ingrIndex;
+          RecipeList[i].data.splice(j, 1);
+        }
         this.callClearHashTable();
         this.callCombineFunction(RecipeList.length);
         this.callBulkGenerate(0);
@@ -162,15 +177,17 @@ export default class GroceryList extends Component {
         this.setState({ editList: [] });
       }
     } else {
+      let indexCount = 0;
       for (let item of RecipeList) {
-        let addItemObject = { name: "Add Item..." }
+        let addItemObject = { name: "Add Item...", index: indexCount }
         item.data.push(addItemObject);
+        indexCount++;
       }
     }
-    //Auto switch to non-combined menu when edit mode is selected
-    if (this.state.combine) {
-      this.toggleMenu();
-    }
+    // //Auto switch to non-combined menu when edit mode is selected
+    // if (this.state.combine) {
+    //   this.toggleMenu();
+    // }
   }
 
   forceUpdate() {
@@ -380,6 +397,9 @@ export default class GroceryList extends Component {
                     handlenameupdate={this.handleNameUpdate}
                     handlequantityupdate={this.handleQuantityUpdate}
                     selectUnitModal={this.showUnitSelectModal}
+                    index={item.index}
+                    forceRefresh={this.forceUpdate}
+                    updateeditarray={this.updateEditArray}
                   />
                 </View>
               )}
@@ -416,6 +436,9 @@ export default class GroceryList extends Component {
                       handlenameupdate={this.handleNameUpdate}
                       handlequantityupdate={this.handleQuantityUpdate}
                       selectUnitModal={this.showUnitSelectModal}
+                      index={item.index}
+                      forceRefresh={this.forceUpdate}
+                      updateeditarray={this.updateEditArray}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -452,6 +475,9 @@ export default class GroceryList extends Component {
                         handlenameupdate={this.handleNameUpdate}
                         handlequantityupdate={this.handleQuantityUpdate}
                         selectUnitModal={this.showUnitSelectModal}
+                        index={item.index}
+                        forceRefresh={this.forceUpdate}
+                        updateeditarray={this.updateEditArray}
                       />
                     </View>
                   </TouchableWithoutFeedback>
