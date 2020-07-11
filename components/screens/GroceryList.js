@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
-  SafeAreaView,
   SectionList,
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
   TextInput,
+  KeyboardAvoidingView, Platform
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
@@ -15,6 +15,7 @@ import DropMenu from "../screen-components/grocery-list/DropMenu.js";
 import MenuBar from "../screen-components/grocery-list/MenuBar.js";
 import Item from "../screen-components/grocery-list/Item.js";
 import PortionModal from "../screen-components/grocery-list/PortionModal.js";
+import UnitSelectModal from "../screen-components/grocery-list/UnitSelectModal.js";
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
@@ -61,9 +62,11 @@ export default class GroceryList extends Component {
     this.handleName = this.handleName.bind(this);
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
+    this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.handleUnits = this.handleUnits.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.showUnitSelectModal = this.showUnitSelectModal.bind(this);
     this.sendPortion = this.sendPortion.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
     this.rebuildCombinedList = this.rebuildCombinedList.bind(this);
@@ -150,13 +153,13 @@ export default class GroceryList extends Component {
         item.data.splice(item.data.length - 1, 1);
       }
       //Edits were made
-      if(this.state.editList.length > 0) {
+      if (this.state.editList.length > 0) {
         //Redo combine function, regenerate all keys (May need to clear hashtable first)
         this.callClearHashTable();
         this.callCombineFunction(RecipeList.length);
         this.callBulkGenerate(0);
         //Reset EditList
-        this.setState({ editList: []});
+        this.setState({ editList: [] });
       }
     } else {
       for (let item of RecipeList) {
@@ -193,6 +196,10 @@ export default class GroceryList extends Component {
   sendPortion = (portion, title) => {
     this.refs.portionModal.receivePortion(portion, title);
   };
+  //Function to call unit selection modal
+  showUnitSelectModal = (itemKey) => {
+    this.refs.unitselectmodal.renderModal(itemKey);
+  };
 
   //Functions to call hashFunctions
   callCombineFunction = (index) => {
@@ -223,21 +230,29 @@ export default class GroceryList extends Component {
   handleNameUpdate = (text, itemKey) => {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     RecipeList[recipeIndex].data[ingrIndex].name = text;
-    let tempEditArray = this.state.editList;
-    tempEditArray.push(itemKey);
-    //Set it as state
-    this.setState({ editList: tempEditArray});
+    this.updateEditArray(itemKey);
   }
   handleQuantityUpdate = (text, itemKey) => {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     //Number has to be in decimal for this function to work
     RecipeList[recipeIndex].data[ingrIndex].amount = Number(text);
+    this.updateEditArray(itemKey);
+  }
+  handleUnitUpdate = (newUnit, itemKey) => {
+    let unit = newUnit;
+    if (unit === "No Units") {
+      unit = "";
+    }
+    let [name, recipeIndex, ingrIndex] = itemKey.split(".");
+    RecipeList[recipeIndex].data[ingrIndex].unit = unit;
+    this.updateEditArray(itemKey);
+  }
+  updateEditArray = (itemKey) => {
     let tempEditArray = this.state.editList;
     tempEditArray.push(itemKey);
     //Set it as state
-    this.setState({ editList: tempEditArray});
+    this.setState({ editList: tempEditArray });
   }
-
 
   //Check if entered is valid
   _verifyInfo = async (name, quantity, units) => {
@@ -345,31 +360,37 @@ export default class GroceryList extends Component {
         {/* Determine whether to render edit mode, combined list or individual list */}
         {(this.state.editMode) ? (
           // Render Edit Mode
-          <SectionList
-            stickySectionHeadersEnabled={true}
-            sections={RecipeList}
-            keyExtractor={(item, index) => item + index}
-            renderItem={({ item }) => (
-              <View>
-                <Item
-                  title={item.name}
-                  amounts={item.amount}
-                  units={item.unit}
-                  mark={item.mark}
-                  editState={this.state.editMode}
-                  itemKey={item.key}
-                  handlenameupdate={this.handleNameUpdate}
-                  handlequantityupdate={this.handleQuantityUpdate}
-                />
-              </View>
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-              <View style={[styles.combinedHeader, styles.editHeaderColor]}>
-                <Text style={[styles.header]}>{title}</Text>
-              </View>
-            )}
-            ItemSeparatorComponent={ItemSeparator}
-          />
+          <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "height" : "height"}
+            style={styles.editView}
+          >
+            <SectionList
+              stickySectionHeadersEnabled={true}
+              sections={RecipeList}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({ item }) => (
+                <View>
+                  <Item
+                    title={item.name}
+                    amounts={item.amount}
+                    units={item.unit}
+                    mark={item.mark}
+                    editState={this.state.editMode}
+                    itemKey={item.key}
+                    handlenameupdate={this.handleNameUpdate}
+                    handlequantityupdate={this.handleQuantityUpdate}
+                    selectUnitModal={this.showUnitSelectModal}
+                  />
+                </View>
+              )}
+              renderSectionHeader={({ section: { title } }) => (
+                <View style={[styles.combinedHeader, styles.editHeaderColor]}>
+                  <Text style={[styles.header]}>{title}</Text>
+                </View>
+              )}
+              ItemSeparatorComponent={ItemSeparator}
+            />
+          </KeyboardAvoidingView>
         ) :
           (this.state.combine) ? (
             //Render Combined Item Cards
@@ -394,6 +415,7 @@ export default class GroceryList extends Component {
                       itemKey={item.key}
                       handlenameupdate={this.handleNameUpdate}
                       handlequantityupdate={this.handleQuantityUpdate}
+                      selectUnitModal={this.showUnitSelectModal}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -429,6 +451,7 @@ export default class GroceryList extends Component {
                         itemKey={item.key}
                         handlenameupdate={this.handleNameUpdate}
                         handlequantityupdate={this.handleQuantityUpdate}
+                        selectUnitModal={this.showUnitSelectModal}
                       />
                     </View>
                   </TouchableWithoutFeedback>
@@ -475,6 +498,10 @@ export default class GroceryList extends Component {
           ref={"portionModal"}
           MainRefresh={this.forceUpdate}
           rebuildList={this.rebuildCombinedList}
+        />
+        <UnitSelectModal
+          ref={"unitselectmodal"}
+          unitUpdate={this.handleUnitUpdate}
         />
         <HashFunctions
           ref={"hashFunctions"}
@@ -539,5 +566,8 @@ const styles = StyleSheet.create({
   },
   editHeaderColor: {
     borderLeftColor: "rebeccapurple",
+  },
+  editView: {
+    paddingBottom: 65,
   }
 });

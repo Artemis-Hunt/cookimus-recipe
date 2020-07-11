@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AppRegistry, FlatList, StyleSheet, Text, View, Platform, Dimensions, TouchableOpacity, Button } from 'react-native';
+import { AppRegistry, FlatList, StyleSheet, Text, View, Dimensions, TouchableOpacity, Button } from 'react-native';
 import Modal from 'react-native-modalbox';
 
 import RecipeList from '../../../data/RecipeList.js'
