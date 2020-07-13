@@ -39,7 +39,10 @@ const itemCard = (icon, checkStyle, title, final, units) => {
   }
   return (
     < View style={styles.ingredientEntry} >
-      <Text style={checkStyle}>{icon}  {title}</Text>
+      <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+        {icon}
+        <Text style={checkStyle}>   {title}</Text>
+      </View>
       <Text style={[styles.ingredientValueText, styles.text]}>
         {final} {units}
       </Text>
@@ -50,21 +53,25 @@ const itemCard = (icon, checkStyle, title, final, units) => {
 //Render edit mode item card
 const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal) => {
   const [newValue, setNewValue] = useState(amounts);
+  const [newName, setNewName] = useState(title);
   return (
     < View
-      style={[styles.editMode]}
+      style={styles.editMode}
     >
       {icon}
       <TextInput
-        style={styles.textInput}
-        width={140}
+        style={[styles.textInput, { flex: 6 }]}
+        //width={140}
         placeholder={title}
-        value={title}
-        onChangeText={(text) => handlenameupdate(text, itemKey)}
+        value={newName}
+        onChangeText={(text) => {
+          setNewName(text);
+          handlenameupdate(text, itemKey);
+        }}
       />
       <TextInput
-        style={styles.textInput}
-        width={50}
+        style={[styles.textInput, { flex: 1.5 }]}
+        //width={50}
         keyboardType={"numeric"}
         numeric
         //placeholder={amounts.toString()}
@@ -81,7 +88,7 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
           <Text>{units}</Text>
         </View>
       </TouchableOpacity>
-    </View >
+    </View>
   )
 }
 
@@ -105,7 +112,7 @@ const addItemCard = (icon, title, index, forceRefresh, updateeditarray) => {
 const handleAddItem = (index, updateeditarray) => {
   //Add item into second last slot of array before add item card
   let slotIndex = RecipeList[index].data.length - 1;
-  let newItemObject = {name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 }};
+  let newItemObject = { name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 } };
   newItemObject.key = `${newItemObject.name}.${index}.${slotIndex}`;
   RecipeList[index].data.splice(slotIndex, 0, newItemObject);
   updateeditarray(newItemObject.key);
@@ -116,6 +123,7 @@ const styles = StyleSheet.create({
   ingredientEntry: {
     flexDirection: "row",
     justifyContent: "space-between",
+    justifyContent: "center",
     padding: 10,
     backgroundColor: "white",
   },
@@ -146,6 +154,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: "white",
+    marginHorizontal: 5,
   },
   editMode: {
     flexDirection: "row",

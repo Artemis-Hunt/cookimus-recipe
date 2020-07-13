@@ -245,7 +245,8 @@ export default class GroceryList extends Component {
   //Handle Updating of variables in edit mode
   handleNameUpdate = (text, itemKey) => {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-    RecipeList[recipeIndex].data[ingrIndex].name = text;
+    let trimmedText = text.trim();
+    RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
     this.updateEditArray(itemKey);
   }
   handleQuantityUpdate = (text, itemKey) => {
