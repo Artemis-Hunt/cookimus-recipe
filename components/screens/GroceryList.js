@@ -262,6 +262,7 @@ export default class GroceryList extends Component {
     }
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     RecipeList[recipeIndex].data[ingrIndex].unit = unit;
+    RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit = unit;
     this.updateEditArray(itemKey);
   }
   updateEditArray = (itemKey) => {

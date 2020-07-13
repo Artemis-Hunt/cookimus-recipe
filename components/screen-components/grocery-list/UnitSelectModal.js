@@ -71,10 +71,13 @@ export default class UnitSelectModal extends Component {
     }
     //Handles when an item in the flatlist is selected
     handlePress = (title) => {
+        //alert("Previous: " + selected);
         selected = title;
         this.forceUpdate();
         //Change units in recipeList
         this.props.unitUpdate(title, itemKey);
+        //alert("Updated: " + selected);
+        this.refs.unitselectmodal.close();
     }
     handleCustomUnit = (text) => {
         this.setState({ tempUnit: text })
@@ -82,6 +85,7 @@ export default class UnitSelectModal extends Component {
     //Update unit to be new custom unit
     submitCustomUnit = () => {
         let customUnit = this.state.tempUnit;
+        customUnit = customUnit.trim();
         this.props.unitUpdate(customUnit, itemKey)
     }
     render() {
