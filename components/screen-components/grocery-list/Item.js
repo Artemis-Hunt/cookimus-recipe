@@ -39,9 +39,11 @@ const itemCard = (icon, checkStyle, title, final, units) => {
   }
   return (
     < View style={styles.ingredientEntry} >
-      <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-        {icon}
-        <Text style={checkStyle}>   {title}</Text>
+      <View style={styles.ingredientCard}>
+        <View style={{marginTop: 3}}>
+          {icon}
+        </View>
+        <Text style={[checkStyle, { marginHorizontal: 5 }]}>{title}</Text>
       </View>
       <Text style={[styles.ingredientValueText, styles.text]}>
         {final} {units}
@@ -74,7 +76,6 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
         //width={50}
         keyboardType={"numeric"}
         numeric
-        //placeholder={amounts.toString()}
         value={`${newValue}`}
         onChangeText={(text) => {
           setNewValue(text);
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
     backgroundColor: "white",
+    alignItems: "center"
   },
   text: {
     fontFamily: "SourceSansPro",
@@ -133,6 +135,11 @@ const styles = StyleSheet.create({
   //Ingredient Card Text
   ingredientText: {
     fontSize: 18,
+  },
+  ingredientCard: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   errorText: {
     color: "red",
