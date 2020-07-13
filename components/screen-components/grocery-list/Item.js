@@ -43,7 +43,7 @@ const itemCard = (icon, checkStyle, title, final, units) => {
         <View style={{marginTop: 3}}>
           {icon}
         </View>
-        <Text style={[checkStyle, { marginHorizontal: 5 }]}>{title}</Text>
+        <Text style={[checkStyle, { marginHorizontal: 15 }]}>{title}</Text>
       </View>
       <Text style={[styles.ingredientValueText, styles.text]}>
         {final} {units}

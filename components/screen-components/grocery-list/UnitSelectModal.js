@@ -9,8 +9,8 @@ let screen = Dimensions.get('window');
 
 const DATA = [
     { title: 'No Units', value: "" },
-    { title: "gram", value: "g" },
     { title: "kilogram", value: "kg" },
+    { title: "gram", value: "g" },
     { title: "pound", value: "lb." },
     { title: "ounce", value: "oz." },
     { title: "quart", value: "qt." },
