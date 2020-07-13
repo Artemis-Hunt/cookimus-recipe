@@ -34,6 +34,7 @@ import {
 
 //Size of hash table
 const ArraySize = 200;
+let verifyFlag = false;
 
 const ItemSeparator = () => {
   return <View style={styles.separator} />;
@@ -63,8 +64,8 @@ export default class GroceryList extends Component {
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
+    this.updateEditArray = this.updateEditArray.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
-    this.handleUnits = this.handleUnits.bind(this);
     this.showModal = this.showModal.bind(this);
     this.showUnitSelectModal = this.showUnitSelectModal.bind(this);
     this.sendPortion = this.sendPortion.bind(this);
@@ -100,7 +101,7 @@ export default class GroceryList extends Component {
       //Update new table, add to combined list
       let index = newLength - this.oldLength;
       this.oldLength = newLength;
-      if (RecipeList[newLength - 1].title !== "Added to list") {
+      if (verifyFlag === false) {
         this.callCombineFunction(index);
       }
       this.callBulkGenerate(0);
@@ -129,6 +130,9 @@ export default class GroceryList extends Component {
     this.setState({
       showComponent: true,
     });
+    if(this.state.editMode === true) {
+      this.toggleEdit();
+    }
   }
 
   hideAddItem() {
@@ -147,6 +151,10 @@ export default class GroceryList extends Component {
     this.setState({
       editMode: !this.state.editMode,
     });
+    this.handleEditMode();
+  }
+  //Handles what happens when edit mode is called
+  handleEditMode() {
     //Append new row into the RecipeList array / Remove temp rows
     if (this.state.editMode) {
       for (let item of RecipeList) {
@@ -154,22 +162,35 @@ export default class GroceryList extends Component {
       }
       //Edits were made
       if (this.state.editList.length > 0) {
-        //Redo combine function, regenerate all keys (May need to clear hashtable first)
+        //Redo combine function, regenerate all keys
+        let deleteArray = [];
+        for (let itemKey of this.state.editList) {
+          //New Item Added, check if all blank
+          let [name, i, j] = itemKey.split(".");
+          if (RecipeList[i].data[j].name === "" && RecipeList[i].data[j].amount === "" && RecipeList[i].data[j].unit === "") {
+            let deleteIndex = { recipeIndex: i, ingrIndex: j };
+            deleteArray.unshift(deleteIndex);
+          }
+        }
+        for (let todelete of deleteArray) {
+          let i = todelete.recipeIndex;
+          let j = todelete.ingrIndex;
+          RecipeList[i].data.splice(j, 1);
+        }
         this.callClearHashTable();
         this.callCombineFunction(RecipeList.length);
         this.callBulkGenerate(0);
         //Reset EditList
         this.setState({ editList: [] });
+        verifyFlag = false;
       }
     } else {
+      let indexCount = 0;
       for (let item of RecipeList) {
-        let addItemObject = { name: "Add Item..." }
+        let addItemObject = { name: "Add Item...", index: indexCount }
         item.data.push(addItemObject);
+        indexCount++;
       }
-    }
-    //Auto switch to non-combined menu when edit mode is selected
-    if (this.state.combine) {
-      this.toggleMenu();
     }
   }
 
@@ -184,11 +205,6 @@ export default class GroceryList extends Component {
   handleQuantity = (text) => {
     this.setState({ quantity: text });
   };
-
-  handleUnits = (item) => {
-    this.setState({ units: item });
-  };
-
   //Functions for modal
   showModal = () => {
     this.refs.portionModal.renderModal();
@@ -255,39 +271,35 @@ export default class GroceryList extends Component {
   }
 
   //Check if entered is valid
-  _verifyInfo = async (name, quantity, units) => {
-    if (name && quantity) {
-      //Index of last item
-      let RecipeIndex = RecipeList.length - 1;
-
-      //If added to list section doesn't exist, create it
-      if (
-        RecipeList.length === 0 ||
-        RecipeList[RecipeIndex].title !== "Added to list"
-      ) {
-        RecipeList.push({ title: "Added to list", data: [] });
-        RecipeIndex++;
+  _verifyInfo = (name, quantity) => {
+    if (name) {
+      verifyFlag = true;
+      name = name.trim();
+      let newRecipe = { title: name, data: [] };
+      //Creating the empty slots to input ingredient info
+      let count = Number(quantity);
+      for (let i = 0; i < count; i++) {
+        let defaultIngredientObject = { name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 } };
+        newRecipe.data.push(defaultIngredientObject);
       }
-      //itemIndex
-      let itemIndex = RecipeList[RecipeIndex].data.length;
-      let ingredientToAdd = {
-        name: name,
-        amount: quantity,
-        unit: units,
-      };
-      RecipeList[RecipeIndex].data.push(ingredientToAdd);
+      //Push into recipe list
+      RecipeList.unshift(newRecipe);
+      this.callBulkGenerate(0);
+      for (let item of RecipeList[0].data) {
+        this.updateEditArray(item.key);
+      }
+      if (this.state.editMode === false) {
+        this.toggleEdit();
+      }
+
+      //REDACTED PART
       //Push the ingredient to "Added to list"
       //Don't await the promise to ensure UI fluidity
-      groceryListCustomPush({ [name]: ingredientToAdd });
-
-      RecipeList[RecipeIndex].data[itemIndex].key = this.callgenerateKey(
-        RecipeIndex,
-        itemIndex
-      );
-
-      this.callhandleSingleItem(name, itemIndex);
+      //groceryListCustomPush({ [name]: ingredientToAdd });
+      //END OF REDACTED
 
       //Clear fields
+      this.hideAddItem();
       this.setState({ name: "", quantity: "", incompleteField: "" });
     } else this.setState({ incompleteField: "Please fill in all fields" });
   };
@@ -348,12 +360,10 @@ export default class GroceryList extends Component {
             close={this.hideAddItem}
             name={this.state.name}
             quantity={this.state.quantity}
-            unit={this.state.units}
             handlename={this.handleName}
             handlequantity={this.handleQuantity}
-            handleunits={this.handleUnits}
             verifyinfo={this._verifyInfo}
-            incomplete={this.state.incompleteField}
+            incomepletefield={this.state.incompleteField}
           />
         ) : null}
 
@@ -380,6 +390,9 @@ export default class GroceryList extends Component {
                     handlenameupdate={this.handleNameUpdate}
                     handlequantityupdate={this.handleQuantityUpdate}
                     selectUnitModal={this.showUnitSelectModal}
+                    index={item.index}
+                    forceRefresh={this.forceUpdate}
+                    updateeditarray={this.updateEditArray}
                   />
                 </View>
               )}
@@ -416,6 +429,9 @@ export default class GroceryList extends Component {
                       handlenameupdate={this.handleNameUpdate}
                       handlequantityupdate={this.handleQuantityUpdate}
                       selectUnitModal={this.showUnitSelectModal}
+                      index={item.index}
+                      forceRefresh={this.forceUpdate}
+                      updateeditarray={this.updateEditArray}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -452,6 +468,9 @@ export default class GroceryList extends Component {
                         handlenameupdate={this.handleNameUpdate}
                         handlequantityupdate={this.handleQuantityUpdate}
                         selectUnitModal={this.showUnitSelectModal}
+                        index={item.index}
+                        forceRefresh={this.forceUpdate}
+                        updateeditarray={this.updateEditArray}
                       />
                     </View>
                   </TouchableWithoutFeedback>

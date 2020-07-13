@@ -101,4 +101,30 @@ export default class combineList extends Component {
             }
         }
     }
+    // <DropDownPicker
+    //       items={[
+    //         { label: "No Units", value: "" },
+    //         { label: "Gram", value: "grams" },
+    //         { label: "Kilogram", value: "kg" },
+    //         { label: "Cups", value: "cups" },
+    //         { label: "Tablespoon", value: "tbsp" },
+    //         { label: "Teaspoon", value: "tsp" },
+    //         { label: "Millilitres", value: "ml" },
+    //         { label: "Litres", value: "litres" },
+    //       ]}
+    //       defaultNull
+    //       placeholder="No units"
+    //       containerStyle={{ height: 30, width: 100 }}
+    //       style={{ paddingVertical: 5 }}
+    //       dropDownStyle={{ backgroundColor: "#fafafa", position: "absolute" }}
+    //       onOpen={() => {
+    //         dropDownHeight += 130;
+    //         setChanged(!changed);
+    //       }}
+    //       onClose={() => {
+    //         dropDownHeight -= 130;
+    //         setChanged(!changed);
+    //       }}
+    //       onChangeItem={(item) => handleunits(item.value)}
+    // />
 } 
