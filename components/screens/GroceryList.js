@@ -277,7 +277,7 @@ export default class GroceryList extends Component {
     if (name) {
       verifyFlag = true;
       name = name.trim();
-      let newRecipe = { title: name, data: [] };
+      let newRecipe = { title: name, data: [], portion: 1, portionText: '1' };
       //Creating the empty slots to input ingredient info
       let count = Number(quantity);
       for (let i = 0; i < count; i++) {
