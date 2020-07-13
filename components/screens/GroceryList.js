@@ -130,6 +130,9 @@ export default class GroceryList extends Component {
     this.setState({
       showComponent: true,
     });
+    if(this.state.editMode === true) {
+      this.toggleEdit();
+    }
   }
 
   hideAddItem() {
@@ -272,27 +275,21 @@ export default class GroceryList extends Component {
     if (name) {
       verifyFlag = true;
       name = name.trim();
-      let newRecipe = {title: name, data: []};
+      let newRecipe = { title: name, data: [] };
       //Creating the empty slots to input ingredient info
       let count = Number(quantity);
-      for(let i = 0; i < count; i++) {
-        let defaultIngredientObject = {name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 }};
+      for (let i = 0; i < count; i++) {
+        let defaultIngredientObject = { name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 } };
         newRecipe.data.push(defaultIngredientObject);
       }
       //Push into recipe list
       RecipeList.unshift(newRecipe);
       this.callBulkGenerate(0);
-      for(let item of RecipeList[0].data) {
+      for (let item of RecipeList[0].data) {
         this.updateEditArray(item.key);
       }
-      if(this.state.editMode === true) {
-        // for (let i = 1; i < RecipeList.length; i++) {
-        //   RecipeList[i].data.splice(RecipeList[i].data.length - 1, 1);
-        // }
-        //this.handleEditMode();
-      } else {
-        this.setState({ editMode: true })
-        this.handleEditMode();
+      if (this.state.editMode === false) {
+        this.toggleEdit();
       }
 
       //REDACTED PART
