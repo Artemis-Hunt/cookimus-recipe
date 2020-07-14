@@ -66,8 +66,20 @@ export default class UnitSelectModal extends Component {
         this.refs.unitselectmodal.open();
     }
     //Render Modal when called from recipe view
-    renderForConfirm = (key) => {
-
+    renderForConfirm = (key, unit) => {
+        //Determine current selected Unit
+        itemKey = key;
+        if (unit === '') {
+            selected = 'No Units';
+        } else {
+            for (let item of DATA) {
+                if (unit.includes(item.title)) {
+                    selected = item.title;
+                    break;
+                }
+            }
+        }
+        this.refs.unitselectmodal.open();
     }
     //Resets variables in modal
     clearData = () => {

@@ -5,11 +5,12 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import SavedRecipes from "../../../data/SavedRecipes.js"
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js"
+import HashFunctions from "../grocery-list/HashFunctions.js"
 
 let DATA = [];
 
 //Render card for ingredients
-const RenderItemCard = ({ info, handlenameupdate, handlequantityupdate, selectUnitModal }) => {
+const RenderItemCard = ({ info, handlenameupdate, handlequantityupdate, selectUnitModal, calldetermineclass }) => {
     if (info.key % 2 === 0) {
         //Print out original recipe
         return (
@@ -40,7 +41,10 @@ const RenderItemCard = ({ info, handlenameupdate, handlequantityupdate, selectUn
                         }}
                     />
                     <TouchableOpacity
-                        onPress={() => selectUnitModal(info.key)}
+                        onPress={() => {
+                            let unitClass = calldetermineclass(info.ingredientDetails.unit);
+                            selectUnitModal(info.key, unitClass.unit);
+                        }}
                     >
                         <View style={[styles.textInput, styles.unitBox]}>
                             <Text>{info.ingredientDetails.unit}</Text>
@@ -60,6 +64,9 @@ export default class ConfirmItemModal extends Component {
         }
         this.handleNameUpdate = this.handleNameUpdate.bind(this);
         this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
+        this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
+        this.callDetermineClass = this.callDetermineClass.bind(this);
+        this.callUnitModal = this.callUnitModal.bind(this);
     }
     //Run whenever there is a state change and check if added
     componentDidUpdate() {
@@ -94,7 +101,10 @@ export default class ConfirmItemModal extends Component {
         }
         this.setState({ editArray: DATA });
     }
-
+    //Call function to get the unit details of the item
+    callDetermineClass(unit) {
+        return this.refs.hashfunctions.determineClass(unit);
+    }
     handleNameUpdate(text, index) {
         let tempArray = this.state.editArray;
         tempArray[index].ingredientDetails.name = text;
@@ -106,10 +116,15 @@ export default class ConfirmItemModal extends Component {
         tempArray[index].ingredientDetails.amount = text;
         this.setState({ editArray: tempArray });
     }
-    callUnitModal(key) {
-        this.refs.unitselectconfirm.renderForConfirm(key);
+    handleUnitUpdate(unit, index) {
+        let tempArray = this.state.editArray;
+        //Read in as text - Remember to change to number when saving
+        tempArray[index].ingredientDetails.unit = unit;
+        this.setState({ editArray: tempArray });
     }
-
+    callUnitModal(key, unit) {
+        this.refs.unitselectconfirm.renderForConfirm(key, unit);
+    }
     render() {
         return (
             <Modal
@@ -137,13 +152,18 @@ export default class ConfirmItemModal extends Component {
                             info={item}
                             handlenameupdate={this.handleNameUpdate}
                             handlequantityupdate={this.handleQuantityUpdate}
+                            selectUnitModal={this.callUnitModal}
+                            calldetermineclass={this.callDetermineClass}
                         />
                     )}
                     keyExtractor={item => item.key.toString()}
                 />
-                <UnitSelectModal 
+                <UnitSelectModal
                     ref={"unitselectconfirm"}
                     unitUpdate={this.handleUnitUpdate}
+                />
+                <HashFunctions
+                    ref={"hashfunctions"}
                 />
             </Modal>
         )
