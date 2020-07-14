@@ -18,6 +18,8 @@ import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddRecipe from "../screen-components/recipe/AddRecipe.js";
 import SaveRecipe from "../screen-components/recipe/SaveRecipe.js";
 
+import ConfirmItemModal from "../screen-components/recipe/ConfirmItemModal.js"
+
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
 //Render the individual recipe pages when clicked into from the search page
@@ -26,6 +28,7 @@ const Recipe = () => {
   const navigation = useNavigation();
 
   const [addedToList, setAddedToList] = useState(false);
+  const [openModal, setModalState] = useState(false);
 
   //Props from SearchList.js, passed through SearchCard.js
   const Window = route.params.Window;
@@ -61,7 +64,8 @@ const Recipe = () => {
               <TouchableOpacity
                 onPress={() => {
                   AddRecipe(additionalData[index].ingredient, name, url);
-                  setAddedToList(true)
+                  setAddedToList(true);
+                  setModalState(!openModal);
                 }}
                 style={styles.buttonBox}
               >
@@ -91,6 +95,7 @@ const Recipe = () => {
               </TouchableOpacity> */}
             </ScrollView>
           )}
+          <ConfirmItemModal modalState={openModal} originalIngre={additionalData[index].originalIngredient} modIngre={additionalData[index].ingredient}/>
         </View>
       )}
     </LoadingAdditionalContext.Consumer>
