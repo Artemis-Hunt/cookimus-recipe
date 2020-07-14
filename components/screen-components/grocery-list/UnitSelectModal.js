@@ -47,6 +47,7 @@ export default class UnitSelectModal extends Component {
     forceUpdate() {
         this.setState({ refresh: !this.state.refresh })
     }
+    //Render Modal when called from grocery list
     renderModal = (key) => {
         itemKey = key;
         let [name, recipeIndex, ingrIndex] = itemKey.split(".");
@@ -63,6 +64,10 @@ export default class UnitSelectModal extends Component {
             }
         }
         this.refs.unitselectmodal.open();
+    }
+    //Render Modal when called from recipe view
+    renderForConfirm = (key) => {
+
     }
     //Resets variables in modal
     clearData = () => {
