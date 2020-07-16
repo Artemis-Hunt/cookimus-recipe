@@ -1,8 +1,13 @@
 import React, { Component, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from "react-native";
-import { FontAwesome, MaterialIcons, Entypo } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import RecipeList from '../../../data/RecipeList'
 const frac = require('frac');
+
+//Unused Icons
+//(mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="#ccc" /> : <FontAwesome name="check" size={14} color="green" />;
+//<MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;
+//<MaterialCommunityIcons name="check-circle-outline" size={17} color="green" />;
 
 const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal, index, forceRefresh, updateeditarray }) => {
   let fracArray = frac(amounts, 20, true);
@@ -21,7 +26,7 @@ const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdat
   }
   let icon =
     (editState) ? <MaterialIcons name="edit" size={24} color="cornflowerblue" /> :
-      (mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="#ccc" /> : <FontAwesome name="check" size={14} color="green" />;
+      (mark === undefined || mark === false) ? <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={17} color="#ccc" /> : <MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;;
   let checkStyle = (mark === undefined || mark === false) ? [styles.ingredientText, styles.text] : [styles.ingredientValueText, styles.text];
 
   if (title === "Add Item...") {
