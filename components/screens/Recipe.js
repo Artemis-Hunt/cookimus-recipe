@@ -10,15 +10,13 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
-import LoadingIndicator from "../generic/LoadingIndicator"
+import LoadingIndicator from "../generic/LoadingIndicator";
 
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddRecipe from "../screen-components/recipe/AddRecipe.js";
 import SaveRecipe from "../screen-components/recipe/SaveRecipe.js";
-
-import ConfirmItemModal from "../screen-components/recipe/ConfirmItemModal.js"
 
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
@@ -28,7 +26,6 @@ const Recipe = () => {
   const navigation = useNavigation();
 
   const [addedToList, setAddedToList] = useState(false);
-  const [openModal, setModalState] = useState(false);
 
   //Props from SearchList.js, passed through SearchCard.js
   const Window = route.params.Window;
@@ -45,39 +42,51 @@ const Recipe = () => {
           {loadingAdditional ? (
             <LoadingIndicator size={"large"} />
           ) : (
-              <View>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  <Image
-                    style={[styles.image, { height: Window.height / 3 }]}
-                    source={{ uri: `${image}` }}
-                  />
-                  {/* Extra info e.g. servings, preparation time*/}
-                  <View style={styles.categoryBox}>
-                    <View style={styles.subBox}>
-                      <Text style={[styles.text, styles.name]}>{name}</Text>
-                    </View>
-                    <AdditionalInfo additional={additionalData[index].additionalInfo} />
+            <View>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <Image
+                  style={[styles.image, { height: Window.height / 3 }]}
+                  source={{ uri: `${image}` }}
+                />
+                {/* Extra info e.g. servings, preparation time*/}
+                <View style={styles.categoryBox}>
+                  <View style={styles.subBox}>
+                    <Text style={[styles.text, styles.name]}>{name}</Text>
                   </View>
+                  <AdditionalInfo
+                    additional={additionalData[index].additionalInfo}
+                  />
+                </View>
 
-                  <IngredientBox ingredients={additionalData[index].originalIngredient} />
+                <IngredientBox
+                  ingredients={additionalData[index].originalIngredient}
+                />
 
-                  {/*Add to grocery list*/}
-                  <TouchableOpacity
-                    onPress={() => {
-                      AddRecipe(additionalData[index].ingredient, name, url);
-                      setAddedToList(true);
-                      setModalState(!openModal);
-                    }}
-                    style={styles.buttonBox}
-                  >
-                    <Text style={styles.addButton}>Add to Grocery List </Text>
-                    <Entypo name="add-to-list" size={19} color="#1E90FF" />
-                  </TouchableOpacity>
-                  {addedToList ? <Text style={styles.addedText}>Added to Grocery list!</Text> : null}
-                  <PrepMethod instructions={additionalData[index].prepInstructions} />
-                  <View style={{ height: 50 }}></View>
-                  {/*Store recipe locally*/}
-                  {/* <TouchableOpacity
+                {/*Add to grocery list*/}
+                <TouchableOpacity
+                  onPress={() => {
+                    //AddRecipe(additionalData[index].ingredient, name, url);
+                    setAddedToList(true);
+                    navigation.navigate("ConfirmIngredients", {
+                      originalIngredients:
+                        additionalData[index].originalIngredient,
+                      modIngredients: additionalData[index].ingredient,
+                    });
+                  }}
+                  style={styles.buttonBox}
+                >
+                  <Text style={styles.addButton}>Add to Grocery List </Text>
+                  <Entypo name="add-to-list" size={19} color="#1E90FF" />
+                </TouchableOpacity>
+                {addedToList ? (
+                  <Text style={styles.addedText}>Added to Grocery list!</Text>
+                ) : null}
+                <PrepMethod
+                  instructions={additionalData[index].prepInstructions}
+                />
+                <View style={{ height: 50 }}></View>
+                {/*Store recipe locally*/}
+                {/* <TouchableOpacity
                 onPress={() => {
                   SaveRecipe(
                     name,
@@ -94,15 +103,15 @@ const Recipe = () => {
                 <Text style={styles.addButton}>Save This Recipe </Text>
                 <Feather name="save" size={19} color="#1E90FF" />
               </TouchableOpacity> */}
-                </ScrollView>
-                <ConfirmItemModal 
+              </ScrollView>
+              {/* <ConfirmItemModal 
                   modalState={openModal} 
                   originalIngre={additionalData[index].originalIngredient} 
                   modIngre={additionalData[index].ingredient}
                   link={url}
-                />
-              </View>
-            )}
+                /> */}
+            </View>
+          )}
         </View>
       )}
     </LoadingAdditionalContext.Consumer>
@@ -151,7 +160,7 @@ const styles = StyleSheet.create({
   addedText: {
     color: "green",
     textAlign: "center",
-    fontSize: 17
+    fontSize: 17,
   },
   buttonBox: {
     flexDirection: "row",
