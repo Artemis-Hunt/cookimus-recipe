@@ -8,7 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js";
 import HashFunctions from "../grocery-list/HashFunctions.js";
@@ -24,6 +24,7 @@ const RenderItemCard = ({
   handlequantityupdate,
   selectUnitModal,
   calldetermineclass,
+  handledelete,
 }) => {
   if (index % 2 === 0) {
     //Print out original recipe
@@ -64,6 +65,12 @@ const RenderItemCard = ({
               <Text>{item.ingredientDetails.unit}</Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handledelete(index)}
+          >
+            <Entypo name="circle-with-cross" size={26} color="crimson" />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -81,6 +88,7 @@ export default class ConfirmItemModal extends Component {
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
     this.callDetermineClass = this.callDetermineClass.bind(this);
     this.callUnitModal = this.callUnitModal.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.originalIngredients = this.props.route.params.originalIngredients;
     this.modIngredients = this.props.route.params.modIngredients;
     this.title = this.props.route.params.recipeTitle;
@@ -137,6 +145,16 @@ export default class ConfirmItemModal extends Component {
     }
     AddRecipe(ingredientArray, this.title, this.url);
   }
+  //Delete items from the state
+  handleDelete(index) {
+    let tempArray = this.state.editArray;
+    tempArray.splice(index - 1, 2);
+    this.setState({ editArray: tempArray });
+    //Item Completely Removed
+    if(this.state.editArray.length === 0) {
+      this.props.navigation.goBack();
+    }
+  }
   render() {
     return (
       <KeyboardAvoidingView
@@ -169,6 +187,7 @@ export default class ConfirmItemModal extends Component {
                 handlequantityupdate={this.handleQuantityUpdate}
                 selectUnitModal={this.callUnitModal}
                 calldetermineclass={this.callDetermineClass}
+                handledelete={this.handleDelete}
               />
             )}
           />
@@ -197,7 +216,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 5,
     backgroundColor: "#F9F9F9",
-    //Temporary Margin - Remove when nav bar fixed
     flex: 1,
   },
   headerText: {
@@ -229,7 +247,7 @@ const styles = StyleSheet.create({
   },
   moddedCard: {
     flex: 1,
-    paddingVertical: 5,
+    paddingBottom: 10,
   },
   closeButton: {
     marginHorizontal: 10,
@@ -247,7 +265,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   unitBox: {
-    width: 100,
+    width: 90,
   },
   confirmButton: {
     paddingVertical: 15,
@@ -260,5 +278,8 @@ const styles = StyleSheet.create({
   },
   editView: {
     flex: 1,
+  },
+  deleteButton: {
+    paddingHorizontal: 5,
   }
 });

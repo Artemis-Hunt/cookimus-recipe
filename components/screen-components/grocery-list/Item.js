@@ -40,7 +40,7 @@ const itemCard = (icon, checkStyle, title, final, units) => {
   return (
     < View style={styles.ingredientEntry} >
       <View style={styles.ingredientCard}>
-        <View style={{marginTop: 3}}>
+        <View style={{ marginTop: 3 }}>
           {icon}
         </View>
         <Text style={[checkStyle, { marginHorizontal: 15 }]}>{title}</Text>
@@ -169,12 +169,9 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
   },
-  nameInput: {
-    width: 130,
-  },
   unitBox: {
-    width: 100,
-  }
+    width: 90,
+  },
 });
 
 export default Item;
