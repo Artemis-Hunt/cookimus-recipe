@@ -153,6 +153,7 @@ export default class PortionModal extends Component {
                     <Text style={styles.headerText}>Serving Portions</Text>
                     <FlatList
                         scrollEnabled={false}
+                        showsVerticalScrollIndicator={false}
                         data={DATA}
                         renderItem={({ item }) => (
                             <TouchableOpacity

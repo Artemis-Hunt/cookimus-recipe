@@ -245,7 +245,8 @@ export default class GroceryList extends Component {
   //Handle Updating of variables in edit mode
   handleNameUpdate = (text, itemKey) => {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-    RecipeList[recipeIndex].data[ingrIndex].name = text;
+    let trimmedText = text.trim();
+    RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
     this.updateEditArray(itemKey);
   }
   handleQuantityUpdate = (text, itemKey) => {
@@ -261,6 +262,7 @@ export default class GroceryList extends Component {
     }
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     RecipeList[recipeIndex].data[ingrIndex].unit = unit;
+    RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit = unit;
     this.updateEditArray(itemKey);
   }
   updateEditArray = (itemKey) => {
@@ -275,7 +277,7 @@ export default class GroceryList extends Component {
     if (name) {
       verifyFlag = true;
       name = name.trim();
-      let newRecipe = { title: name, data: [] };
+      let newRecipe = { title: name, data: [], portion: 1, portionText: '1' };
       //Creating the empty slots to input ingredient info
       let count = Number(quantity);
       for (let i = 0; i < count; i++) {

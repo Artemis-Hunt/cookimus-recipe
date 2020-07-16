@@ -9,8 +9,8 @@ let screen = Dimensions.get('window');
 
 const DATA = [
     { title: 'No Units', value: "" },
-    { title: "gram", value: "g" },
     { title: "kilogram", value: "kg" },
+    { title: "gram", value: "g" },
     { title: "pound", value: "lb." },
     { title: "ounce", value: "oz." },
     { title: "quart", value: "qt." },
@@ -47,6 +47,7 @@ export default class UnitSelectModal extends Component {
     forceUpdate() {
         this.setState({ refresh: !this.state.refresh })
     }
+    //Render Modal when called from grocery list
     renderModal = (key) => {
         itemKey = key;
         let [name, recipeIndex, ingrIndex] = itemKey.split(".");
@@ -64,6 +65,22 @@ export default class UnitSelectModal extends Component {
         }
         this.refs.unitselectmodal.open();
     }
+    //Render Modal when called from recipe view
+    renderForConfirm = (key, unit) => {
+        //Determine current selected Unit
+        itemKey = key;
+        if (unit === '') {
+            selected = 'No Units';
+        } else {
+            for (let item of DATA) {
+                if (unit.includes(item.title)) {
+                    selected = item.title;
+                    break;
+                }
+            }
+        }
+        this.refs.unitselectmodal.open();
+    }
     //Resets variables in modal
     clearData = () => {
         selected = '';
@@ -71,10 +88,13 @@ export default class UnitSelectModal extends Component {
     }
     //Handles when an item in the flatlist is selected
     handlePress = (title) => {
+        //alert("Previous: " + selected);
         selected = title;
         this.forceUpdate();
         //Change units in recipeList
         this.props.unitUpdate(title, itemKey);
+        //alert("Updated: " + selected);
+        this.refs.unitselectmodal.close();
     }
     handleCustomUnit = (text) => {
         this.setState({ tempUnit: text })
@@ -82,6 +102,7 @@ export default class UnitSelectModal extends Component {
     //Update unit to be new custom unit
     submitCustomUnit = () => {
         let customUnit = this.state.tempUnit;
+        customUnit = customUnit.trim();
         this.props.unitUpdate(customUnit, itemKey)
     }
     render() {

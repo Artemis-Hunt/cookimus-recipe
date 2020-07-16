@@ -55,7 +55,9 @@ const DropMenu = ({
         style={styles.textInput}
         placeholder=" Enter Recipe name"
         value={name}
-        onChangeText={(text) => handlename(text)}
+        onChangeText={(text) => {
+          handlename(text);
+        }}
       />
       <Text style={[styles.menuText, styles.subHeading]}>
         Ingredient Quantity

@@ -24,7 +24,7 @@ export default class HashFunctions extends Component {
         return total;
     };
 
-    //This function will determin if the current unit measures in volume or in weight 
+    //This function will determine if the current unit measures in volume or in weight 
     determineClass = (item) => {
         //Pass in full item object, detect the current unit and convert into target unit
         //Add classes: Volume (Class 1)/Weight (Class 2)/ Ounce (Class 3) *Special/ Undefined (Class 9)/ Default - Everything else (Class 0)
@@ -35,8 +35,8 @@ export default class HashFunctions extends Component {
             { name: 'quart', unit: 'quart', multiplier: 0.25, class: 1 },
             { name: 'ounce', unit: 'ounce', multiplier: 8, class: 3 },
             { name: 'pound', unit: 'pound', multiplier: 0.5, class: 2 },
-            { name: 'gram', unit: 'gram', multiplier: 227, class: 2 },
             { name: 'kilogram', unit: 'kilogram', multiplier: 0.227, class: 2 },
+            { name: 'gram', unit: 'gram', multiplier: 227, class: 2 },
             { name: 'pint', unit: 'pint', multiplier: 0.5, class: 1 },
             { name: 'millilitre', unit: 'millilitre', multiplier: 250, class: 1 },
             { name: 'litre', unit: 'litre', multiplier: 0.25, class: 1 },
@@ -335,5 +335,4 @@ export default class HashFunctions extends Component {
     render() {
         return (null);
     }
-
 }
