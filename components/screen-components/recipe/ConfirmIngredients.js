@@ -8,7 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Entypo, MaterialIcons } from "@expo/vector-icons";
 
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js";
 import HashFunctions from "../grocery-list/HashFunctions.js";
@@ -82,6 +82,8 @@ export default class ConfirmItemModal extends Component {
     super(props);
     this.state = {
       editArray: [],
+      undoArray: [],
+      showUndo: false,
     };
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
@@ -148,12 +150,36 @@ export default class ConfirmItemModal extends Component {
   //Delete items from the state
   handleDelete(index) {
     let tempArray = this.state.editArray;
+    let tempUndoArray = this.state.undoArray;
+    let deleteItem = { originalIngre: tempArray[index - 1].ingredient, modIngre: tempArray[index].ingredientDetails, index: Number(index - 1) };
+    tempUndoArray.unshift(deleteItem);
     tempArray.splice(index - 1, 2);
     this.setState({ editArray: tempArray });
+    this.setState({ undoArray: tempUndoArray });
+    this.setState({ showUndo: true });
     //Item Completely Removed
-    if(this.state.editArray.length === 0) {
+    if (this.state.editArray.length === 0) {
       this.props.navigation.goBack();
     }
+  }
+  //Undo button
+  handleUndo() {
+    let tempUndoArray = this.state.undoArray;
+    let tempArray = this.state.editArray;
+    let undoItem = tempUndoArray[0];
+    tempUndoArray.splice(0, 1);
+    if (tempUndoArray.length === 0) {
+      this.setState({ showUndo: false });
+    }
+    //Add items back into the list
+    let originalItem = {}
+    originalItem.ingredient = undoItem.originalIngre;
+    let modItem = {}
+    modItem.ingredientDetails = undoItem.modIngre;
+    tempArray.splice(undoItem.index, 0, modItem);
+    tempArray.splice(undoItem.index, 0, originalItem);
+    this.setState({ editArray: tempArray });
+    this.setState({ undoArray: tempUndoArray });
   }
   render() {
     return (
@@ -163,12 +189,25 @@ export default class ConfirmItemModal extends Component {
       >
         <View style={styles.container}>
           <View style={styles.headerBar}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => { this.props.navigation.goBack() }}
-            >
-              <MaterialCommunityIcons name="close" size={35} color="#CCC" />
-            </TouchableOpacity>
+            <View style={styles.rowView}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => { this.props.navigation.goBack() }}
+              >
+                <MaterialCommunityIcons name="close" size={35} color="#CCC" />
+              </TouchableOpacity>
+              { (this.state.showUndo) ?
+                <TouchableOpacity
+                  onPress={() => this.handleUndo()}
+                  style={styles.undoButton}
+                >
+                  {/* <MaterialIcons name="undo" size={35} color="dodgerblue" /> */}
+                  <MaterialCommunityIcons name="undo-variant" size={35} color="dodgerblue" />
+                </TouchableOpacity>
+                :
+                null
+              }
+            </View>
             <View style={styles.rowView}>
               <Text style={styles.headerText}>Confirm Ingredients</Text>
               <View style={{ marginTop: 3 }}>
@@ -250,10 +289,19 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   closeButton: {
+    flex: 1,
     marginHorizontal: 10,
     marginTop: 5,
     justifyContent: "flex-end",
     alignSelf: "center",
+    alignItems: "flex-start"
+  },
+  undoButton: {
+    flex: 1,
+    marginHorizontal: 10,
+    marginTop: 5,
+    justifyContent: "flex-start",
+    alignItems: "flex-end"
   },
   textInput: {
     height: 30,
