@@ -373,7 +373,7 @@ export default class GroceryList extends Component {
         {(this.state.editMode) ? (
           // Render Edit Mode
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "height" : "height"}
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
             style={styles.editView}
           >
             <SectionList
@@ -589,6 +589,6 @@ const styles = StyleSheet.create({
     borderLeftColor: "rebeccapurple",
   },
   editView: {
-    paddingBottom: 65,
+    flex: 1,
   }
 });
