@@ -53,9 +53,8 @@ export default class GroceryList extends Component {
       refresh: false,
       combine: false,
       editMode: false,
-      groceryList: [],
-      editList: [],
     };
+    this.editedItemsFlag = false;
     this.showAddItem = this.showAddItem.bind(this);
     this.hideAddItem = this.hideAddItem.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
@@ -64,7 +63,7 @@ export default class GroceryList extends Component {
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
-    this.updateEditArray = this.updateEditArray.bind(this);
+    this.triggerEditedItemsFlag = this.triggerEditedItemsFlag.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.showModal = this.showModal.bind(this);
     this.showUnitSelectModal = this.showUnitSelectModal.bind(this);
@@ -161,27 +160,13 @@ export default class GroceryList extends Component {
         item.data.splice(item.data.length - 1, 1);
       }
       //Edits were made
-      if (this.state.editList.length > 0) {
+      if (this.editedItemsFlag === true) {
         //Redo combine function, regenerate all keys
-        let deleteArray = [];
-        for (let itemKey of this.state.editList) {
-          //New Item Added, check if all blank
-          let [name, i, j] = itemKey.split(".");
-          if (RecipeList[i].data[j].name === "" && RecipeList[i].data[j].amount === "" && RecipeList[i].data[j].unit === "") {
-            let deleteIndex = { recipeIndex: i, ingrIndex: j };
-            deleteArray.unshift(deleteIndex);
-          }
-        }
-        for (let todelete of deleteArray) {
-          let i = todelete.recipeIndex;
-          let j = todelete.ingrIndex;
-          RecipeList[i].data.splice(j, 1);
-        }
         this.callClearHashTable();
         this.callCombineFunction(RecipeList.length);
         this.callBulkGenerate(0);
         //Reset EditList
-        this.setState({ editList: [] });
+        this.editedItemsFlag = false;
         verifyFlag = false;
       }
     } else {
@@ -213,8 +198,8 @@ export default class GroceryList extends Component {
     this.refs.portionModal.receivePortion(portion, title);
   };
   //Function to call unit selection modal
-  showUnitSelectModal = (itemKey) => {
-    this.refs.unitselectmodal.renderModal(itemKey);
+  showUnitSelectModal = (item) => {
+    this.refs.unitselectmodal.renderModal(item);
   };
 
   //Functions to call hashFunctions
@@ -243,17 +228,19 @@ export default class GroceryList extends Component {
   }
 
   //Handle Updating of variables in edit mode
-  handleNameUpdate = (text, itemKey) => {
-    let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-    let trimmedText = text.trim();
-    RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
-    this.updateEditArray(itemKey);
+  handleNameUpdate = (text, item) => {
+    //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
+    //let trimmedText = text.trim();
+    item.name = text.trim();
+    //RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
+    //this.triggerEditedItemsFlag(itemKey);
   }
-  handleQuantityUpdate = (text, itemKey) => {
-    let [name, recipeIndex, ingrIndex] = itemKey.split(".");
+  handleQuantityUpdate = (text, item) => {
+    //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     //Number has to be in decimal for this function to work
-    RecipeList[recipeIndex].data[ingrIndex].amount = Number(text);
-    this.updateEditArray(itemKey);
+    item.amount = Number(text);
+    // RecipeList[recipeIndex].data[ingrIndex].amount = Number(text);
+    // this.triggerEditedItemsFlag(itemKey);
   }
   handleUnitUpdate = (newUnit, itemKey) => {
     let unit = newUnit;
@@ -263,13 +250,13 @@ export default class GroceryList extends Component {
     let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     RecipeList[recipeIndex].data[ingrIndex].unit = unit;
     RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit = unit;
-    this.updateEditArray(itemKey);
+    this.triggerEditedItemsFlag();
   }
-  updateEditArray = (itemKey) => {
-    let tempEditArray = this.state.editList;
-    tempEditArray.push(itemKey);
-    //Set it as state
-    this.setState({ editList: tempEditArray });
+
+  triggerEditedItemsFlag = () => {
+    if(this.editedItemsFlag === false) {
+      this.editedItemsFlag === true
+    }
   }
 
   //Check if entered is valid
@@ -288,7 +275,7 @@ export default class GroceryList extends Component {
       RecipeList.unshift(newRecipe);
       this.callBulkGenerate(0);
       for (let item of RecipeList[0].data) {
-        this.updateEditArray(item.key);
+        this.triggerEditedItemsFlag();
       }
       if (this.state.editMode === false) {
         this.toggleEdit();
@@ -387,14 +374,15 @@ export default class GroceryList extends Component {
                     amounts={item.amount}
                     units={item.unit}
                     mark={item.mark}
+                    item={item}
                     editState={this.state.editMode}
                     itemKey={item.key}
                     handlenameupdate={this.handleNameUpdate}
                     handlequantityupdate={this.handleQuantityUpdate}
-                    selectUnitModal={this.showUnitSelectModal}
+                    showunitselectmodal={this.showUnitSelectModal}
                     index={item.index}
                     forceRefresh={this.forceUpdate}
-                    updateeditarray={this.updateEditArray}
+                    triggerediteditemsflag={this.triggerEditedItemsFlag}
                   />
                 </View>
               )}
@@ -430,10 +418,10 @@ export default class GroceryList extends Component {
                       itemKey={item.key}
                       handlenameupdate={this.handleNameUpdate}
                       handlequantityupdate={this.handleQuantityUpdate}
-                      selectUnitModal={this.showUnitSelectModal}
+                      showunitselectmodal={this.showUnitSelectModal}
                       index={item.index}
                       forceRefresh={this.forceUpdate}
-                      updateeditarray={this.updateEditArray}
+                      triggerediteditemsflag={this.triggerEditedItemsFlag}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -469,10 +457,10 @@ export default class GroceryList extends Component {
                         itemKey={item.key}
                         handlenameupdate={this.handleNameUpdate}
                         handlequantityupdate={this.handleQuantityUpdate}
-                        selectUnitModal={this.showUnitSelectModal}
+                        showunitselectmodal={this.showUnitSelectModal}
                         index={item.index}
                         forceRefresh={this.forceUpdate}
-                        updateeditarray={this.updateEditArray}
+                        triggerediteditemsflag={this.triggerEditedItemsFlag}
                       />
                     </View>
                   </TouchableWithoutFeedback>

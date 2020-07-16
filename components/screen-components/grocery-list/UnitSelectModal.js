@@ -7,7 +7,7 @@ import RecipeList from '../../../data/RecipeList.js'
 
 let screen = Dimensions.get('window');
 
-const DATA = [
+const UnitsTable = [
     { title: 'No Units', value: "" },
     { title: "kilogram", value: "kg" },
     { title: "gram", value: "g" },
@@ -48,16 +48,14 @@ export default class UnitSelectModal extends Component {
         this.setState({ refresh: !this.state.refresh })
     }
     //Render Modal when called from grocery list
-    renderModal = (key) => {
-        itemKey = key;
-        let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-        let itemUnit = RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit;
+    renderModal = (item) => {
+        let itemUnit = item.unit;
         //Determine current selected Unit
         if (itemUnit === '') {
             selected = 'No Units';
         } else {
-            for (let item of DATA) {
-                if (itemUnit.includes(item.title)) {
+            for (let unitsEntry of UnitsTable) {
+                if (itemUnit.includes(unitsEntry.title)) {
                     selected = item.title;
                     break;
                 }
@@ -72,7 +70,7 @@ export default class UnitSelectModal extends Component {
         if (unit === '') {
             selected = 'No Units';
         } else {
-            for (let item of DATA) {
+            for (let item of UnitsTable) {
                 if (unit.includes(item.title)) {
                     selected = item.title;
                     break;
@@ -124,7 +122,7 @@ export default class UnitSelectModal extends Component {
                         </View>
                     </View>
                     <FlatList
-                        data={DATA}
+                        data={UnitsTable}
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 onPress={() => this.handlePress(item.title)}

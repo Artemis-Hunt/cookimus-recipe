@@ -42,7 +42,7 @@ const RenderItemCard = ({
             placeholder={item.ingredientDetails.name}
             value={item.ingredientDetails.name}
             onChangeText={(text) => {
-              handlenameupdate(text, index);
+              handlenameupdate(text, item);
             }}
           />
           <TextInput
@@ -51,7 +51,7 @@ const RenderItemCard = ({
             numeric
             value={`${item.ingredientDetails.amount}`}
             onChangeText={(text) => {
-              handlequantityupdate(text, index);
+              handlequantityupdate(text, item);
             }}
           />
           <TouchableOpacity
