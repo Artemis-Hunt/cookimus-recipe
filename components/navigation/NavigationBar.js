@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,6 +10,7 @@ import Search from "../screens/Search";
 import Settings from "../screens/Settings";
 import RecipeList from "../../data/RecipeList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
+import ConfirmIngredients from "../screen-components/recipe/ConfirmIngredients";
 
 const HomeStack = createStackNavigator();
 
@@ -50,6 +50,11 @@ class HomeScreen extends React.Component {
             name="Recipe"
             component={Recipe}
             options={({ route }) => ({ title: route.params.name })}
+          />
+          <HomeStack.Screen
+            name="ConfirmIngredients"
+            component={ConfirmIngredients}
+            options={{ header: () => null }}
           />
         </HomeStack.Navigator>
       </LoadingAdditionalContext.Provider>
@@ -95,6 +100,11 @@ class SearchScreen extends React.Component {
             name="Recipe"
             component={Recipe}
             options={({ route }) => ({ title: route.params.name })}
+          />
+          <SearchStack.Screen
+            name="ConfirmIngredients"
+            component={ConfirmIngredients}
+            options={{ header: () => null }}
           />
         </SearchStack.Navigator>
       </LoadingAdditionalContext.Provider>
