@@ -6,13 +6,13 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
-import Modal from "react-native-modalbox";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-import SavedRecipes from "../../../data/SavedRecipes.js";
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js";
 import HashFunctions from "../grocery-list/HashFunctions.js";
+import AddRecipe from "./AddRecipe.js";
 
 let DATA = [];
 
@@ -29,7 +29,7 @@ const RenderItemCard = ({
     //Print out original recipe
     return (
       <View style={styles.originalCard}>
-        <Text style={[styles.bodyFontSize]}>{item.ingredient}</Text>
+        <Text style={[styles.bodyFontSize, styles.originalCardText]}>{item.ingredient}</Text>
       </View>
     );
   } else {
@@ -83,25 +83,15 @@ export default class ConfirmItemModal extends Component {
     this.callUnitModal = this.callUnitModal.bind(this);
     this.originalIngredients = this.props.route.params.originalIngredients;
     this.modIngredients = this.props.route.params.modIngredients;
+    this.title = this.props.route.params.recipeTitle;
+    this.url = this.props.route.params.recipeURL;
   }
 
   componentDidMount() {
-      this.buildDataArray();
+    this.buildDataArray();
   }
-  //Run whenever there is a state change and check if added
-  // componentDidUpdate() {
-  //     let checkFlag = false;
-  //     for (let checkLink of SavedRecipes) {
-  //         if (checkLink.url === this.props.url) {
-  //             checkFlag = true;
-  //             break;
-  //         }
-  //     }
-  //     if (checkFlag === false && this.state.editArray.length === 0) {
-  //         this.buildDataArray();
-  //         this.refs.confirmItemModal.open();
-  //     }
-  // }
+  componentWillUnmount() {
+  }
   //Build the data list with alternating original ingredients and modded ingredients
   buildDataArray() {
     DATA = [];
@@ -140,41 +130,64 @@ export default class ConfirmItemModal extends Component {
   callUnitModal(key, unit) {
     this.refs.unitselectconfirm.renderForConfirm(key, unit);
   }
+  handleSubmitButton() {
+    let ingredientArray = [];
+    for (let i = 1; i < this.state.editArray.length; i += 2) {
+      ingredientArray.push(this.state.editArray[i].ingredientDetails);
+    }
+    AddRecipe(ingredientArray, this.title, this.url);
+  }
   render() {
     return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() => {this.props.navigation.goBack()}}
-        >
-          <MaterialCommunityIcons name="close" size={35} color="#CCC" />
-        </TouchableOpacity>
-        <View style={styles.rowView}>
-          <Text style={styles.headerText}>Confirm Ingredients</Text>
-          {/* <View style={{ marginTop: 3 }}>
-            <Ionicons name="ios-checkmark-circle" size={24} color="green" />
-          </View> */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.editView}
+      >
+        <View style={styles.container}>
+          <View style={styles.headerBar}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => { this.props.navigation.goBack() }}
+            >
+              <MaterialCommunityIcons name="close" size={35} color="#CCC" />
+            </TouchableOpacity>
+            <View style={styles.rowView}>
+              <Text style={styles.headerText}>Confirm Ingredients</Text>
+              <View style={{ marginTop: 3 }}>
+                <Ionicons name="ios-checkmark-circle" size={24} color="green" />
+              </View>
+            </View>
+          </View>
+          <FlatList
+            data={this.state.editArray}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <RenderItemCard
+                item={item}
+                index={index}
+                handlenameupdate={this.handleNameUpdate}
+                handlequantityupdate={this.handleQuantityUpdate}
+                selectUnitModal={this.callUnitModal}
+                calldetermineclass={this.callDetermineClass}
+              />
+            )}
+          />
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={() => {
+              this.handleSubmitButton();
+              this.props.navigation.goBack();
+            }}
+          >
+            <Text style={styles.buttonText}>Confirm and Add+</Text>
+          </TouchableOpacity>
+          <UnitSelectModal
+            ref={"unitselectconfirm"}
+            unitUpdate={this.handleUnitUpdate}
+          />
+          <HashFunctions ref={"hashfunctions"} />
         </View>
-        <FlatList
-          data={this.state.editArray}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <RenderItemCard
-              item={item}
-              index={index}
-              handlenameupdate={this.handleNameUpdate}
-              handlequantityupdate={this.handleQuantityUpdate}
-              selectUnitModal={this.callUnitModal}
-              calldetermineclass={this.callDetermineClass}
-            />
-          )}
-        />
-        <UnitSelectModal
-          ref={"unitselectconfirm"}
-          unitUpdate={this.handleUnitUpdate}
-        />
-        <HashFunctions ref={"hashfunctions"} />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -182,15 +195,24 @@ export default class ConfirmItemModal extends Component {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-    marginHorizontal: 5,
+    paddingHorizontal: 5,
+    backgroundColor: "#F9F9F9",
+    //Temporary Margin - Remove when nav bar fixed
+    flex: 1,
   },
   headerText: {
     fontSize: 25,
     color: "#778899",
     margin: 10,
   },
+  headerBar: {
+    backgroundColor: "white",
+  },
   bodyFontSize: {
-    fontSize: 16,
+    fontSize: 17,
+  },
+  originalCardText: {
+    color: "#696969"
   },
   rowView: {
     flexDirection: "row",
@@ -203,10 +225,11 @@ const styles = StyleSheet.create({
     borderTopColor: "#E8E8E8",
     paddingVertical: 5,
     justifyContent: "flex-start",
+    paddingLeft: 7,
   },
   moddedCard: {
     flex: 1,
-    marginBottom: 5,
+    paddingVertical: 5,
   },
   closeButton: {
     marginHorizontal: 10,
@@ -226,4 +249,16 @@ const styles = StyleSheet.create({
   unitBox: {
     width: 100,
   },
+  confirmButton: {
+    paddingVertical: 15,
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+  buttonText: {
+    color: "dodgerblue",
+    fontSize: 20,
+  },
+  editView: {
+    flex: 1,
+  }
 });
