@@ -101,8 +101,8 @@ export default class ConfirmItemModal extends Component {
     this.callDetermineClass = this.callDetermineClass.bind(this);
     this.callUnitModal = this.callUnitModal.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.originalIngredients = this.props.route.params.originalIngredients;
-    this.modIngredients = this.props.route.params.modIngredients;
+    this.originalIngredients = JSON.parse(JSON.stringify(this.props.route.params.originalIngredients));
+    this.modIngredients = JSON.parse(JSON.stringify(this.props.route.params.modIngredients));
     this.title = this.props.route.params.recipeTitle;
     this.url = this.props.route.params.recipeURL;
   }
