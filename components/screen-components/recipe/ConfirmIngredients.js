@@ -8,7 +8,12 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons, Entypo, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  Entypo,
+  MaterialIcons,
+} from "@expo/vector-icons";
 
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js";
 import HashFunctions from "../grocery-list/HashFunctions.js";
@@ -30,7 +35,9 @@ const RenderItemCard = ({
     //Print out original recipe
     return (
       <View style={styles.originalCard}>
-        <Text style={[styles.bodyFontSize, styles.originalCardText]}>{item.ingredient}</Text>
+        <Text style={[styles.bodyFontSize, styles.originalCardText]}>
+          {item.ingredient}
+        </Text>
       </View>
     );
   } else {
@@ -85,7 +92,10 @@ export default class ConfirmItemModal extends Component {
       undoArray: [],
       showUndo: false,
     };
+    //Variables to store ingredients to be edited
     this.editArray = [];
+    this.undoArray = [];
+
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
@@ -101,84 +111,75 @@ export default class ConfirmItemModal extends Component {
   componentDidMount() {
     this.buildDataArray();
   }
-  componentWillUnmount() {
-  }
-    //Build the data list with alternating original ingredients and modded ingredients
-    buildDataArray() {
-      DATA = [];
-      let originalLength = this.originalIngredients.length;
-      let modLength = this.modIngredients.length;
-  
-      //Handle items with "And", excluding half and half
-      if (modLength > originalLength) {
-        //In case of multiple "ands"
-        let modCount = 0;
-        for (let i = 0; i < originalLength; i++) {
-          let originalItem = {};
-          let modItem = {};
-          let itemFound = false; //True when "and" is found
-          let searchArray = this.originalIngredients[i].split(" ");
-          for (let splitWord of searchArray) {
-            if (splitWord === 'And' || splitWord === 'and') {
-              itemFound = true;
-              break;
-            }
+  componentWillUnmount() {}
+  //Build the data list with alternating original ingredients and modded ingredients
+  buildDataArray() {
+    DATA = [];
+    let originalLength = this.originalIngredients.length;
+    let modLength = this.modIngredients.length;
+
+    //Handle items with "And", excluding half and half
+    if (modLength > originalLength) {
+      //In case of multiple "ands"
+      let modCount = 0;
+      for (let i = 0; i < originalLength; i++) {
+        let originalItem = {};
+        let modItem = {};
+        let itemFound = false; //True when "and" is found
+        let searchArray = this.originalIngredients[i].split(" ");
+        for (let splitWord of searchArray) {
+          if (splitWord === "And" || splitWord === "and") {
+            itemFound = true;
+            break;
           }
-          if (itemFound) {
-            originalItem.ingredient = this.originalIngredients[i];
-            DATA.push(originalItem);
-            modItem.ingredientDetails = this.modIngredients[modCount];
-            DATA.push(modItem);
-            modCount++;
-            originalItem = {};
-            originalItem.ingredient = "";
-            DATA.push(originalItem);
-            modItem = {};
-            modItem.ingredientDetails = this.modIngredients[modCount];
-            DATA.push(modItem);
-            modCount++;
-            continue;
-          }
+        }
+        if (itemFound) {
           originalItem.ingredient = this.originalIngredients[i];
-          DATA.push(originalItem);
-          //Alternate
+          this.editArray.push(originalItem);
           modItem.ingredientDetails = this.modIngredients[modCount];
-          DATA.push(modItem);
+          this.editArray.push(modItem);
           modCount++;
+          originalItem = {};
+          originalItem.ingredient = "";
+          this.editArray.push(originalItem);
+          modItem = {};
+          modItem.ingredientDetails = this.modIngredients[modCount];
+          this.editArray.push(modItem);
+          modCount++;
+          continue;
         }
-      } else {
-        //Normal build
-        for (let i = 0; i < originalLength; i++) {
-          let originalItem = {};
-          let modItem = {};
-          originalItem.ingredient = this.originalIngredients[i];
-          DATA.push(originalItem);
-          //Alternate
-          modItem.ingredientDetails = this.modIngredients[i];
-          DATA.push(modItem);
-        }
-  //     for (let i = 0; i < this.originalIngredients.length; i++) {
-  //       let originalItem = {}
-  //       originalItem.ingredient = this.originalIngredients[i];
-  //       this.editArray.push(originalItem);
-  //       //Alternate
-  //       let modItem = {}
-  //       modItem.ingredientDetails = this.modIngredients[i];
-  //       this.editArray.push(modItem);
+        originalItem.ingredient = this.originalIngredients[i];
+        this.editArray.push(originalItem);
+        //Alternate
+        modItem.ingredientDetails = this.modIngredients[modCount];
+        this.editArray.push(modItem);
+        modCount++;
+      }
+    } else {
+      //Normal build
+      for (let i = 0; i < originalLength; i++) {
+        let originalItem = {};
+        let modItem = {};
+        originalItem.ingredient = this.originalIngredients[i];
+        this.editArray.push(originalItem);
+        //Alternate
+        modItem.ingredientDetails = this.modIngredients[i];
+        this.editArray.push(modItem);
       }
     }
+  }
   //Call function to get the unit details of the item
   callDetermineClass(unit) {
     return this.refs.hashfunctions.determineClass(unit);
   }
   handleNameUpdate(item, text) {
-    item.ingredientDetails.name = text
+    item.ingredientDetails.name = text;
   }
   handleQuantityUpdate(item, text) {
     item.ingredientDetails.amount = Number(text);
   }
   handleUnitUpdate(item, unit) {
-    item.ingredientDetails.unit = unit
+    item.ingredientDetails.unit = unit;
   }
   callUnitModal(item, unit) {
     this.refs.unitselectconfirm.renderForConfirm(item, unit);
@@ -190,40 +191,36 @@ export default class ConfirmItemModal extends Component {
     }
     AddRecipe(ingredientArray, this.title, this.url);
   }
-    //Delete items from the state
-    handleDelete(index) {
-      let tempArray = this.state.editArray;
-      let tempUndoArray = this.state.undoArray;
-      let deleteItem = { originalIngre: tempArray[index - 1].ingredient, modIngre: tempArray[index].ingredientDetails, index: Number(index - 1) };
-      tempUndoArray.unshift(deleteItem);
-      tempArray.splice(index - 1, 2);
-      this.setState({ editArray: tempArray });
-      this.setState({ undoArray: tempUndoArray });
-      this.setState({ showUndo: true });
-      //Item Completely Removed
-      if (this.state.editArray.length === 0) {
-        this.props.navigation.goBack();
-      }
+  //Delete items from the state
+  handleDelete(index) {
+    let deleteItem = {
+      originalIngre: this.editArray[index - 1].ingredient,
+      modIngre: this.editArray[index].ingredientDetails,
+      index: Number(index - 1),
+    };
+    this.undoArray.unshift(deleteItem);
+    this.editArray.splice(index - 1, 2);
+    this.setState({ showUndo: true });
+    //Item Completely Removed
+    if (this.editArray.length === 0) {
+      this.props.navigation.goBack();
     }
-    //Undo button
-    handleUndo() {
-      let tempUndoArray = this.state.undoArray;
-      let tempArray = this.state.editArray;
-      let undoItem = tempUndoArray[0];
-      tempUndoArray.splice(0, 1);
-      if (tempUndoArray.length === 0) {
-        this.setState({ showUndo: false });
-      }
-      //Add items back into the list
-      let originalItem = {}
-      originalItem.ingredient = undoItem.originalIngre;
-      let modItem = {}
-      modItem.ingredientDetails = undoItem.modIngre;
-      tempArray.splice(undoItem.index, 0, modItem);
-      tempArray.splice(undoItem.index, 0, originalItem);
-      this.setState({ editArray: tempArray });
-      this.setState({ undoArray: tempUndoArray });
+  }
+  //Undo button
+  handleUndo() {
+    let undoItem = this.undoArray[0];
+    this.undoArray.splice(0, 1);
+    if (this.undoArray.length === 0) {
+      this.setState({ showUndo: false });
     }
+    //Add items back into the list
+    let originalItem = {};
+    originalItem.ingredient = undoItem.originalIngre;
+    let modItem = {};
+    modItem.ingredientDetails = undoItem.modIngre;
+    this.editArray.splice(undoItem.index, 0, modItem);
+    this.editArray.splice(undoItem.index, 0, originalItem);
+  }
   render() {
     return (
       <KeyboardAvoidingView
@@ -232,24 +229,28 @@ export default class ConfirmItemModal extends Component {
       >
         <View style={styles.container}>
           <View style={styles.headerBar}>
-          <View style={styles.rowView}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => { this.props.navigation.goBack() }}
-            >
-              <MaterialCommunityIcons name="close" size={35} color="#CCC" />
-            </TouchableOpacity>
-            {(this.state.showUndo) ?
+            <View style={styles.rowView}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  this.props.navigation.goBack();
+                }}
+              >
+                <MaterialCommunityIcons name="close" size={35} color="#CCC" />
+              </TouchableOpacity>
+              {this.state.showUndo ? (
                 <TouchableOpacity
                   onPress={() => this.handleUndo()}
                   style={styles.undoButton}
                 >
                   {/* <MaterialIcons name="undo" size={35} color="dodgerblue" /> */}
-                  <MaterialCommunityIcons name="undo-variant" size={35} color="dodgerblue" />
+                  <MaterialCommunityIcons
+                    name="undo-variant"
+                    size={35}
+                    color="dodgerblue"
+                  />
                 </TouchableOpacity>
-                :
-                null
-              }
+              ) : null}
             </View>
             <View style={styles.rowView}>
               <Text style={styles.headerText}>Confirm Ingredients</Text>
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   originalCardText: {
-    color: "#696969"
+    color: "#696969",
   },
   rowView: {
     flexDirection: "row",
@@ -338,14 +339,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     justifyContent: "flex-end",
     alignSelf: "center",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
   },
   undoButton: {
     flex: 1,
     marginHorizontal: 10,
     marginTop: 5,
     justifyContent: "flex-start",
-    alignItems: "flex-end"
+    alignItems: "flex-end",
   },
   textInput: {
     height: 30,
@@ -373,5 +374,5 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     paddingHorizontal: 5,
-  }
+  },
 });
