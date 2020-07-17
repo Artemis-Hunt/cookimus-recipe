@@ -75,7 +75,7 @@ const editCard = (icon, title, amounts, units, item, itemKey, handlenameupdate, 
         value={newName}
         onChangeText={(text) => {
           setNewName(text);
-          handlenameupdate(text, item);
+          handlenameupdate(item, text);
         }}
       />
       <TextInput
@@ -86,7 +86,7 @@ const editCard = (icon, title, amounts, units, item, itemKey, handlenameupdate, 
         value={`${newValue}`}
         onChangeText={(text) => {
           setNewValue(text);
-          handlequantityupdate(text, item);
+          handlequantityupdate(item, text);
         }}
       />
       <TouchableOpacity
