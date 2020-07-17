@@ -10,7 +10,8 @@ const frac = require('frac');
 //<MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;
 //<MaterialCommunityIcons name="check-circle-outline" size={17} color="green" />;
 
-const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal, index, forceRefresh, updateeditarray }) => {
+const Item = ({ title, amounts, units, mark, item, editState, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal, index, forceRefresh,  triggerediteditemsflag }) => {
+
   let fracArray = frac(amounts, 20, true);
   let final = '';
   //Conversion to fractions
@@ -32,9 +33,9 @@ const Item = ({ title, amounts, units, mark, editState, itemKey, handlenameupdat
 
   if (title === "Add Item...") {
     let addIcon = <Entypo name="plus" size={22} color="mediumseagreen" />;
-    return addItemCard(addIcon, title, index, forceRefresh, updateeditarray);
+    return addItemCard(addIcon, title, index, forceRefresh, triggerediteditemsflag);
   } else {
-    return (editState) ? editCard(icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal) : itemCard(icon, checkStyle, title, final, units);
+    return (editState) ? editCard(icon, title, amounts, units, item, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal) : itemCard(icon, checkStyle, title, final, units);
   }
 };
 
@@ -59,7 +60,7 @@ const itemCard = (icon, checkStyle, title, final, units) => {
 }
 
 //Render edit mode item card
-const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handlequantityupdate, selectUnitModal) => {
+const editCard = (icon, title, amounts, units, item, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal) => {
   const [newValue, setNewValue] = useState(amounts);
   const [newName, setNewName] = useState(title);
   return (
@@ -74,7 +75,7 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
         value={newName}
         onChangeText={(text) => {
           setNewName(text);
-          handlenameupdate(text, itemKey);
+          handlenameupdate(text, item);
         }}
       />
       <TextInput
@@ -85,12 +86,11 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
         value={`${newValue}`}
         onChangeText={(text) => {
           setNewValue(text);
-          handlequantityupdate(text, itemKey);
+          handlequantityupdate(text, item);
         }}
       />
       <TouchableOpacity
-        onPress={() => selectUnitModal(itemKey)}
-      >
+        onPress={() => showunitselectmodal(item)}>
         <View style={[styles.textInput, styles.unitBox]}>
           <Text>{units}</Text>
         </View>
@@ -100,11 +100,11 @@ const editCard = (icon, title, amounts, units, itemKey, handlenameupdate, handle
 }
 
 //Render card with add item functionality on press
-const addItemCard = (icon, title, index, forceRefresh, updateeditarray) => {
+const addItemCard = (icon, title, index, forceRefresh, triggerediteditemsflag) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        handleAddItem(index, updateeditarray);
+        handleAddItem(index, triggerediteditemsflag);
         forceRefresh();
       }}
     >
@@ -116,13 +116,13 @@ const addItemCard = (icon, title, index, forceRefresh, updateeditarray) => {
 }
 
 //Adds another row into the recipe list
-const handleAddItem = (index, updateeditarray) => {
+const handleAddItem = (index, triggerediteditemsflag) => {
   //Add item into second last slot of array before add item card
   let slotIndex = RecipeList[index].data.length - 1;
   let newItemObject = { name: "", amount: "", unit: "", unitDetails: { unit: "", class: 0 } };
   newItemObject.key = `${newItemObject.name}.${index}.${slotIndex}`;
   RecipeList[index].data.splice(slotIndex, 0, newItemObject);
-  updateeditarray(newItemObject.key);
+  triggerediteditemsflag();
 }
 
 const styles = StyleSheet.create({

@@ -43,7 +43,7 @@ const RenderItemCard = ({
             placeholder={item.ingredientDetails.name}
             value={item.ingredientDetails.name}
             onChangeText={(text) => {
-              handlenameupdate(text, index);
+              handlenameupdate(text, item);
             }}
           />
           <TextInput
@@ -52,13 +52,13 @@ const RenderItemCard = ({
             numeric
             value={`${item.ingredientDetails.amount}`}
             onChangeText={(text) => {
-              handlequantityupdate(text, index);
+              handlequantityupdate(text, item);
             }}
           />
           <TouchableOpacity
             onPress={() => {
               let unitClass = calldetermineclass(item.ingredientDetails.unit);
-              selectUnitModal(index, unitClass.unit);
+              selectUnitModal(item, unitClass.unit);
             }}
           >
             <View style={[styles.textInput, styles.unitBox]}>
@@ -85,6 +85,7 @@ export default class ConfirmItemModal extends Component {
       undoArray: [],
       showUndo: false,
     };
+    this.editArray = [];
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
@@ -156,8 +157,15 @@ export default class ConfirmItemModal extends Component {
         modItem.ingredientDetails = this.modIngredients[i];
         DATA.push(modItem);
       }
+//     for (let i = 0; i < this.originalIngredients.length; i++) {
+//       let originalItem = {}
+//       originalItem.ingredient = this.originalIngredients[i];
+//       this.editArray.push(originalItem);
+//       //Alternate
+//       let modItem = {}
+//       modItem.ingredientDetails = this.modIngredients[i];
+//       this.editArray.push(modItem);
     }
-    this.setState({ editArray: DATA });
   }
   //Call function to get the unit details of the item
   callDetermineClass(unit) {
@@ -174,19 +182,18 @@ export default class ConfirmItemModal extends Component {
     tempArray[index].ingredientDetails.amount = text;
     this.setState({ editArray: tempArray });
   }
-  handleUnitUpdate(unit, index) {
-    let tempArray = this.state.editArray;
+  handleUnitUpdate(item, unit) {
     //Read in as text - Remember to change to number when saving
     tempArray[index].ingredientDetails.unit = unit;
-    this.setState({ editArray: tempArray });
+    item.
   }
-  callUnitModal(key, unit) {
-    this.refs.unitselectconfirm.renderForConfirm(key, unit);
+  callUnitModal(item, unit) {
+    this.refs.unitselectconfirm.renderForConfirm(item, unit);
   }
   handleSubmitButton() {
     let ingredientArray = [];
     for (let i = 1; i < this.state.editArray.length; i += 2) {
-      ingredientArray.push(this.state.editArray[i].ingredientDetails);
+      ingredientArray.push(this.editArray[i].ingredientDetails);
     }
     AddRecipe(ingredientArray, this.title, this.url);
   }
@@ -259,7 +266,7 @@ export default class ConfirmItemModal extends Component {
             </View>
           </View>
           <FlatList
-            data={this.state.editArray}
+            data={this.editArray}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <RenderItemCard
