@@ -166,14 +166,6 @@ export default class ConfirmItemModal extends Component {
         modItem.ingredientDetails = this.modIngredients[i];
         this.editArray.push(modItem);
       }
-      //     for (let i = 0; i < this.originalIngredients.length; i++) {
-      //       let originalItem = {}
-      //       originalItem.ingredient = this.originalIngredients[i];
-      //       this.editArray.push(originalItem);
-      //       //Alternate
-      //       let modItem = {}
-      //       modItem.ingredientDetails = this.modIngredients[i];
-      //       this.editArray.push(modItem);
     }
   }
   //Call function to get the unit details of the item
