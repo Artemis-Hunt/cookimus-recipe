@@ -51,14 +51,14 @@ export default class UnitSelectModal extends Component {
     //Render Modal when called from grocery list
     renderModal = (item) => {
         this.itemToConfirmUnits = item;
-        let itemUnit = item.unit;
+        let itemUnit = item.unitDetails.unit;
         //Determine current selected Unit
         if (itemUnit === '') {
             selected = 'No Units';
         } else {
             for (let unitsEntry of UnitsTable) {
                 if (itemUnit.includes(unitsEntry.title)) {
-                    selected = item.title;
+                    selected = unitsEntry.title;
                     break;
                 }
             }

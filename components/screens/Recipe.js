@@ -130,8 +130,8 @@ export default Recipe;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 20,
-    //backgroundColor: "#f9f9f9"
+    paddingHorizontal: 20,
+    backgroundColor: "#f9f9f9"
   },
   loading: {
     flex: 1,

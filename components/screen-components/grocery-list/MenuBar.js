@@ -7,19 +7,19 @@ const menuBar = ({ buttonClick, togglemenu, toggleedit, editState }) => {
     //Swap style when edit mode is selected
     let iconStyle = (editState) ? [styles.iconSelected] : [styles.icon];
     let iconColor = (editState) ? "white" : "dodgerblue";
+    let toggleColor = (editState) ? "#CCC" : "dodgerblue";
     return (
         <View style={styles.outerBorder1}>
             <View style={styles.menuBar}>
                 <Text style={[styles.titleText]}>Groceries  <FontAwesome5 name="shopping-basket" size={24} color="forestgreen" /></Text>
                 <View style={styles.iconBar}>
-                    {(editState) ? null :
-                        <TouchableOpacity
-                            style={styles.icon}
-                            onPress={togglemenu}
-                        >
-                            <AntDesign name="retweet" size={24} color="dodgerblue" />
-                        </TouchableOpacity>
-                    }
+                    <TouchableOpacity
+                        style={styles.icon}
+                        onPress={togglemenu}
+                        disabled={editState}
+                    >
+                        <AntDesign name="retweet" size={24} color={toggleColor} />
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         style={iconStyle}

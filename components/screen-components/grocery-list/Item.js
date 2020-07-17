@@ -10,7 +10,7 @@ const frac = require('frac');
 //<MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;
 //<MaterialCommunityIcons name="check-circle-outline" size={17} color="green" />;
 
-const Item = ({ title, amounts, units, mark, item, editState, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal, index, forceRefresh,  triggerediteditemsflag }) => {
+const Item = ({ title, amounts, units, mark, item, editState, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal, index, forceRefresh, triggerediteditemsflag, editmodedelete }) => {
 
   let fracArray = frac(amounts, 20, true);
   let final = '';
@@ -26,16 +26,14 @@ const Item = ({ title, amounts, units, mark, item, editState, itemKey, handlenam
       final = fracArray[0].toString() + '"' + fracArray[1].toString() + '/' + fracArray[2].toString();
     }
   }
-  let icon =
-    (editState) ? <MaterialIcons name="edit" size={24} color="cornflowerblue" /> :
-      (mark === undefined || mark === false) ? <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={17} color="#ccc" /> : <MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;;
+  let icon = (mark === undefined || mark === false) ? <MaterialCommunityIcons name="checkbox-blank-circle-outline" size={17} color="#ccc" /> : <MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;;
   let checkStyle = (mark === undefined || mark === false) ? [styles.ingredientText, styles.text] : [styles.ingredientValueText, styles.text];
 
   if (title === "Add Item...") {
     let addIcon = <Entypo name="plus" size={22} color="mediumseagreen" />;
     return addItemCard(addIcon, title, index, forceRefresh, triggerediteditemsflag);
   } else {
-    return (editState) ? editCard(icon, title, amounts, units, item, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal) : itemCard(icon, checkStyle, title, final, units);
+    return (editState) ? editCard(title, amounts, units, item, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal, editmodedelete, forceRefresh) : itemCard(icon, checkStyle, title, final, units);
   }
 };
 
@@ -50,7 +48,7 @@ const itemCard = (icon, checkStyle, title, final, units) => {
         <View style={{ marginTop: 3 }}>
           {icon}
         </View>
-        <Text style={[checkStyle, { marginHorizontal: 15 }]}>{title}</Text>
+        <Text style={[checkStyle, { marginHorizontal: 10 }]}>{title}</Text>
       </View>
       <Text style={[styles.ingredientValueText, styles.text]}>
         {final} {units}
@@ -60,14 +58,22 @@ const itemCard = (icon, checkStyle, title, final, units) => {
 }
 
 //Render edit mode item card
-const editCard = (icon, title, amounts, units, item, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal) => {
+const editCard = (title, amounts, units, item, itemKey, handlenameupdate, handlequantityupdate, showunitselectmodal, editmodedelete, forceRefresh) => {
   const [newValue, setNewValue] = useState(amounts);
   const [newName, setNewName] = useState(title);
   return (
     < View
       style={styles.editMode}
     >
-      {icon}
+      <TouchableOpacity
+        onPress={() => {
+          editmodedelete(item)
+          forceRefresh();
+        }}
+        style={styles.deleteIcon}
+      >
+        <MaterialCommunityIcons name="delete" size={26} color={(item.toDelete) ? "crimson" : "#ccc"} />
+      </TouchableOpacity>
       <TextInput
         style={[styles.textInput, { flex: 6 }]}
         //width={140}
@@ -172,12 +178,17 @@ const styles = StyleSheet.create({
   editMode: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 10,
+    paddingVertical: 10,
+    paddingRight: 10,
     backgroundColor: "white",
   },
   unitBox: {
     width: 90,
   },
+  deleteIcon: {
+    paddingLeft: 5,
+    justifyContent: "center",
+  }
 });
 
 export default Item;

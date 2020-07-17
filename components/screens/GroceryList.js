@@ -19,6 +19,7 @@ import UnitSelectModal from "../screen-components/grocery-list/UnitSelectModal.j
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
+import SavedRecipes from "../../data/SavedRecipes.js"
 import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
 import HashFunctions from "../screen-components/grocery-list/HashFunctions.js";
@@ -64,6 +65,7 @@ export default class GroceryList extends Component {
     this.handleQuantityUpdate = this.handleQuantityUpdate.bind(this);
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
     this.triggerEditedItemsFlag = this.triggerEditedItemsFlag.bind(this);
+    this.toggleEditModeDelete = this.toggleEditModeDelete.bind(this);
     this.handleQuantity = this.handleQuantity.bind(this);
     this.showModal = this.showModal.bind(this);
     this.showUnitSelectModal = this.showUnitSelectModal.bind(this);
@@ -128,7 +130,7 @@ export default class GroceryList extends Component {
     this.setState({
       showComponent: true,
     });
-    if(this.state.editMode === true) {
+    if (this.state.editMode === true) {
       this.toggleEdit();
     }
   }
@@ -160,10 +162,31 @@ export default class GroceryList extends Component {
       }
       //Edits were made
       if (this.editedItemsFlag === true) {
+        //Clear all items whose names that are blank
+        for (let i = 0; i < RecipeList.length; i++) {
+          for (let j = RecipeList[i].data.length - 1; j >= 0; j--) {
+            if (RecipeList[i].data[j].name === "" || RecipeList[i].data[j].toDelete === true) {
+              RecipeList[i].data.splice(j, 1);
+            }
+          }
+        }
+        //Remove all empty recipes
+        for (let i = RecipeList.length - 1; i >= 0; i--) {
+          if (RecipeList[i].data.length === 0) {
+            for (let j = 0; j < SavedRecipes.length; j++) {
+              if (SavedRecipes[j].title === RecipeList[i].title) {
+                SavedRecipes.splice(j, 1);
+                break;
+              }
+            }
+            RecipeList.splice(i, 1);
+          }
+        }
         //Redo combine function, regenerate all keys
         this.callClearHashTable();
         this.callCombineFunction(RecipeList.length);
         this.callBulkGenerate(0);
+        this.oldLength = RecipeList.length;
         //Reset EditList
         this.editedItemsFlag = false;
         verifyFlag = false;
@@ -228,17 +251,11 @@ export default class GroceryList extends Component {
 
   //Handle Updating of variables in edit mode
   handleNameUpdate = (item, text) => {
-    //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-    //let trimmedText = text.trim();
     item.name = text.trim();
-    //RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
     this.triggerEditedItemsFlag();
   }
   handleQuantityUpdate = (item, text) => {
-    //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-    //Number has to be in decimal for this function to work
     item.amount = Number(text);
-    // RecipeList[recipeIndex].data[ingrIndex].amount = Number(text);
     this.triggerEditedItemsFlag();
   }
   handleUnitUpdate = (item, unit) => {
@@ -249,10 +266,14 @@ export default class GroceryList extends Component {
     item.unitDetails.unit = unit;
     this.triggerEditedItemsFlag();
   }
+  toggleEditModeDelete = (item) => {
+    item.toDelete = !item.toDelete;
+    this.triggerEditedItemsFlag();
+  }
 
   triggerEditedItemsFlag = () => {
-    if(this.editedItemsFlag === false) {
-      this.editedItemsFlag === true
+    if (this.editedItemsFlag === false) {
+      this.editedItemsFlag = true;
     }
   }
 
@@ -380,6 +401,7 @@ export default class GroceryList extends Component {
                     index={item.index}
                     forceRefresh={this.forceUpdate}
                     triggerediteditemsflag={this.triggerEditedItemsFlag}
+                    editmodedelete={this.toggleEditModeDelete}
                   />
                 </View>
               )}
@@ -419,6 +441,7 @@ export default class GroceryList extends Component {
                       index={item.index}
                       forceRefresh={this.forceUpdate}
                       triggerediteditemsflag={this.triggerEditedItemsFlag}
+                      editmodedelete={this.toggleEditModeDelete}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -458,6 +481,7 @@ export default class GroceryList extends Component {
                         index={item.index}
                         forceRefresh={this.forceUpdate}
                         triggerediteditemsflag={this.triggerEditedItemsFlag}
+                        editmodedelete={this.toggleEditModeDelete}
                       />
                     </View>
                   </TouchableWithoutFeedback>
@@ -524,6 +548,7 @@ GroceryList.contextType = UserContext;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F9F9F9",
   },
   //Recipe Names
   header: {
