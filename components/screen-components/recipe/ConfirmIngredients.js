@@ -102,8 +102,8 @@ export default class ConfirmItemModal extends Component {
     this.callDetermineClass = this.callDetermineClass.bind(this);
     this.callUnitModal = this.callUnitModal.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.originalIngredients = this.props.route.params.originalIngredients;
-    this.modIngredients = this.props.route.params.modIngredients;
+    this.originalIngredients = JSON.parse(JSON.stringify(this.props.route.params.originalIngredients));
+    this.modIngredients = JSON.parse(JSON.stringify(this.props.route.params.modIngredients));
     this.title = this.props.route.params.recipeTitle;
     this.url = this.props.route.params.recipeURL;
   }
@@ -186,7 +186,7 @@ export default class ConfirmItemModal extends Component {
   }
   handleSubmitButton() {
     let ingredientArray = [];
-    for (let i = 1; i < this.state.editArray.length; i += 2) {
+    for (let i = 1; i < this.editArray.length; i += 2) {
       ingredientArray.push(this.editArray[i].ingredientDetails);
     }
     AddRecipe(ingredientArray, this.title, this.url);
