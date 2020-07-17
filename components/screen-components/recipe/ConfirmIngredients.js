@@ -88,9 +88,8 @@ export default class ConfirmItemModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editArray: [],
-      undoArray: [],
       showUndo: false,
+      refresh: false,
     };
     //Variables to store ingredients to be edited
     this.editArray = [];
@@ -168,18 +167,24 @@ export default class ConfirmItemModal extends Component {
       }
     }
   }
+  refreshPage() {
+    this.setState({ refresh: !this.state.refresh})
+  }
   //Call function to get the unit details of the item
   callDetermineClass(unit) {
     return this.refs.hashfunctions.determineClass(unit);
   }
   handleNameUpdate(item, text) {
     item.ingredientDetails.name = text;
+    this.refreshPage();
   }
   handleQuantityUpdate(item, text) {
     item.ingredientDetails.amount = Number(text);
+    this.refreshPage();
   }
   handleUnitUpdate(item, unit) {
     item.ingredientDetails.unit = unit;
+    this.refreshPage();
   }
   callUnitModal(item, unit) {
     this.refs.unitselectconfirm.renderForConfirm(item, unit);
@@ -206,7 +211,7 @@ export default class ConfirmItemModal extends Component {
       this.props.navigation.goBack();
     }
   }
-  //Undo button
+  //Undo button - Need to update state to refresh
   handleUndo() {
     let undoItem = this.undoArray[0];
     this.undoArray.splice(0, 1);
@@ -220,6 +225,7 @@ export default class ConfirmItemModal extends Component {
     modItem.ingredientDetails = undoItem.modIngre;
     this.editArray.splice(undoItem.index, 0, modItem);
     this.editArray.splice(undoItem.index, 0, originalItem);
+    this.refreshPage();
   }
   render() {
     return (
