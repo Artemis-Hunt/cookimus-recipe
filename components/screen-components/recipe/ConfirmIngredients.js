@@ -105,14 +105,57 @@ export default class ConfirmItemModal extends Component {
   //Build the data list with alternating original ingredients and modded ingredients
   buildDataArray() {
     DATA = [];
-    for (let i = 0; i < this.originalIngredients.length; i++) {
-      let originalItem = {}
-      originalItem.ingredient = this.originalIngredients[i];
-      DATA.push(originalItem);
-      //Alternate
-      let modItem = {}
-      modItem.ingredientDetails = this.modIngredients[i];
-      DATA.push(modItem);
+    let originalLength = this.originalIngredients.length;
+    let modLength = this.modIngredients.length;
+
+    //Handle items with "And", excluding half and half
+    if (modLength > originalLength) {
+      //In case of multiple "ands"
+      let modCount = 0;
+      for (let i = 0; i < originalLength; i++) {
+        let originalItem = {};
+        let modItem = {};
+        let itemFound = false; //True when "and" is found
+        let searchArray = this.originalIngredients[i].split(" ");
+        for (let splitWord of searchArray) {
+          if (splitWord === 'And' || splitWord === 'and') {
+            itemFound = true;
+            break;
+          }
+        }
+        if (itemFound) {
+          originalItem.ingredient = this.originalIngredients[i];
+          DATA.push(originalItem);
+          modItem.ingredientDetails = this.modIngredients[modCount];
+          DATA.push(modItem);
+          modCount++;
+          originalItem = {};
+          originalItem.ingredient = "";
+          DATA.push(originalItem);
+          modItem = {};
+          modItem.ingredientDetails = this.modIngredients[modCount];
+          DATA.push(modItem);
+          modCount++;
+          continue;
+        }
+        originalItem.ingredient = this.originalIngredients[i];
+        DATA.push(originalItem);
+        //Alternate
+        modItem.ingredientDetails = this.modIngredients[modCount];
+        DATA.push(modItem);
+        modCount++;
+      }
+    } else {
+      //Normal build
+      for (let i = 0; i < originalLength; i++) {
+        let originalItem = {};
+        let modItem = {};
+        originalItem.ingredient = this.originalIngredients[i];
+        DATA.push(originalItem);
+        //Alternate
+        modItem.ingredientDetails = this.modIngredients[i];
+        DATA.push(modItem);
+      }
     }
     this.setState({ editArray: DATA });
   }
@@ -196,7 +239,7 @@ export default class ConfirmItemModal extends Component {
               >
                 <MaterialCommunityIcons name="close" size={35} color="#CCC" />
               </TouchableOpacity>
-              { (this.state.showUndo) ?
+              {(this.state.showUndo) ?
                 <TouchableOpacity
                   onPress={() => this.handleUndo()}
                   style={styles.undoButton}
