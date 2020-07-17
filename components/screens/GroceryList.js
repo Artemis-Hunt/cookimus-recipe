@@ -488,7 +488,7 @@ export default class GroceryList extends Component {
                           await groceryListDelete(title);
                           this.forceUpdate();
                         }}
-                        style={styles.header}
+                        style={[styles.header, styles.text]}
                       >
                         {title}
                       </Text>

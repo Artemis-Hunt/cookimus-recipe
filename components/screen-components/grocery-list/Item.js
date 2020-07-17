@@ -5,7 +5,8 @@ import RecipeList from '../../../data/RecipeList'
 const frac = require('frac');
 
 //Unused Icons
-//(mark === undefined || mark === false) ? <FontAwesome name="circle-thin" size={17} color="#ccc" /> : <FontAwesome name="check" size={14} color="green" />;
+//<FontAwesome name="circle-thin" size={17} color="#ccc" />;
+//<FontAwesome name="check" size={14} color="green" />;
 //<MaterialCommunityIcons name="checkbox-marked-circle" size={17} color="green" />;
 //<MaterialCommunityIcons name="check-circle-outline" size={17} color="green" />;
 
