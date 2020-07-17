@@ -227,14 +227,14 @@ export default class GroceryList extends Component {
   }
 
   //Handle Updating of variables in edit mode
-  handleNameUpdate = (text, item) => {
+  handleNameUpdate = (item, text) => {
     //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     //let trimmedText = text.trim();
     item.name = text.trim();
     //RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
     this.triggerEditedItemsFlag();
   }
-  handleQuantityUpdate = (text, item) => {
+  handleQuantityUpdate = (item, text) => {
     //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     //Number has to be in decimal for this function to work
     item.amount = Number(text);
