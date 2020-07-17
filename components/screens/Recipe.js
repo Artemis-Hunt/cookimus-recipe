@@ -15,7 +15,6 @@ import LoadingIndicator from "../generic/LoadingIndicator";
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
-//import SaveRecipe from "../screen-components/recipe/SaveRecipe.js";
 import SavedRecipe from "../../data/SavedRecipes.js";
 
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";

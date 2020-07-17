@@ -8,7 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Entypo, MaterialIcons } from "@expo/vector-icons";
 
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js";
 import HashFunctions from "../grocery-list/HashFunctions.js";
@@ -24,6 +24,7 @@ const RenderItemCard = ({
   handlequantityupdate,
   selectUnitModal,
   calldetermineclass,
+  handledelete,
 }) => {
   if (index % 2 === 0) {
     //Print out original recipe
@@ -64,6 +65,12 @@ const RenderItemCard = ({
               <Text>{item.ingredientDetails.unit}</Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handledelete(index)}
+          >
+            <Entypo name="circle-with-cross" size={26} color="crimson" />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -75,6 +82,8 @@ export default class ConfirmItemModal extends Component {
     super(props);
     this.state = {
       editArray: [],
+      undoArray: [],
+      showUndo: false,
     };
     this.editArray = [];
     this.handleNameUpdate = this.handleNameUpdate.bind(this);
@@ -82,6 +91,7 @@ export default class ConfirmItemModal extends Component {
     this.handleUnitUpdate = this.handleUnitUpdate.bind(this);
     this.callDetermineClass = this.callDetermineClass.bind(this);
     this.callUnitModal = this.callUnitModal.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.originalIngredients = this.props.route.params.originalIngredients;
     this.modIngredients = this.props.route.params.modIngredients;
     this.title = this.props.route.params.recipeTitle;
@@ -95,14 +105,66 @@ export default class ConfirmItemModal extends Component {
   }
   //Build the data list with alternating original ingredients and modded ingredients
   buildDataArray() {
-    for (let i = 0; i < this.originalIngredients.length; i++) {
-      let originalItem = {}
-      originalItem.ingredient = this.originalIngredients[i];
-      this.editArray.push(originalItem);
-      //Alternate
-      let modItem = {}
-      modItem.ingredientDetails = this.modIngredients[i];
-      this.editArray.push(modItem);
+    DATA = [];
+    let originalLength = this.originalIngredients.length;
+    let modLength = this.modIngredients.length;
+
+    //Handle items with "And", excluding half and half
+    if (modLength > originalLength) {
+      //In case of multiple "ands"
+      let modCount = 0;
+      for (let i = 0; i < originalLength; i++) {
+        let originalItem = {};
+        let modItem = {};
+        let itemFound = false; //True when "and" is found
+        let searchArray = this.originalIngredients[i].split(" ");
+        for (let splitWord of searchArray) {
+          if (splitWord === 'And' || splitWord === 'and') {
+            itemFound = true;
+            break;
+          }
+        }
+        if (itemFound) {
+          originalItem.ingredient = this.originalIngredients[i];
+          DATA.push(originalItem);
+          modItem.ingredientDetails = this.modIngredients[modCount];
+          DATA.push(modItem);
+          modCount++;
+          originalItem = {};
+          originalItem.ingredient = "";
+          DATA.push(originalItem);
+          modItem = {};
+          modItem.ingredientDetails = this.modIngredients[modCount];
+          DATA.push(modItem);
+          modCount++;
+          continue;
+        }
+        originalItem.ingredient = this.originalIngredients[i];
+        DATA.push(originalItem);
+        //Alternate
+        modItem.ingredientDetails = this.modIngredients[modCount];
+        DATA.push(modItem);
+        modCount++;
+      }
+    } else {
+      //Normal build
+      for (let i = 0; i < originalLength; i++) {
+        let originalItem = {};
+        let modItem = {};
+        originalItem.ingredient = this.originalIngredients[i];
+        DATA.push(originalItem);
+        //Alternate
+        modItem.ingredientDetails = this.modIngredients[i];
+        DATA.push(modItem);
+      }
+//     for (let i = 0; i < this.originalIngredients.length; i++) {
+//       let originalItem = {}
+//       originalItem.ingredient = this.originalIngredients[i];
+//       this.editArray.push(originalItem);
+//       //Alternate
+//       let modItem = {}
+//       modItem.ingredientDetails = this.modIngredients[i];
+//       this.editArray.push(modItem);
     }
   }
   //Call function to get the unit details of the item
@@ -135,6 +197,40 @@ export default class ConfirmItemModal extends Component {
     }
     AddRecipe(ingredientArray, this.title, this.url);
   }
+  //Delete items from the state
+  handleDelete(index) {
+    let tempArray = this.state.editArray;
+    let tempUndoArray = this.state.undoArray;
+    let deleteItem = { originalIngre: tempArray[index - 1].ingredient, modIngre: tempArray[index].ingredientDetails, index: Number(index - 1) };
+    tempUndoArray.unshift(deleteItem);
+    tempArray.splice(index - 1, 2);
+    this.setState({ editArray: tempArray });
+    this.setState({ undoArray: tempUndoArray });
+    this.setState({ showUndo: true });
+    //Item Completely Removed
+    if (this.state.editArray.length === 0) {
+      this.props.navigation.goBack();
+    }
+  }
+  //Undo button
+  handleUndo() {
+    let tempUndoArray = this.state.undoArray;
+    let tempArray = this.state.editArray;
+    let undoItem = tempUndoArray[0];
+    tempUndoArray.splice(0, 1);
+    if (tempUndoArray.length === 0) {
+      this.setState({ showUndo: false });
+    }
+    //Add items back into the list
+    let originalItem = {}
+    originalItem.ingredient = undoItem.originalIngre;
+    let modItem = {}
+    modItem.ingredientDetails = undoItem.modIngre;
+    tempArray.splice(undoItem.index, 0, modItem);
+    tempArray.splice(undoItem.index, 0, originalItem);
+    this.setState({ editArray: tempArray });
+    this.setState({ undoArray: tempUndoArray });
+  }
   render() {
     return (
       <KeyboardAvoidingView
@@ -143,12 +239,25 @@ export default class ConfirmItemModal extends Component {
       >
         <View style={styles.container}>
           <View style={styles.headerBar}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => { this.props.navigation.goBack() }}
-            >
-              <MaterialCommunityIcons name="close" size={35} color="#CCC" />
-            </TouchableOpacity>
+            <View style={styles.rowView}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => { this.props.navigation.goBack() }}
+              >
+                <MaterialCommunityIcons name="close" size={35} color="#CCC" />
+              </TouchableOpacity>
+              {(this.state.showUndo) ?
+                <TouchableOpacity
+                  onPress={() => this.handleUndo()}
+                  style={styles.undoButton}
+                >
+                  {/* <MaterialIcons name="undo" size={35} color="dodgerblue" /> */}
+                  <MaterialCommunityIcons name="undo-variant" size={35} color="dodgerblue" />
+                </TouchableOpacity>
+                :
+                null
+              }
+            </View>
             <View style={styles.rowView}>
               <Text style={styles.headerText}>Confirm Ingredients</Text>
               <View style={{ marginTop: 3 }}>
@@ -167,6 +276,7 @@ export default class ConfirmItemModal extends Component {
                 handlequantityupdate={this.handleQuantityUpdate}
                 selectUnitModal={this.callUnitModal}
                 calldetermineclass={this.callDetermineClass}
+                handledelete={this.handleDelete}
               />
             )}
           />
@@ -195,7 +305,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 5,
     backgroundColor: "#F9F9F9",
-    //Temporary Margin - Remove when nav bar fixed
     flex: 1,
   },
   headerText: {
@@ -227,13 +336,22 @@ const styles = StyleSheet.create({
   },
   moddedCard: {
     flex: 1,
-    paddingVertical: 5,
+    paddingBottom: 10,
   },
   closeButton: {
+    flex: 1,
     marginHorizontal: 10,
     marginTop: 5,
     justifyContent: "flex-end",
     alignSelf: "center",
+    alignItems: "flex-start"
+  },
+  undoButton: {
+    flex: 1,
+    marginHorizontal: 10,
+    marginTop: 5,
+    justifyContent: "flex-start",
+    alignItems: "flex-end"
   },
   textInput: {
     height: 30,
@@ -245,7 +363,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   unitBox: {
-    width: 100,
+    width: 90,
   },
   confirmButton: {
     paddingVertical: 15,
@@ -258,5 +376,8 @@ const styles = StyleSheet.create({
   },
   editView: {
     flex: 1,
+  },
+  deleteButton: {
+    paddingHorizontal: 5,
   }
 });

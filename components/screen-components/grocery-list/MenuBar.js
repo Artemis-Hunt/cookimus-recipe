@@ -10,14 +10,16 @@ const menuBar = ({ buttonClick, togglemenu, toggleedit, editState }) => {
     return (
         <View style={styles.outerBorder1}>
             <View style={styles.menuBar}>
-                <Text style={[styles.titleText]}>Grocery List  <FontAwesome5 name="shopping-basket" size={24} color="forestgreen" /></Text>
+                <Text style={[styles.titleText]}>Groceries  <FontAwesome5 name="shopping-basket" size={24} color="forestgreen" /></Text>
                 <View style={styles.iconBar}>
-                    <TouchableOpacity
-                        style={styles.icon}
-                        onPress={togglemenu}
-                    >
-                        <AntDesign name="retweet" size={25} color="dodgerblue" />
-                    </TouchableOpacity>
+                    {(editState) ? null :
+                        <TouchableOpacity
+                            style={styles.icon}
+                            onPress={togglemenu}
+                        >
+                            <AntDesign name="retweet" size={24} color="dodgerblue" />
+                        </TouchableOpacity>
+                    }
 
                     <TouchableOpacity
                         style={iconStyle}
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "baseline",
+        alignItems: "center",
         borderBottomWidth: 5,
         borderBottomColor: "teal",
     },
