@@ -111,7 +111,6 @@ export default class GroceryList extends Component {
   componentWillUnmount() {
     //Unsubscribe event handler
     this.unsubscribeTabPress();
-    //this.unsubscribeSnapshot(); this.unsubscribeSnapshot =
   }
 
   //Fetch from Firebase - not in use
@@ -233,23 +232,21 @@ export default class GroceryList extends Component {
     //let trimmedText = text.trim();
     item.name = text.trim();
     //RecipeList[recipeIndex].data[ingrIndex].name = trimmedText;
-    //this.triggerEditedItemsFlag(itemKey);
+    this.triggerEditedItemsFlag();
   }
   handleQuantityUpdate = (text, item) => {
     //let [name, recipeIndex, ingrIndex] = itemKey.split(".");
     //Number has to be in decimal for this function to work
     item.amount = Number(text);
     // RecipeList[recipeIndex].data[ingrIndex].amount = Number(text);
-    // this.triggerEditedItemsFlag(itemKey);
+    this.triggerEditedItemsFlag();
   }
-  handleUnitUpdate = (newUnit, itemKey) => {
-    let unit = newUnit;
+  handleUnitUpdate = (item, unit) => {
     if (unit === "No Units") {
       unit = "";
     }
-    let [name, recipeIndex, ingrIndex] = itemKey.split(".");
-    RecipeList[recipeIndex].data[ingrIndex].unit = unit;
-    RecipeList[recipeIndex].data[ingrIndex].unitDetails.unit = unit;
+    item.unit = unit;
+    item.unitDetails.unit = unit;
     this.triggerEditedItemsFlag();
   }
 

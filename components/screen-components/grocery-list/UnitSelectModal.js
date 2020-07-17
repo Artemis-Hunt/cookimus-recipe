@@ -43,12 +43,14 @@ export default class UnitSelectModal extends Component {
             refresh: false,
             tempUnit: "",
         }
+        this.itemToConfirmUnits = {}; //Reference to ingredient oject to be modified
     }
     forceUpdate() {
         this.setState({ refresh: !this.state.refresh })
     }
     //Render Modal when called from grocery list
     renderModal = (item) => {
+        this.itemToConfirmUnits = item;
         let itemUnit = item.unit;
         //Determine current selected Unit
         if (itemUnit === '') {
@@ -64,15 +66,15 @@ export default class UnitSelectModal extends Component {
         this.refs.unitselectmodal.open();
     }
     //Render Modal when called from recipe view
-    renderForConfirm = (key, unit) => {
+    renderForConfirm = (item, unit) => {
+        this.itemToConfirmUnits = item;
         //Determine current selected Unit
-        itemKey = key;
         if (unit === '') {
             selected = 'No Units';
         } else {
-            for (let item of UnitsTable) {
-                if (unit.includes(item.title)) {
-                    selected = item.title;
+            for (let unitsEntry of UnitsTable) {
+                if (unit.includes(unitsEntry.title)) {
+                    selected = unitsEntry.title;
                     break;
                 }
             }
@@ -90,7 +92,7 @@ export default class UnitSelectModal extends Component {
         selected = title;
         this.forceUpdate();
         //Change units in recipeList
-        this.props.unitUpdate(title, itemKey);
+        this.props.unitUpdate(item, customUnit);
         //alert("Updated: " + selected);
         this.refs.unitselectmodal.close();
     }
@@ -98,10 +100,10 @@ export default class UnitSelectModal extends Component {
         this.setState({ tempUnit: text })
     }
     //Update unit to be new custom unit
-    submitCustomUnit = () => {
+    submitCustomUnit = (item) => {
         let customUnit = this.state.tempUnit;
         customUnit = customUnit.trim();
-        this.props.unitUpdate(customUnit, itemKey)
+        this.props.unitUpdate(item, customUnit)
     }
     render() {
         return (
@@ -143,7 +145,7 @@ export default class UnitSelectModal extends Component {
                         <TouchableOpacity
                             style={styles.saveButton}
                             onPress={() => {
-                                this.submitCustomUnit();
+                                this.submitCustomUnit(this.itemToConfirmUnits);
                                 this.refs.unitselectmodal.close();
                             }}
                         >
