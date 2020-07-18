@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { AppRegistry, FlatList, StyleSheet, Text, View, Dimensions, TouchableOpacity, Button } from 'react-native';
 import Modal from 'react-native-modalbox';
+import { AntDesign } from '@expo/vector-icons';
 
 import RecipeList from '../../../data/RecipeList.js'
 import HashTable from '../../../data/HashTable.js'
@@ -8,7 +9,7 @@ import HashTable from '../../../data/HashTable.js'
 let screen = Dimensions.get('window');
 let previous = 0;
 let selected;
-let selectedText='';
+let selectedText = '';
 let recipeIndex = 0;
 
 const ArraySize = 200;
@@ -150,7 +151,12 @@ export default class PortionModal extends Component {
                 backdrop={true}
             >
                 <View style={styles.contents}>
-                    <Text style={styles.headerText}>Serving Portions</Text>
+                    <View style={styles.headerBar}>
+                        <Text style={styles.headerText}>Serving Portions </Text>
+                        <View style={styles.iconStyle}>
+                            <AntDesign name="piechart" size={20} color="#ccc" />
+                        </View>
+                    </View>
                     <FlatList
                         scrollEnabled={false}
                         showsVerticalScrollIndicator={false}
@@ -233,4 +239,13 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: "SourceSansPro",
     },
+    headerBar: {
+        borderBottomWidth: 2,
+        borderBottomColor: "cornflowerblue",
+        flexDirection: "row",
+    },
+    iconStyle: {
+        justifyContent: "center",
+        marginBottom: 7,
+    }
 })

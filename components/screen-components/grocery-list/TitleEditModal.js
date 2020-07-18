@@ -67,7 +67,7 @@ export default class TitleEditModal extends Component {
                     >
                         <View style={{ flexDirection: "row", justifyContent: 'center' }}>
                             <Text style={styles.saveButtonText}>Save </Text>
-                            <Entypo name="save" size={19} color="dodgerblue" />
+                            <Entypo name="save" size={19} color="white" />
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         shadowRadius: 10,
         width: screen.width - 80,
-        height: 200,
+        height: 225,
         alignItems: 'center',
     },
     contents: {
@@ -116,9 +116,11 @@ const styles = StyleSheet.create({
     },
     iconStyle: {
         paddingHorizontal: 10,
+        justifyContent: "center",
+        marginBottom: 4,
     },
     textInput: {
-        height: 35,
+        height: 30,
         padding: 5,
         borderColor: "#CCC",
         borderWidth: 1,
@@ -128,12 +130,18 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     saveButton: {
-        //paddingVertical: 5,
-        marginBottom: 25,
+        marginTop: 10,
+        marginBottom: 15,
+        backgroundColor: "dodgerblue",
+        height: 40,
+        width: screen.width - 200,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     saveButtonText: {
         fontSize: 18,
-        color: "dodgerblue",
+        color: "white",
     },
     deleteButtonText: {
         fontSize: 17,
