@@ -11,6 +11,7 @@ import Settings from "../screens/Settings";
 import RecipeList from "../../data/RecipeList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 import ConfirmIngredients from "../screen-components/recipe/ConfirmIngredients";
+import SavedRecipes from "../screens/SavedRecipes";
 
 const HomeStack = createStackNavigator();
 
@@ -112,6 +113,56 @@ class SearchScreen extends React.Component {
   }
 }
 
+const SavedStack = createStackNavigator();
+
+class SavedScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeLoadingStatus = (boolean) => {
+      this.setState({ loadingAdditional: boolean });
+    };
+    this.changeAdditionalData = (array) => {
+      this.setState({ additionalData: array });
+    };
+    this.state = {
+      loadingAdditional: true,
+      changeLoadingStatus: this.changeLoadingStatus,
+      additionalData: [],
+      changeAdditionalData: this.changeAdditionalData,
+    };
+  }
+
+  render() {
+    return (
+      <LoadingAdditionalContext.Provider value={this.state}>
+        <SavedStack.Navigator
+          screenOptions={{
+            headerStatusBarHeight: 0,
+            headerStyle: { ...styles.headerStyle },
+            headerTitleStyle: { ...styles.headerTitle },
+          }}
+        >
+          <SavedStack.Screen
+            name="SavedPage"
+            component={SavedRecipes}
+            options={{ header: () => null }}
+          />
+          <SavedStack.Screen
+            name="Recipe"
+            component={Recipe}
+            options={({ route }) => ({ title: route.params.name })}
+          />
+          {/* <SavedStack.Screen
+            name="ConfirmIngredients"
+            component={ConfirmIngredients}
+            options={{ header: () => null }}
+          /> */}
+        </SavedStack.Navigator>
+      </LoadingAdditionalContext.Provider>
+    );
+  }
+}
+
 const GroceryScreen = () => {
   return <GroceryList RecipeList={RecipeList} />;
 };
@@ -133,6 +184,9 @@ const NavigationBar = () => {
             case "Browse":
               iconName = focused ? "book-search" : "book-search-outline";
               break;
+            case "Saved Recipes":
+              iconName = focused ? "notebook" : "notebook-outline";
+              break;
             case "Grocery List":
               iconName = focused ? "cart" : "cart-outline";
               break;
@@ -149,6 +203,7 @@ const NavigationBar = () => {
     >
       <NavBar.Screen name="Home" component={HomeScreen} />
       <NavBar.Screen name="Browse" component={SearchScreen} />
+      <NavBar.Screen name="Saved Recipes" component={SavedScreen} />
       <NavBar.Screen name="Grocery List" component={GroceryList} />
       <NavBar.Screen name="Settings" component={Settings} />
     </NavBar.Navigator>
