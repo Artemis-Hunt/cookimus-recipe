@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput } from 'react-native';
 import Modal from 'react-native-modalbox';
-import { Feather, Entypo } from '@expo/vector-icons';
+import { Feather, Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 
 let screen = Dimensions.get('window');
 let originalTitle;
@@ -66,7 +66,15 @@ export default class TitleEditModal extends Component {
                     >
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.saveButtonText}>Save Title </Text>
-                            <Entypo name="save" size={18} color="dodgerblue" />
+                            <Entypo name="save" size={17} color="dodgerblue" />
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.deleteButton}
+                    >
+                        <View style={{ flexDirection: "row" }}>
+                            <Text style={styles.deleteButtonText}>Delete Recipe </Text>
+                            <MaterialCommunityIcons name="delete-forever" size={20} color="white" />
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -88,7 +96,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
-        marginBottom: 15,
+        marginBottom: 10,
     },
     headerContainer: {
         flexDirection: "row",
@@ -97,7 +105,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     headerText: {
-        fontSize: 23,
+        fontSize: 25,
         marginBottom: 5,
         color: '#778899',
     },
@@ -115,9 +123,22 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         paddingVertical: 10,
+        marginBottom: 20,
     },
     saveButtonText: {
-        fontSize: 18,
+        fontSize: 17,
         color: "dodgerblue",
+    },
+    deleteButtonText: {
+        fontSize: 17,
+        color: "white",
+    },
+    deleteButton: {
+        backgroundColor: "red",
+        height: 40,
+        width: screen.width - 200,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })
