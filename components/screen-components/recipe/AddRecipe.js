@@ -15,6 +15,9 @@ const AddRecipe = async (ingredient, name, url) => {
       );
     //Sort the ingredient names by alphabetical order
     recipeToAdd.data.sort((a, b) => a.name.localeCompare(b.name));
+    for(let item of recipeToAdd.data) {
+      item.amount = Number(item.amount);
+    }
     RecipeList.unshift(recipeToAdd);
     //Push to firebase
     await groceryListPush(recipeToAdd);

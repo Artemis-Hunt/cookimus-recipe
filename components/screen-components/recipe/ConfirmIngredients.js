@@ -187,7 +187,7 @@ export default class ConfirmItemModal extends Component {
     this.refreshPage();
   }
   handleQuantityUpdate(item, text) {
-    item.ingredientDetails.amount = Number(text);
+    item.ingredientDetails.amount = text;
     this.refreshPage();
   }
   handleUnitUpdate(item, unit) {
