@@ -11,7 +11,7 @@ export default class TitleEditModal extends Component {
         super(props);
         this.state = {
             recipeTitle: "",
-            errorText: false,
+            errorText: "",
         }
     }
     //Renders modal when called
@@ -28,7 +28,7 @@ export default class TitleEditModal extends Component {
     //Verify if title is not a blank string
     verifyTitle() {
         if (this.state.recipeTitle === "") {
-            this.setState({ errorText: true });
+            this.setState({ errorText: "Title cannot be an empty field" });
         } else {
             this.props.saveChangeTitle(this.state.recipeTitle, originalTitle);
         }
@@ -58,19 +58,24 @@ export default class TitleEditModal extends Component {
                         value={this.state.recipeTitle}
                         onChangeText={(text) => { this.handleTitleChange(text) }}
                     />
+                    <Text style={styles.invalidField}>{this.state.errorText}</Text>
                     <TouchableOpacity
                         style={styles.saveButton}
                         onPress={() => {
                             this.verifyTitle();
                         }}
                     >
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={styles.saveButtonText}>Save Title </Text>
-                            <Entypo name="save" size={17} color="dodgerblue" />
+                        <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+                            <Text style={styles.saveButtonText}>Save </Text>
+                            <Entypo name="save" size={19} color="dodgerblue" />
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.deleteButton}
+                        onPress={() => {
+                            this.props.titleDelete(originalTitle);
+                            this.refs.titleeditmodal.close();
+                        }}
                     >
                         <View style={{ flexDirection: "row" }}>
                             <Text style={styles.deleteButtonText}>Delete Recipe </Text>
@@ -95,8 +100,8 @@ const styles = StyleSheet.create({
     contents: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: 15,
+        marginBottom: 15,
     },
     headerContainer: {
         flexDirection: "row",
@@ -120,13 +125,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: "white",
         width: 250,
+        fontSize: 16
     },
     saveButton: {
-        paddingVertical: 10,
-        marginBottom: 20,
+        //paddingVertical: 5,
+        marginBottom: 25,
     },
     saveButtonText: {
-        fontSize: 17,
+        fontSize: 18,
         color: "dodgerblue",
     },
     deleteButtonText: {
@@ -140,5 +146,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    invalidField: {
+        color: "red"
     }
 })

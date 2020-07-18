@@ -208,35 +208,38 @@ export default class GroceryList extends Component {
     this.setState({ refresh: !this.state.refresh });
   }
 
+  //Handle States for Adding of Custom Recipe
   handleName = (text) => {
     this.setState({ name: text });
   };
-
   handleQuantity = (text) => {
     this.setState({ quantity: text });
   };
-  //Functions for modal
+
+  //Functions for portion modal
   showModal = () => {
     this.refs.portionModal.renderModal();
   };
   sendPortion = (portion, title) => {
     this.refs.portionModal.receivePortion(portion, title);
   };
+
   //Function to call unit selection modal
   showUnitSelectModal = (item) => {
     this.refs.unitselectmodal.renderModal(item);
   };
+
   //Function to call modal on long press of Recipe Titles
   showEditTitleModal = (title) => {
     this.refs.titleeditmodal.renderModal(title);
   }
-  //Handle Editing of Recipe Title - Need Firebase Sync
+  //Handle Editing of Recipe Title
   handleChangeTitle = (newTitle, originalTitle) => {
-    for(let item of RecipeList) {
-      if(item.title === originalTitle) {
+    for (let item of RecipeList) {
+      if (item.title === originalTitle) {
         //Update Saved Recipes
-        for(let savedItem of SavedRecipes) {
-          if(savedItem.title === originalTitle) {
+        for (let savedItem of SavedRecipes) {
+          if (savedItem.title === originalTitle) {
             savedItem.title = newTitle;
             break;
           }
@@ -248,6 +251,13 @@ export default class GroceryList extends Component {
     }
     this.forceUpdate();
   }
+  sectionDelete = async (title) => {
+    this.callDeleteSection(title);
+    //Delete entire recipe from Firebase
+    await groceryListDelete(title);
+    this.forceUpdate();
+  }
+
   //Functions to call hashFunctions
   callCombineFunction = (index) => {
     this.refs.hashFunctions.combineFunction(index);
@@ -515,11 +525,8 @@ export default class GroceryList extends Component {
                 }) => (
                     <View style={styles.titleCard}>
                       <Text
-                        onPress={async () => {
-                          this.callDeleteSection(title);
-                          //Delete entire recipe from Firebase
-                          await groceryListDelete(title);
-                          this.forceUpdate();
+                        onPress={() => {
+                          alert("Navigate to Recipe Page")
                         }}
                         onLongPress={() => {
                           this.showEditTitleModal(title);
@@ -563,6 +570,7 @@ export default class GroceryList extends Component {
         <TitleEditModal
           ref={"titleeditmodal"}
           saveChangeTitle={this.handleChangeTitle}
+          titleDelete={this.sectionDelete}
         />
         <HashFunctions
           ref={"hashFunctions"}
