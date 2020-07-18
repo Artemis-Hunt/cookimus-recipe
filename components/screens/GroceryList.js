@@ -16,6 +16,7 @@ import MenuBar from "../screen-components/grocery-list/MenuBar.js";
 import Item from "../screen-components/grocery-list/Item.js";
 import PortionModal from "../screen-components/grocery-list/PortionModal.js";
 import UnitSelectModal from "../screen-components/grocery-list/UnitSelectModal.js";
+import TitleEditModal from "../screen-components/grocery-list/TitleEditModal.js"
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
@@ -69,6 +70,8 @@ export default class GroceryList extends Component {
     this.handleQuantity = this.handleQuantity.bind(this);
     this.showModal = this.showModal.bind(this);
     this.showUnitSelectModal = this.showUnitSelectModal.bind(this);
+    this.showEditTitleModal = this.showEditTitleModal.bind(this);
+    this.handleChangeTitle = this.handleChangeTitle.bind(this);
     this.sendPortion = this.sendPortion.bind(this);
     this.forceUpdate = this.forceUpdate.bind(this);
     this.rebuildCombinedList = this.rebuildCombinedList.bind(this);
@@ -205,24 +208,55 @@ export default class GroceryList extends Component {
     this.setState({ refresh: !this.state.refresh });
   }
 
+  //Handle States for Adding of Custom Recipe
   handleName = (text) => {
     this.setState({ name: text });
   };
-
   handleQuantity = (text) => {
     this.setState({ quantity: text });
   };
-  //Functions for modal
+
+  //Functions for portion modal
   showModal = () => {
     this.refs.portionModal.renderModal();
   };
   sendPortion = (portion, title) => {
     this.refs.portionModal.receivePortion(portion, title);
   };
+
   //Function to call unit selection modal
   showUnitSelectModal = (item) => {
     this.refs.unitselectmodal.renderModal(item);
   };
+
+  //Function to call modal on long press of Recipe Titles
+  showEditTitleModal = (title) => {
+    this.refs.titleeditmodal.renderModal(title);
+  }
+  //Handle Editing of Recipe Title
+  handleChangeTitle = (newTitle, originalTitle) => {
+    for (let item of RecipeList) {
+      if (item.title === originalTitle) {
+        //Update Saved Recipes
+        for (let savedItem of SavedRecipes) {
+          if (savedItem.title === originalTitle) {
+            savedItem.title = newTitle;
+            break;
+          }
+        }
+        //Update RecipeList title
+        item.title = newTitle;
+        break;
+      }
+    }
+    this.forceUpdate();
+  }
+  sectionDelete = async (title) => {
+    this.callDeleteSection(title);
+    //Delete entire recipe from Firebase
+    await groceryListDelete(title);
+    this.forceUpdate();
+  }
 
   //Functions to call hashFunctions
   callCombineFunction = (index) => {
@@ -491,11 +525,11 @@ export default class GroceryList extends Component {
                 }) => (
                     <View style={styles.titleCard}>
                       <Text
-                        onPress={async () => {
-                          this.callDeleteSection(title);
-                          //Delete entire recipe from Firebase
-                          await groceryListDelete(title);
-                          this.forceUpdate();
+                        onPress={() => {
+                          alert("Navigate to Recipe Page")
+                        }}
+                        onLongPress={() => {
+                          this.showEditTitleModal(title);
                         }}
                         style={[styles.header, styles.text]}
                       >
@@ -532,6 +566,11 @@ export default class GroceryList extends Component {
         <UnitSelectModal
           ref={"unitselectmodal"}
           unitUpdate={this.handleUnitUpdate}
+        />
+        <TitleEditModal
+          ref={"titleeditmodal"}
+          saveChangeTitle={this.handleChangeTitle}
+          titleDelete={this.sectionDelete}
         />
         <HashFunctions
           ref={"hashFunctions"}
