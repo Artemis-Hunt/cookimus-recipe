@@ -33,13 +33,19 @@ const RenderItemCard = ({
 }) => {
   if (index % 2 === 0) {
     //Print out original recipe
-    return (
-      <View style={styles.originalCard}>
-        <Text style={[styles.bodyFontSize, styles.originalCardText]}>
-          {item.ingredient}
-        </Text>
-      </View>
-    );
+    if (item.ingredient === "") {
+      return (
+        <View></View>
+      )
+    } else {
+      return (
+        <View style={styles.originalCard}>
+          <Text style={[styles.bodyFontSize, styles.originalCardText]}>
+            {item.ingredient}
+          </Text>
+        </View>
+      );
+    }
   } else {
     //Render Card for Editing Purpose
     return (
@@ -110,7 +116,7 @@ export default class ConfirmItemModal extends Component {
   componentDidMount() {
     this.buildDataArray();
   }
-  componentWillUnmount() {}
+  componentWillUnmount() { }
   //Build the data list with alternating original ingredients and modded ingredients
   buildDataArray() {
     DATA = [];
@@ -136,6 +142,7 @@ export default class ConfirmItemModal extends Component {
           originalItem.ingredient = this.originalIngredients[i];
           this.editArray.push(originalItem);
           modItem.ingredientDetails = this.modIngredients[modCount];
+          modItem.firstItem = true;
           this.editArray.push(modItem);
           modCount++;
           originalItem = {};
@@ -168,7 +175,7 @@ export default class ConfirmItemModal extends Component {
     }
   }
   refreshPage() {
-    this.setState({ refresh: !this.state.refresh})
+    this.setState({ refresh: !this.state.refresh })
   }
   //Call function to get the unit details of the item
   callDetermineClass(unit) {
@@ -203,6 +210,11 @@ export default class ConfirmItemModal extends Component {
       modIngre: this.editArray[index].ingredientDetails,
       index: Number(index - 1),
     };
+    //Deleted Item is first of "and" item
+    if (this.editArray[index].firstItem) {
+      this.editArray[index + 1].ingredient = deleteItem.originalIngre;
+      deleteItem.firstItem = true;
+    }
     this.undoArray.unshift(deleteItem);
     this.editArray.splice(index - 1, 2);
     this.setState({ showUndo: true });
@@ -225,6 +237,10 @@ export default class ConfirmItemModal extends Component {
     modItem.ingredientDetails = undoItem.modIngre;
     this.editArray.splice(undoItem.index, 0, modItem);
     this.editArray.splice(undoItem.index, 0, originalItem);
+    if(undoItem.firstItem) {
+      this.editArray[undoItem.index + 2].ingredient = "";
+      this.editArray[undoItem.index + 1].firstItem = true;
+    }
     this.refreshPage();
   }
   render() {
