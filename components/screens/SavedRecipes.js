@@ -9,7 +9,7 @@ const SavedRecipes = () => {
     )
 }
 
-const styles = StlyeSheet.create({
+const styles = StyleSheet.create({
     container: {
       flex: 1,  
     },
