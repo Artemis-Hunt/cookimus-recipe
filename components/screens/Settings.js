@@ -6,7 +6,8 @@ import Button from "../generic/Button"
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Entypo, MaterialIcons, Foundation } from '@expo/vector-icons';
+
 
 const Settings = () => {
   const user = useContext(UserContext);
@@ -32,9 +33,9 @@ const Settings = () => {
     <View style={styles.container}>
       <View style={styles.headerBar}>
         <View style={styles.iconStyle}>
-          <AntDesign name="user" size={28} color="cornflowerblue" />
+          <FontAwesome name="user" size={28} color="cornflowerblue" />
         </View>
-        <Text style={[styles.text, styles.headerText, { color: "#778899" }]}>Current user:</Text>
+        <Text style={[styles.text, styles.headerText, { color: "#778899" }]}>Welcome,</Text>
         <Text style={[styles.text, styles.headerText, { color: "dimgray" }]}>{`${user.firstName}`}</Text>
       </View>
       <TouchableOpacity
@@ -48,9 +49,33 @@ const Settings = () => {
       >
         <View style={styles.profileButton}>
           <View style={styles.profileIcon}>
-            <AntDesign name="profile" size={24} color="#888888" />
+            <AntDesign name="profile" size={24} color="#778899" />
           </View>
           <Text style={styles.menuText}>Profile</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <View style={styles.profileButton}>
+          <View style={styles.profileIcon}>
+            <Foundation name="info" size={24} color="#778899" />
+          </View>
+          <Text style={styles.menuText}>About Us</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <View style={styles.profileButton}>
+          <View style={styles.profileIcon}>
+            <MaterialIcons name="bug-report" size={24} color="#778899" />
+          </View>
+          <Text style={styles.menuText}>Report An Issue</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <View style={styles.profileButton}>
+          <View style={styles.profileIcon}>
+            <Entypo name="log-out" size={24} color="#778899" />
+          </View>
+          <Text style={styles.menuText}>Log Out</Text>
         </View>
       </TouchableOpacity>
       <View style={styles.buttonView}>
@@ -82,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: 60,
     borderBottomWidth: 4,
-    borderBottomColor: "#CCC"
+    borderBottomColor: "purple"
   },
   buttonView: {
     flex: 1,
@@ -106,7 +131,8 @@ const styles = StyleSheet.create({
     width: 100,
   },
   iconStyle: {
-    paddingRight: 3,
+    paddingRight: 10,
+    paddingTop: 4,
   },
   profileIcon: {
     paddingRight: 10,
