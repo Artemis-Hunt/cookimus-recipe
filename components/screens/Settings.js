@@ -4,11 +4,16 @@ import UserContext from "../context/UserContext";
 import firebase, { getUserDataRef } from "../../config/Firebase/firebaseConfig";
 import Button from "../generic/Button"
 
+import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { AntDesign } from '@expo/vector-icons';
 
 const Settings = () => {
   const user = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+
+  const route = useRoute();
+  const navigation = useNavigation();
 
   const onLogOutPress = async () => {
     setLoading(true)
@@ -29,13 +34,21 @@ const Settings = () => {
         <View style={styles.iconStyle}>
           <AntDesign name="user" size={28} color="cornflowerblue" />
         </View>
-        <Text style={[styles.text, styles.headerText, { color: "#778899" }]}>Current user is</Text>
+        <Text style={[styles.text, styles.headerText, { color: "#778899" }]}>Current user:</Text>
         <Text style={[styles.text, styles.headerText, { color: "dimgray" }]}>{`${user.firstName}`}</Text>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ProfileEdit", {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          })
+        }}
+      >
         <View style={styles.profileButton}>
           <View style={styles.profileIcon}>
-            <AntDesign name="profile" size={24} color="darkgray" />
+            <AntDesign name="profile" size={24} color="#888888" />
           </View>
           <Text style={styles.menuText}>Profile</Text>
         </View>
@@ -57,8 +70,9 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     //alignItems: "center",
-    flex: 1,
     //justifyContent: "center",
+    flex: 1,
+    backgroundColor: "#F9F9F9"
   },
   headerBar: {
     flexDirection: "row",
@@ -67,8 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "white",
     height: 60,
-    borderBottomWidth: 2
-    ,
+    borderBottomWidth: 4,
     borderBottomColor: "#CCC"
   },
   buttonView: {
@@ -80,7 +93,7 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 25,
-    color: "darkgray"
+    color: "#888888"
   },
   headerText: {
     fontSize: 28,
@@ -104,5 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: 2,
     flexDirection: "row",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#CCC"
   }
 });
