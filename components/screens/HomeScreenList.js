@@ -63,20 +63,20 @@ class HomeScreenList extends React.Component {
     let hours = time.getHours();
     let minutes = time.getMinutes();
     if (hours <= 4) {
-      this.setState({timeSegment: "evening"});
-      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 5))
+      this.setState({ timeSegment: "evening" });
+      this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 5))
     } else if (hours >= 5 && hours <= 10) {
-      this.setState({timeSegment: "morning"});
-      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 11))
+      this.setState({ timeSegment: "morning" });
+      this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 11))
     } else if (hours >= 11 && hours <= 13) {
-      this.setState({timeSegment: "noon"});
-      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 14))
+      this.setState({ timeSegment: "noon" });
+      this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 14))
     } else if (hours >= 14 && hours <= 16) {
-      this.setState({timeSegment: "afternoon"});
-      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 17))
+      this.setState({ timeSegment: "afternoon" });
+      this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 17))
     } else if (hours >= 17) {
-      this.setState({timeSegment: "evening"});
-      this.timeoutID = setTimeout(() => {this.getTime()}, this.calculateInterval(hours, minutes, 29))
+      this.setState({ timeSegment: "evening" });
+      this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 29))
     }
   }
 
@@ -128,28 +128,30 @@ class HomeScreenList extends React.Component {
         {this.state.loading ? (
           <LoadingIndicator size={"large"} />
         ) : (
-          <>
-            <FlavorText name={this.user} time={this.state.timeSegment}/>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={this.state.cardData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item, index }) => (
-                <Card
-                  name={item.name}
-                  url={item.recipeURL}
-                  image={item.recipeImageURL}
-                  index={index}
-                  Window={Window}
-                />
-              )}
-              // renderSectionHeader={({ section }) => (
-              //   <Text style={styles.heading}>{section.heading}</Text>
-              // )}
-              ItemSeparatorComponent={ItemSeparator}
-            />
-          </>
-        )}
+            <>
+              <FlavorText name={this.user} time={this.state.timeSegment} />
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={this.state.cardData}
+                //horizontal={true}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                  <Card
+                    name={item.name}
+                    url={item.recipeURL}
+                    image={item.recipeImageURL}
+                    index={index}
+                    Window={Window}
+                  />
+                )}
+
+                // renderSectionHeader={({ section }) => (
+                //   <Text style={styles.heading}>{section.heading}</Text>
+                // )}
+                ItemSeparatorComponent={ItemSeparator}
+              />
+            </>
+          )}
       </View>
     );
   }
