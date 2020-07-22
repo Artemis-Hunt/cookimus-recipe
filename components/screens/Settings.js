@@ -54,7 +54,11 @@ const Settings = () => {
           <Text style={styles.menuText}>Profile</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("InfoPage")
+        }}
+      >
         <View style={styles.infoButton}>
           <View style={styles.infoIcon}>
             <Foundation name="info" size={26} color="#778899" />
@@ -62,7 +66,11 @@ const Settings = () => {
           <Text style={styles.menuText}>About Us</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ReportPage")
+        }}
+      >
         <View style={styles.bugButton}>
           <View style={styles.bugIcon}>
             <MaterialIcons name="bug-report" size={26} color="#778899" />
@@ -70,7 +78,9 @@ const Settings = () => {
           <Text style={styles.menuText}>Report An Issue</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => alert("LOGOUT")}
+      >
         <View style={styles.profileButton}>
           <View style={styles.exitIcon}>
             <Entypo name="log-out" size={24} color="#778899" />
@@ -144,7 +154,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     flexDirection: "row",
     borderBottomWidth: 1.5,
-    borderBottomColor: "#CCC"
+    borderBottomColor: "#CCC",
   },
   bugButton: {
     paddingVertical: 10,
