@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  useWindowDimensions
+  useWindowDimensions,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
@@ -67,6 +67,7 @@ const Recipe = () => {
                 <TouchableOpacity
                   onPress={() => {
                     if (url in AddedToGroceryList) {
+                    } else {
                       setAddedToList(true);
                       navigation.navigate("ConfirmIngredients", {
                         originalIngredients:

@@ -13,3 +13,4 @@ firebaseConfig.js
 
 # macOS
 .DS_Store
+config/Algolia/algoliaConfig.js

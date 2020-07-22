@@ -15,6 +15,8 @@ import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 import SearchList from "../screen-components/search/SearchList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
+import AlgoliaRecipesIndex from "../../config/Algolia/algoliaConfig"
+
 export default class Search extends React.PureComponent {
   constructor(props) {
     super(props);

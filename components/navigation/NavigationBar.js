@@ -173,11 +173,11 @@ class SettingsScreen extends React.Component {
 
   render() {
     return (
-      <Settings.Navigator
+      <SettingsStack.Navigator
         screenOptions={{
           headerStatusBarHeight: 0,
           header: () => null,
-          
+
         }}
       >
         <SettingsStack.Screen 
@@ -188,7 +188,7 @@ class SettingsScreen extends React.Component {
           name="ProfileEdit"
           component={ProfileEdit}
         />
-      </Settings.Navigator>
+      </SettingsStack.Navigator>
     );
   }
 }
@@ -214,10 +214,10 @@ const NavigationBar = () => {
             case "Browse":
               iconName = focused ? "book-search" : "book-search-outline";
               break;
-            case "Saved Recipes":
+            case "My Recipes":
               iconName = focused ? "notebook" : "notebook-outline";
               break;
-            case "Grocery List":
+            case "Groceries":
               iconName = focused ? "cart" : "cart-outline";
               break;
             case "Settings":
@@ -233,8 +233,8 @@ const NavigationBar = () => {
     >
       <NavBar.Screen name="Home" component={HomeScreen} />
       <NavBar.Screen name="Browse" component={SearchScreen} />
-      <NavBar.Screen name="Saved Recipes" component={SavedScreen} />
-      <NavBar.Screen name="Grocery List" component={GroceryList} />
+      <NavBar.Screen name="My Recipes" component={SavedScreen} />
+      <NavBar.Screen name="Groceries" component={GroceryList} />
       <NavBar.Screen name="Settings" component={SettingsScreen} />
     </NavBar.Navigator>
   );
