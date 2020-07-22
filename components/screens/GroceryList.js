@@ -20,7 +20,7 @@ import TitleEditModal from "../screen-components/grocery-list/TitleEditModal.js"
 import RecipeList from "../../data/RecipeList";
 import CombinedList from "../../data/CombinedList.js";
 import HashTable from "../../data/HashTable.js";
-import SavedRecipes from "../../data/SavedRecipes.js"
+import AddedToGroceryList from "../../data/AddedToGroceryList.js"
 import { MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
 
 import HashFunctions from "../screen-components/grocery-list/HashFunctions.js";
@@ -176,12 +176,7 @@ export default class GroceryList extends Component {
         //Remove all empty recipes
         for (let i = RecipeList.length - 1; i >= 0; i--) {
           if (RecipeList[i].data.length === 0) {
-            for (let j = 0; j < SavedRecipes.length; j++) {
-              if (SavedRecipes[j].title === RecipeList[i].title) {
-                SavedRecipes.splice(j, 1);
-                break;
-              }
-            }
+            delete AddedToGroceryList[RecipeList[i].url];
             RecipeList.splice(i, 1);
           }
         }
@@ -237,13 +232,6 @@ export default class GroceryList extends Component {
   handleChangeTitle = (newTitle, originalTitle) => {
     for (let item of RecipeList) {
       if (item.title === originalTitle) {
-        //Update Saved Recipes
-        for (let savedItem of SavedRecipes) {
-          if (savedItem.title === originalTitle) {
-            savedItem.title = newTitle;
-            break;
-          }
-        }
         //Update RecipeList title
         item.title = newTitle;
         break;

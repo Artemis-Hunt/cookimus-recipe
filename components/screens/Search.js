@@ -10,11 +10,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import LoadingIndicator from "../generic/LoadingIndicator"
 
-//Temp JSON files
-import scrapedList from "../../data/allRecipesScraped.json";
-import scrapedListAdditional from "../../data/allRecipesAdditional.json";
-const combinedData = [];
-
 import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";

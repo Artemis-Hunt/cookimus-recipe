@@ -31,6 +31,7 @@ export default class TitleEditModal extends Component {
             this.setState({ errorText: "Title cannot be an empty field" });
         } else {
             this.props.saveChangeTitle(this.state.recipeTitle, originalTitle);
+            this.refs.titleeditmodal.close();
         }
     }
 

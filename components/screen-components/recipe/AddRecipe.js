@@ -1,8 +1,9 @@
 import RecipeList from "../../../data/RecipeList.js"
-import SavedRecipes from "../../../data/SavedRecipes.js"
+import AddedToGroceryList from "../../../data/AddedToGroceryList.js"
 import { firestoreDb, groceryListPush } from "../../../config/Firebase/firebaseConfig"
 
 const AddRecipe = async (ingredient, name, url) => {
+    ingredient.sort((a, b) => a.name.localeCompare(b.name));
     //Add entire recipe to RecipeList
     const recipeToAdd = JSON.parse(
         JSON.stringify({
@@ -20,8 +21,7 @@ const AddRecipe = async (ingredient, name, url) => {
     await groceryListPush(recipeToAdd);
 
     //Keep track of saved recipes
-    const savedData = { title: name, url: url };
-    SavedRecipes.push(savedData);
+    AddedToGroceryList[url] = null;
     //alert("Added to grocery list");
 }
 
