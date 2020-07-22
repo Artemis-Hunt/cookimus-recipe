@@ -150,6 +150,7 @@ export default class ConfirmItemModal extends Component {
           this.editArray.push(originalItem);
           modItem = {};
           modItem.ingredientDetails = this.modIngredients[modCount];
+          modItem.secondItem = true;
           this.editArray.push(modItem);
           modCount++;
           continue;
@@ -186,7 +187,7 @@ export default class ConfirmItemModal extends Component {
     this.refreshPage();
   }
   handleQuantityUpdate(item, text) {
-    item.ingredientDetails.amount = Number(text);
+    item.ingredientDetails.amount = text;
     this.refreshPage();
   }
   handleUnitUpdate(item, unit) {
@@ -212,8 +213,13 @@ export default class ConfirmItemModal extends Component {
     };
     //Deleted Item is first of "and" item
     if (this.editArray[index].firstItem) {
-      this.editArray[index + 1].ingredient = deleteItem.originalIngre;
+      if (this.editArray[index + 2].secondItem) {
+        this.editArray[index + 1].ingredient = deleteItem.originalIngre;
+      }
       deleteItem.firstItem = true;
+    }
+    if (this.editArray[index].secondItem) {
+      deleteItem.secondItem = true;
     }
     this.undoArray.unshift(deleteItem);
     this.editArray.splice(index - 1, 2);
@@ -237,9 +243,14 @@ export default class ConfirmItemModal extends Component {
     modItem.ingredientDetails = undoItem.modIngre;
     this.editArray.splice(undoItem.index, 0, modItem);
     this.editArray.splice(undoItem.index, 0, originalItem);
-    if(undoItem.firstItem) {
-      this.editArray[undoItem.index + 2].ingredient = "";
-      this.editArray[undoItem.index + 1].firstItem = true;
+    if (undoItem.firstItem) {
+      if (this.editArray[undoItem.index + 3].secondItem) {
+        this.editArray[undoItem.index + 2].ingredient = "";
+        this.editArray[undoItem.index + 1].firstItem = true;
+      }
+    }
+    if (undoItem.secondItem) {
+      this.editArray[undoItem.index + 1].secondItem = true;
     }
     this.refreshPage();
   }

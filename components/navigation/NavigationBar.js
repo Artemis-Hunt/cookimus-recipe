@@ -12,6 +12,7 @@ import RecipeList from "../../data/RecipeList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 import ConfirmIngredients from "../screen-components/recipe/ConfirmIngredients";
 import MyRecipes from "../screens/MyRecipes";
+import ProfileEdit from "../screen-components/settings/ProfileEdit"
 
 const HomeStack = createStackNavigator();
 
@@ -55,6 +56,11 @@ class HomeScreen extends React.Component {
           <HomeStack.Screen
             name="ConfirmIngredients"
             component={ConfirmIngredients}
+            options={{ header: () => null }}
+          />
+          <HomeStack.Screen
+            name="ProfileEdit"
+            component={ProfileEdit}
             options={{ header: () => null }}
           />
         </HomeStack.Navigator>
@@ -105,6 +111,11 @@ class SearchScreen extends React.Component {
           <SearchStack.Screen
             name="ConfirmIngredients"
             component={ConfirmIngredients}
+            options={{ header: () => null }}
+          />
+          <SearchStack.Screen
+            name="ProfileEdit"
+            component={ProfileEdit}
             options={{ header: () => null }}
           />
         </SearchStack.Navigator>

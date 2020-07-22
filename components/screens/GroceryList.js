@@ -287,6 +287,7 @@ export default class GroceryList extends Component {
     item.unit = unit;
     item.unitDetails.unit = unit;
     this.triggerEditedItemsFlag();
+    this.forceUpdate();
   }
   toggleEditModeDelete = (item) => {
     item.toDelete = !item.toDelete;
