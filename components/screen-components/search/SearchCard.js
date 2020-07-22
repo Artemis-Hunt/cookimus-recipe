@@ -24,8 +24,7 @@ const SearchCard = (props) => {
         activeOpacity={1}
         onPress={() => {
           navigation.navigate("Recipe", {
-            ...props,
-            Window: Window
+            ...props
           });
         }}
         style={styles.card}

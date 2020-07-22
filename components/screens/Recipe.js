@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  useWindowDimensions
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
@@ -15,30 +16,20 @@ import LoadingIndicator from "../generic/LoadingIndicator";
 import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
-import SavedRecipe from "../../data/SavedRecipes.js";
+import AddedToGroceryList from "../../data/AddedToGroceryList.js";
+import SavedRecipes from "../../data/SavedRecipes";
 
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
-
-//Check whether recipe has already been added
-const checkRecipe = (link) => {
-  for (let item of SavedRecipe) {
-    if (item.url === link) {
-      //Recipe has already been added
-      return true;
-    }
-  }
-  return false;
-}
 
 //Render the individual recipe pages when clicked into from the search page
 const Recipe = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const Window = useWindowDimensions();
 
   const [addedToList, setAddedToList] = useState(false);
 
   //Props from SearchList.js, passed through SearchCard.js
-  const Window = route.params.Window;
   const name = route.params.name;
   const url = route.params.url;
   const image = route.params.image;
@@ -52,73 +43,74 @@ const Recipe = () => {
           {loadingAdditional ? (
             <LoadingIndicator size={"large"} />
           ) : (
-              <View>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  <Image
-                    style={[styles.image, { height: Window.height / 3 }]}
-                    source={{ uri: `${image}` }}
-                  />
-                  {/* Extra info e.g. servings, preparation time*/}
-                  <View style={styles.categoryBox}>
-                    <View style={styles.subBox}>
-                      <Text style={[styles.text, styles.name]}>{name}</Text>
-                    </View>
-                    <AdditionalInfo
-                      additional={additionalData[index].additionalInfo}
-                    />
+            <View>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <Image
+                  style={[styles.image, { height: Window.height / 3 }]}
+                  source={{ uri: `${image}` }}
+                />
+                {/* Extra info e.g. servings, preparation time*/}
+                <View style={styles.categoryBox}>
+                  <View style={styles.subBox}>
+                    <Text style={[styles.text, styles.name]}>{name}</Text>
                   </View>
-
-                  <IngredientBox
-                    ingredients={additionalData[index].originalIngredient}
+                  <AdditionalInfo
+                    additional={additionalData[index].additionalInfo}
                   />
+                </View>
 
-                  {/*Add to grocery list*/}
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (!checkRecipe(url)) {
-                        setAddedToList(true);
-                        navigation.navigate("ConfirmIngredients", {
-                          originalIngredients:
-                            additionalData[index].originalIngredient,
-                          modIngredients: additionalData[index].ingredient,
-                          recipeURL: url,
-                          recipeTitle: name,
-                        });
-                      }
-                    }}
-                    style={styles.buttonBox}
-                  >
-                    <Text style={styles.addButton}>Add to Grocery List </Text>
-                    <Entypo name="add-to-list" size={19} color="#1E90FF" />
-                  </TouchableOpacity>
-                  {addedToList ? (
-                    <Text style={styles.addedText}>Added to Grocery list!</Text>
-                  ) : null}
-                  <PrepMethod
-                    instructions={additionalData[index].prepInstructions}
-                  />
-                  <View style={{ height: 50 }}></View>
-                  {/*Store recipe locally*/}
-                  {/* <TouchableOpacity
-                onPress={() => {
-                  SaveRecipe(
-                    name,
-                    url,
-                    image,
-                    additionalData[index].originalIngredient,
-                    additionalData[index].ingredient,
-                    additionalData[index].additionalInfo,
-                    additionalData[index].prepInstructions
-                  );
-                }}
-                style={styles.buttonBox}
-              >
-                <Text style={styles.addButton}>Save This Recipe </Text>
-                <Feather name="save" size={19} color="#1E90FF" />
-              </TouchableOpacity> */}
-                </ScrollView>
-              </View>
-            )}
+                <IngredientBox
+                  ingredients={additionalData[index].originalIngredient}
+                />
+
+                {/*Add to grocery list*/}
+                <TouchableOpacity
+                  onPress={() => {
+                    if (url in AddedToGroceryList) {
+                      setAddedToList(true);
+                      navigation.navigate("ConfirmIngredients", {
+                        originalIngredients:
+                          additionalData[index].originalIngredient,
+                        modIngredients: additionalData[index].ingredient,
+                        recipeURL: url,
+                        recipeTitle: name,
+                      });
+                    }
+                  }}
+                  style={styles.buttonBox}
+                >
+                  <Text style={styles.addButton}>Add to Grocery List </Text>
+                  <Entypo name="add-to-list" size={19} color="#1E90FF" />
+                </TouchableOpacity>
+                {addedToList ? (
+                  <Text style={styles.addedText}>Added to Grocery list!</Text>
+                ) : null}
+                <PrepMethod
+                  instructions={additionalData[index].prepInstructions}
+                />
+                <View style={{ height: 50 }}></View>
+                {/*Store recipe locally*/}
+                <TouchableOpacity
+                  onPress={() => {
+                    SavedRecipes.push({
+                      name: name,
+                      url: url,
+                      recipeImageURL: image,
+                      originalIngredient:
+                        additionalData[index].originalIngredient,
+                      ingredient: additionalData[index].ingredient,
+                      additionalInfo: additionalData[index].additionalInfo,
+                      prepInstructions: additionalData[index].prepInstructions,
+                    });
+                  }}
+                  style={styles.buttonBox}
+                >
+                  <Text style={styles.addButton}>Save This Recipe </Text>
+                  <Feather name="save" size={19} color="#1E90FF" />
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          )}
         </View>
       )}
     </LoadingAdditionalContext.Consumer>
@@ -131,7 +123,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: "#f9f9f9"
+    backgroundColor: "#f9f9f9",
   },
   loading: {
     flex: 1,

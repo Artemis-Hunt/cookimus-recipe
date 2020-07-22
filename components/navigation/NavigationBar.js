@@ -11,7 +11,7 @@ import Settings from "../screens/Settings";
 import RecipeList from "../../data/RecipeList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 import ConfirmIngredients from "../screen-components/recipe/ConfirmIngredients";
-import SavedRecipes from "../screens/SavedRecipes";
+import MyRecipes from "../screens/MyRecipes";
 import ProfileEdit from "../screen-components/settings/ProfileEdit"
 
 const HomeStack = createStackNavigator();
@@ -155,7 +155,7 @@ class SavedScreen extends React.Component {
         >
           <SavedStack.Screen
             name="SavedPage"
-            component={SavedRecipes}
+            component={MyRecipes}
             options={{ header: () => null }}
           />
           <SavedStack.Screen

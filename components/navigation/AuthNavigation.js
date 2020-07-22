@@ -5,10 +5,11 @@ import NavigationBar from "./NavigationBar";
 import Login from "../screens/Login";
 import Signup from "../screens/Signup";
 import Loading from "../screens/Loading"
-import {firestoreDb, auth, fetchGroceryList} from "../../config/Firebase/firebaseConfig";
+import {firestoreDb, auth, fetchGroceryList, fetchSavedRecipes} from "../../config/Firebase/firebaseConfig";
 import UserContext from "../context/UserContext"
 
 import RecipeList from "../../data/RecipeList";
+import AddedToGroceryList from "../../data/AddedToGroceryList";
 import SavedRecipes from "../../data/SavedRecipes";
 
 const Stack = createStackNavigator();
@@ -25,23 +26,18 @@ const AuthNavigation = () => {
 
   //Fetch grocery list from Firebase
   const getFirebaseList = async () => {
+    //Clear RecipeList and AddedToGroceryList
     RecipeList.splice(0, RecipeList.length)
-    SavedRecipes.splice(0, SavedRecipes.length)
-    const list = await fetchGroceryList();
-    //Variable for added to list, if it exists
-    let addedToList;
+    for(let property in AddedToGroceryList) {
+      delete AddedToGroceryList[property]
+    }
+
+    const groceryList = await fetchGroceryList();
+    const savedList = await fetchSavedRecipes();
     //Populate local cache with results from Firebase
-    list.forEach((item) => {
+    groceryList.forEach((item) => {
       //Get the list of ingredients in each recipe
       let itemData = item.data();
-
-      if(item.id ===  "Added to list") {
-        addedToList = {
-          title: item.id,
-          data: Object.values(itemData)
-        }
-        return;
-      }
 
       //Remove the extra information that is not supposed to be rendered in the list of ingredients
       let { portion, portionText, url } = itemData;
@@ -55,13 +51,12 @@ const AuthNavigation = () => {
         portion: portion,
         portionText: portionText,
       });
-      SavedRecipes.push({ title: item.id, link: url });
+      AddedToGroceryList[url] = null;
     });
+    savedList.forEach((item => {
+      SavedRecipes.push(item)
+    }))
 
-    //Append "Added to list" at the end
-    if(addedToList) {
-      RecipeList.push(addedToList);
-    }
   }
 
   //Equivalent to componentDidMount, due to empty array supplied as dependency

@@ -18,7 +18,6 @@ import {
 } from "@expo/vector-icons";
 import Card from "../screen-components/homescreen-list/Card.js";
 import FlavorText from "../screen-components/homescreen-list/FlavorText.js";
-import HomeScreenRecipe from "../../data/HomeScreenRecipe.js";
 import LoadingIndicator from "../generic/LoadingIndicator";
 
 import {
