@@ -173,7 +173,7 @@ class SettingsScreen extends React.Component {
 
   render() {
     return (
-      <Settings.Navigator
+      <SettingsStack.Navigator
         screenOptions={{
           headerStatusBarHeight: 0,
           header: () => null,
@@ -188,7 +188,7 @@ class SettingsScreen extends React.Component {
           name="ProfileEdit"
           component={ProfileEdit}
         />
-      </Settings.Navigator>
+      </SettingsStack.Navigator>
     );
   }
 }

@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     height: 60,
     borderBottomWidth: 4,
-    borderBottomColor: "purple"
+    borderBottomColor: "lightblue"
   },
   buttonView: {
     flex: 1,
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSansPro",
   },
   menuText: {
-    fontSize: 25,
+    fontSize: 23,
     color: "#888888"
   },
   headerText: {
