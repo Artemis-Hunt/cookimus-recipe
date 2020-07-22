@@ -12,7 +12,7 @@ import RecipeList from "../../data/RecipeList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 import ConfirmIngredients from "../screen-components/recipe/ConfirmIngredients";
 import MyRecipes from "../screens/MyRecipes";
-import ProfileEdit from "../screen-components/settings/ProfileEdit"
+import ProfileEdit from "../screen-components/settings/ProfileEdit";
 
 const HomeStack = createStackNavigator();
 
@@ -56,11 +56,6 @@ class HomeScreen extends React.Component {
           <HomeStack.Screen
             name="ConfirmIngredients"
             component={ConfirmIngredients}
-            options={{ header: () => null }}
-          />
-          <HomeStack.Screen
-            name="ProfileEdit"
-            component={ProfileEdit}
             options={{ header: () => null }}
           />
         </HomeStack.Navigator>
@@ -111,11 +106,6 @@ class SearchScreen extends React.Component {
           <SearchStack.Screen
             name="ConfirmIngredients"
             component={ConfirmIngredients}
-            options={{ header: () => null }}
-          />
-          <SearchStack.Screen
-            name="ProfileEdit"
-            component={ProfileEdit}
             options={{ header: () => null }}
           />
         </SearchStack.Navigator>
@@ -174,6 +164,35 @@ class SavedScreen extends React.Component {
   }
 }
 
+const SettingsStack = createStackNavigator();
+
+class SettingsScreen extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <Settings.Navigator
+        screenOptions={{
+          headerStatusBarHeight: 0,
+          header: () => null,
+          
+        }}
+      >
+        <SettingsStack.Screen 
+          name='Settings'
+          component={Settings}
+        />
+        <SettingsStack.Screen
+          name="ProfileEdit"
+          component={ProfileEdit}
+        />
+      </Settings.Navigator>
+    );
+  }
+}
+
 const GroceryScreen = () => {
   return <GroceryList RecipeList={RecipeList} />;
 };
@@ -216,7 +235,7 @@ const NavigationBar = () => {
       <NavBar.Screen name="Browse" component={SearchScreen} />
       <NavBar.Screen name="Saved Recipes" component={SavedScreen} />
       <NavBar.Screen name="Grocery List" component={GroceryList} />
-      <NavBar.Screen name="Settings" component={Settings} />
+      <NavBar.Screen name="Settings" component={SettingsScreen} />
     </NavBar.Navigator>
   );
 };
