@@ -35,8 +35,8 @@ const Settings = () => {
         <View style={styles.iconStyle}>
           <FontAwesome name="user" size={28} color="cornflowerblue" />
         </View>
-        <Text style={[styles.text, styles.headerText, { color: "#778899" }]}>Welcome,</Text>
-        <Text style={[styles.text, styles.headerText, { color: "dimgray" }]}>{`${user.firstName}`}</Text>
+        <Text style={[styles.headerText, { color: "black", fontWeight: "bold" }]}>Welcome,</Text>
+        <Text style={[styles.headerText, { color: "dimgray", fontWeight: "bold" }]}>{`${user.firstName}`}</Text>
       </View>
       <TouchableOpacity
         onPress={() => {

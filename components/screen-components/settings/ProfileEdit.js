@@ -29,6 +29,7 @@ export default class ProfileEdit extends Component {
         this.email = this.props.route.params.email;
 
         this.renderPasswordCheckModal = this.renderPasswordCheckModal.bind(this);
+        this.verifiedPassword = this.verifiedPassword.bind(this);
     }
     //Set Variables on mount
     componentDidMount() {
@@ -90,6 +91,13 @@ export default class ProfileEdit extends Component {
                     this.setState({ newEmail: this.email });
                 }
                 break;
+        }
+    }
+    //Enables changes to email when verified
+    verifiedPassword(verify) {
+        if (verify) {
+            this.setState({ emailEditable: true });
+            this.refs.emailEditBox.focus();
         }
     }
     //Verify fields if valid and update name and email on Firebase
@@ -156,11 +164,10 @@ export default class ProfileEdit extends Component {
                         onPress={() => {
                             //alert(this.refs.emailEditBox.isFocused());
                             this.renderPasswordCheckModal();
-                            this.setState({ emailEditable: true });
-                            this.refs.emailEditBox.focus();
                         }}
+                        disabled={this.state.emailEditable}
                     >
-                        <Text style={styles.editEmailButton}>Edit Email</Text>
+                        <Text style={(this.state.emailEditable) ? styles.disabledEditEmailButton : styles.editEmailButton}>Edit Email</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -180,8 +187,9 @@ export default class ProfileEdit extends Component {
                         <Text style={styles.updateText}>Update Info</Text>
                     </TouchableOpacity>
                 </View>
-                <PasswordCheck 
+                <PasswordCheck
                     ref={"passwordCheck"}
+                    verifyPassword={this.verifiedPassword}
                 />
             </View>
         )
@@ -263,5 +271,9 @@ const styles = StyleSheet.create({
     editEmailButton: {
         paddingTop: 5,
         color: "dodgerblue",
+    },
+    disabledEditEmailButton: {
+        paddingTop: 5,
+        color: "#999999",
     }
 })
