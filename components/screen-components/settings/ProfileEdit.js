@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     TextInput,
 } from "react-native";
-
+import PasswordCheck from "./PasswordCheck.js"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 let selectedFirstName = false;
@@ -22,10 +22,13 @@ export default class ProfileEdit extends Component {
             newFirstName: "",
             newLastName: "",
             newEmail: "",
+            emailEditable: false,
         }
         this.firstName = this.props.route.params.firstName;
         this.lastName = this.props.route.params.lastName;
         this.email = this.props.route.params.email;
+
+        this.renderPasswordCheckModal = this.renderPasswordCheckModal.bind(this);
     }
     //Set Variables on mount
     componentDidMount() {
@@ -36,6 +39,10 @@ export default class ProfileEdit extends Component {
     //Refresh current page
     forceRefresh() {
         this.setState({ refresh: !this.state.refresh });
+    }
+    //Render modal for password verification
+    renderPasswordCheckModal() {
+        this.refs.passwordCheck.renderModal();
     }
     //Toggle border colors when text input is selected
     toggleNameSelected() {
@@ -132,9 +139,12 @@ export default class ProfileEdit extends Component {
                 <View styles={styles.editZone}>
                     <Text style={[styles.subFooter, styles.fontBody]}>Registered Email</Text>
                     <TextInput
-                        style={[styles.textInput, (selectedEmail) ? styles.textInputSelectedColor : styles.textInputNormalColor]}
+                        ref={"emailEditBox"}
+                        style={[styles.textInput, (selectedEmail) ? styles.textInputSelectedColor : (this.state.emailEditable) ? styles.textInputNormalColor : styles.nonEditableTextColor]}
                         placeholder={this.state.newEmail}
                         value={this.state.newEmail}
+                        editable={this.state.emailEditable}
+                        selectTextOnFocus={true}
                         onChangeText={(text) => this.handleEmailChange(text)}
                         onFocus={() => this.toggleEmailSelected()}
                         onEndEditing={() => {
@@ -142,8 +152,18 @@ export default class ProfileEdit extends Component {
                             this.verifyField(3);
                         }}
                     />
+                    <TouchableOpacity
+                        onPress={() => {
+                            //alert(this.refs.emailEditBox.isFocused());
+                            this.renderPasswordCheckModal();
+                            this.setState({ emailEditable: true });
+                            this.refs.emailEditBox.focus();
+                        }}
+                    >
+                        <Text style={styles.editEmailButton}>Edit Email</Text>
+                    </TouchableOpacity>
                 </View>
-                
+
                 {/* Just for the Lolz - Delete when necessary*/}
                 <Text style={[styles.subHeading, styles.fontBody]}>Payment Details</Text>
                 <View styles={styles.editZone}>
@@ -160,6 +180,9 @@ export default class ProfileEdit extends Component {
                         <Text style={styles.updateText}>Update Info</Text>
                     </TouchableOpacity>
                 </View>
+                <PasswordCheck 
+                    ref={"passwordCheck"}
+                />
             </View>
         )
     }
@@ -208,6 +231,10 @@ const styles = StyleSheet.create({
     textInputNormalColor: {
         borderBottomColor: "#CCC",
     },
+    nonEditableTextColor: {
+        borderBottomColor: "#CCC",
+        color: "#888888"
+    },
     subFooter: {
         fontSize: 16,
         color: "#686868",
@@ -232,5 +259,9 @@ const styles = StyleSheet.create({
     updateBox: {
         flex: 1,
         justifyContent: "flex-end"
+    },
+    editEmailButton: {
+        paddingTop: 5,
+        color: "dodgerblue",
     }
 })
