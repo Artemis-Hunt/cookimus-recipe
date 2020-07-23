@@ -67,6 +67,7 @@ const Recipe = () => {
                 <TouchableOpacity
                   onPress={() => {
                     if (url in AddedToGroceryList) {
+                      //Recipe is Added
                     } else {
                       setAddedToList(true);
                       navigation.navigate("ConfirmIngredients", {
