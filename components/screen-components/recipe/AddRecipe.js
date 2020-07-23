@@ -18,6 +18,7 @@ const AddRecipe = async (ingredient, name, url) => {
     recipeToAdd.data.sort((a, b) => a.name.localeCompare(b.name));
     for(let item of recipeToAdd.data) {
       item.amount = Number(item.amount);
+      item.originalName = item.name;
     }
     RecipeList.unshift(recipeToAdd);
     //Push to firebase
