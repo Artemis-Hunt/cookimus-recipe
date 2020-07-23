@@ -97,5 +97,6 @@ const styles = StyleSheet.create({
     },
     bodyText: {
         textAlign: "center",
+        color: "dimgray",
     },
 })
