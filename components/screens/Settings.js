@@ -35,8 +35,8 @@ const Settings = () => {
         <View style={styles.iconStyle}>
           <FontAwesome name="user" size={28} color="cornflowerblue" />
         </View>
-        <Text style={[styles.text, styles.headerText, { color: "#778899" }]}>Welcome,</Text>
-        <Text style={[styles.text, styles.headerText, { color: "dimgray" }]}>{`${user.firstName}`}</Text>
+        <Text style={[styles.headerText, { color: "black", fontWeight: "bold" }]}>Welcome,</Text>
+        <Text style={[styles.headerText, { color: "dimgray", fontWeight: "bold" }]}>{`${user.firstName}`}</Text>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -54,25 +54,35 @@ const Settings = () => {
           <Text style={styles.menuText}>Profile</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <View style={styles.profileButton}>
-          <View style={styles.profileIcon}>
-            <Foundation name="info" size={24} color="#778899" />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("InfoPage")
+        }}
+      >
+        <View style={styles.infoButton}>
+          <View style={styles.infoIcon}>
+            <Foundation name="info" size={26} color="#778899" />
           </View>
           <Text style={styles.menuText}>About Us</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <View style={styles.profileButton}>
-          <View style={styles.profileIcon}>
-            <MaterialIcons name="bug-report" size={24} color="#778899" />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("ReportPage")
+        }}
+      >
+        <View style={styles.bugButton}>
+          <View style={styles.bugIcon}>
+            <MaterialIcons name="bug-report" size={26} color="#778899" />
           </View>
           <Text style={styles.menuText}>Report An Issue</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => alert("LOGOUT")}
+      >
         <View style={styles.profileButton}>
-          <View style={styles.profileIcon}>
+          <View style={styles.exitIcon}>
             <Entypo name="log-out" size={24} color="#778899" />
           </View>
           <Text style={styles.menuText}>Log Out</Text>
@@ -144,6 +154,33 @@ const styles = StyleSheet.create({
     marginTop: 2,
     flexDirection: "row",
     borderBottomWidth: 1.5,
+    borderBottomColor: "#CCC",
+  },
+  bugButton: {
+    paddingVertical: 10,
+    paddingLeft: 7,
+    backgroundColor: "white",
+    marginTop: 2,
+    flexDirection: "row",
+    borderBottomWidth: 1.5,
     borderBottomColor: "#CCC"
+  },
+  bugIcon: {
+    paddingRight: 10,
+  },
+  infoIcon: {
+    paddingRight: 13,
+  },
+  infoButton: {
+    paddingVertical: 10,
+    paddingLeft: 11,
+    backgroundColor: "white",
+    marginTop: 2,
+    flexDirection: "row",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#CCC"
+  },
+  exitIcon: {
+    paddingRight: 10,
   }
 });

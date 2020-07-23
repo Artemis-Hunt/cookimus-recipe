@@ -13,6 +13,8 @@ import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 import ConfirmIngredients from "../screen-components/recipe/ConfirmIngredients";
 import MyRecipes from "../screens/MyRecipes";
 import ProfileEdit from "../screen-components/settings/ProfileEdit";
+import InfoPage from "../screen-components/settings/InfoPage"
+import ReportPage from "../screen-components/settings/ReportPage"
 
 const HomeStack = createStackNavigator();
 
@@ -180,13 +182,21 @@ class SettingsScreen extends React.Component {
 
         }}
       >
-        <SettingsStack.Screen 
+        <SettingsStack.Screen
           name='Settings'
           component={Settings}
         />
         <SettingsStack.Screen
           name="ProfileEdit"
           component={ProfileEdit}
+        />
+        <SettingsStack.Screen
+          name="InfoPage"
+          component={InfoPage}
+        />
+        <SettingsStack.Screen
+          name="ReportPage"
+          component={ReportPage}
         />
       </SettingsStack.Navigator>
     );
