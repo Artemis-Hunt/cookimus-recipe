@@ -91,6 +91,7 @@ export default class UnitSelectModal extends Component {
         //alert("Previous: " + selected);
         selected = title;
         this.forceUpdate();
+        this.itemToConfirmUnits.edited = true;
         //Change units in recipeList
         this.props.unitUpdate(this.itemToConfirmUnits, title);
         //alert("Updated: " + selected);
@@ -103,6 +104,7 @@ export default class UnitSelectModal extends Component {
     submitCustomUnit = (item) => {
         let customUnit = this.state.tempUnit;
         customUnit = customUnit.trim();
+        this.itemToConfirmUnits.edited = true;
         this.props.unitUpdate(this.itemToConfirmUnits, customUnit)
     }
     render() {

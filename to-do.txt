@@ -1,0 +1,5 @@
+edit name
+delete whole recipe
+
+edit ingredient name, qty, unit
+delete ingredient

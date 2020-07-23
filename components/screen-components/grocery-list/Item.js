@@ -81,6 +81,7 @@ const editCard = (title, amounts, units, item, itemKey, handlenameupdate, handle
         value={newName}
         onChangeText={(text) => {
           setNewName(text);
+          item.edited = true;
           handlenameupdate(item, text);
         }}
       />
@@ -92,6 +93,7 @@ const editCard = (title, amounts, units, item, itemKey, handlenameupdate, handle
         value={`${newValue}`}
         onChangeText={(text) => {
           setNewValue(text);
+          item.edited = true;
           handlequantityupdate(item, text);
         }}
       />
