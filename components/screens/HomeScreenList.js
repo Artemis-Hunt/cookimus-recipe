@@ -38,16 +38,41 @@ class HomeScreenList extends React.Component {
       loading: true,
       cardData: [],
       timeSegment: "",
+
+      //sliderIndex: 0,
+      //maxSlider: 20,
     };
     this.user = "";
     this.timeoutID;
+    //this.scrollToIndex = this.scrollToIndex.bind(this);
   }
 
   //Fetch time-appropriate recipes
   componentDidMount() {
     this.getTime();
     this.fetchClockRecipe();
+
+    // //FUNCTIONS FOR SCROLLING
+    // setInterval(function() {
+    //   const { sliderIndex, maxSlider } = this.state
+    //   let nextIndex = 0
+ 
+    //   if (sliderIndex < maxSlider) {
+    //     nextIndex = sliderIndex + 1
+    //   }
+ 
+    //   this.scrollToIndex(nextIndex, true)
+    //   this.setState({sliderIndex: nextIndex})
+    // }.bind(this), 10000)
+    // //FUNCTIONS FOR SCROLLING
   }
+  // //FUNCTIONS FOR SCROLLING
+  // //Scroll flatlist
+  // scrollToIndex(index, animated) {
+  //   this.refs.timeList && this.refs.timeList.scrollToIndex({ index, animated })
+  // }
+  // // //FUNCTIONS FOR SCROLLING
+
   //Clean up timeouts to prevent memory leak
   componentWillUnmount() {
     clearTimeout(this.timeoutID)
@@ -137,6 +162,7 @@ class HomeScreenList extends React.Component {
                   <Ionicons name="md-time" size={24} color="#778899" />
                 </View>
                 <FlatList
+                  //ref={"timeList"}
                   showsHorizontalScrollIndicator={false}
                   data={this.state.cardData}
                   horizontal={true}
@@ -150,7 +176,6 @@ class HomeScreenList extends React.Component {
                       Window={Window}
                     />
                   )}
-
                   // renderSectionHeader={({ section }) => (
                   //   <Text style={styles.heading}>{section.heading}</Text>
                   // )}
@@ -176,7 +201,6 @@ class HomeScreenList extends React.Component {
                       Window={Window}
                     />
                   )}
-
                   // renderSectionHeader={({ section }) => (
                   //   <Text style={styles.heading}>{section.heading}</Text>
                   // )}
