@@ -15,30 +15,30 @@ const roundedRadius = 15;
 const Card = (props) => {
   const navigation = useNavigation();
   return (
-      <View style={styles.card}>
-        <TouchableOpacity
-          activeOpacity={1}
-          delayPressIn={5}
-          delayPressOut={5}
-          delayLongPress={5}
-          onPress={() => navigation.navigate("Recipe", {...props})}
-        >
-          <Image
-            style={[styles.image, { height: props.Window.height / 4 }]}
-            source={{
-              uri: `${props.image}`,
-            }}
-          />
-          <LinearGradient
-            colors={["transparent", "#00000088"]}
-            style={styles.overlay}
-            start={[0, 0.6]}
-          />
-          <View style={[styles.overlay, styles.details]}>
-            <Text style={styles.name}>{props.name}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.card}>
+      <TouchableOpacity
+        activeOpacity={1}
+        delayPressIn={5}
+        delayPressOut={5}
+        delayLongPress={5}
+        onPress={() => navigation.navigate("Recipe", { ...props })}
+      >
+        <Image
+          style={[styles.image, { height: props.Window.height / 4, width: props.Window.width - 60 }]}
+          source={{
+            uri: `${props.image}`,
+          }}
+        />
+        <LinearGradient
+          colors={["transparent", "#00000088"]}
+          style={styles.overlay}
+          start={[0, 0.6]}
+        />
+        <View style={[styles.overlay, styles.details]}>
+          <Text style={styles.name}>{props.name}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -61,9 +61,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   image: {
-    flex: 1,
+    //flex: 1,
+    //width: null,
     borderRadius: roundedRadius,
-    width: null,
+    //width: props.Window.width - 20,
   },
   name: {
     fontFamily: "SourceSansPro",
