@@ -152,8 +152,30 @@ const editCard = (
         />
       </TouchableOpacity>
       <TextInput
+        style={[styles.textInput, { flex: 1.5 }]}
+        //width={50}
+        keyboardType={"numeric"}
+        numeric
+        selection={{start: 0}}
+        value={`${newValue}`}
+        onChangeText={(text) => {
+          //Remove any non-numeric values, excluding dot
+          text = text.replace(/[^0-9\.]/g, "");
+          setNewValue(text);
+          item.edited = true;
+          handlequantityupdate(item, text);
+        }}
+        maxLength={8}
+      />
+      <TouchableOpacity onPress={() => showunitselectmodal(item)}>
+        <View style={[styles.textInput, styles.unitBox]}>
+          <Text>{units}</Text>
+        </View>
+      </TouchableOpacity>
+      <TextInput
         style={[styles.textInput, { flex: 6 }]}
         //width={140}
+        selection={{start: 0}}
         placeholder={title}
         value={newName}
         onChangeText={(text) => {
@@ -167,25 +189,6 @@ const editCard = (
         }}
         maxLength={40}
       />
-      <TextInput
-        style={[styles.textInput, { flex: 1.5 }]}
-        //width={50}
-        keyboardType={"numeric"}
-        numeric
-        value={`${newValue}`}
-        onChangeText={(text) => {
-          text = text.replace(/[^0-9]/g, "");
-          setNewValue(text);
-          item.edited = true;
-          handlequantityupdate(item, text);
-        }}
-        maxLength={8}
-      />
-      <TouchableOpacity onPress={() => showunitselectmodal(item)}>
-        <View style={[styles.textInput, styles.unitBox]}>
-          <Text>{units}</Text>
-        </View>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -270,7 +273,7 @@ const styles = StyleSheet.create({
     height: 30,
     padding: 5,
     borderColor: "#CCC",
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderRadius: 5,
     backgroundColor: "white",
     marginHorizontal: 5,
@@ -284,6 +287,7 @@ const styles = StyleSheet.create({
   },
   unitBox: {
     width: 90,
+    borderWidth: 1,
   },
   deleteIcon: {
     paddingLeft: 5,

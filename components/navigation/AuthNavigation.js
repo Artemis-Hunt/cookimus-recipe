@@ -59,6 +59,16 @@ const AuthNavigation = () => {
 
   }
 
+  const setUserData = (firstName, lastName, email) => {
+    let id = user.id
+    setUser({
+      id: id,
+      email: email,
+      firstName: firstName,
+      lastName: lastName
+    })
+  }
+
   //Equivalent to componentDidMount, due to empty array supplied as dependency
   useEffect(() => {
     const usersRef = firestoreDb.collection("users");
@@ -91,7 +101,7 @@ const AuthNavigation = () => {
   }
 
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={{...user, setUserData}}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{

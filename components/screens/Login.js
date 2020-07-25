@@ -106,7 +106,7 @@ export default function LoginScreen({ navigation }) {
         />
         <Button
           text={"Log in"}
-          onPressHandle={onLoginPress}
+          onPress={onLoginPress}
           loading={loading}
           style={styles.button}
         />
@@ -126,7 +126,7 @@ export default function LoginScreen({ navigation }) {
         </View>
         <Button
           text={"Guest login"}
-          onPressHandle={onAnonLoginPress}
+          onPress={onAnonLoginPress}
           loading={anonLoading}
           style={styles.button}
         />

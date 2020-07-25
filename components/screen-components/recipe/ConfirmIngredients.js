@@ -14,6 +14,11 @@ import {
   Entypo,
   MaterialIcons,
 } from "@expo/vector-icons";
+import {
+  KeyboardAwareScrollView,
+  KeyboardAwareFlatList,
+} from "react-native-keyboard-aware-scroll-view";
+import Button from "../../generic/Button";
 
 import UnitSelectModal from "../grocery-list/UnitSelectModal.js";
 import HashFunctions from "../grocery-list/HashFunctions.js";
@@ -34,9 +39,7 @@ const RenderItemCard = ({
   if (index % 2 === 0) {
     //Print out original recipe
     if (item.ingredient === "") {
-      return (
-        <View></View>
-      )
+      return <View></View>;
     } else {
       return (
         <View style={styles.originalCard}>
@@ -52,19 +55,14 @@ const RenderItemCard = ({
       <View style={styles.moddedCard}>
         <View style={styles.rowView}>
           <TextInput
-            style={[styles.textInput, { flex: 6 }]}
-            placeholder={item.ingredientDetails.name}
-            value={item.ingredientDetails.name}
-            onChangeText={(text) => {
-              handlenameupdate(item, text);
-            }}
-          />
-          <TextInput
             style={[styles.textInput, { flex: 1.5 }]}
             keyboardType={"numeric"}
             numeric
+            selection={{ start: 0 }}
             value={`${item.ingredientDetails.amount}`}
             onChangeText={(text) => {
+              //Remove any non-numeric values, excluding dot
+              text = text.replace(/[^0-9\.]/g, "");
               handlequantityupdate(item, text);
             }}
           />
@@ -78,11 +76,29 @@ const RenderItemCard = ({
               <Text>{item.ingredientDetails.unit}</Text>
             </View>
           </TouchableOpacity>
+          <TextInput
+            style={[styles.textInput, { flex: 6 }]}
+            selection={{ start: 0 }}
+            placeholder={item.ingredientDetails.name}
+            value={item.ingredientDetails.name}
+            onChangeText={(text) => {
+              //Remove any non-alphanumeric and non-blank space character
+              text = text.replace(/[^A-Za-z0-9\s]/g, "");
+              //Replace one or more blank spaces with a single blank space. Prevents multiple spaces between words
+              text = text.replace(/\s+/g, " ");
+              handlenameupdate(item, text);
+            }}
+          />
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handledelete(index)}
           >
-            <Entypo name="circle-with-cross" size={26} color="crimson" />
+            <Ionicons
+              style={styles.icon}
+              name="ios-close"
+              size={30}
+              color="rgba(0,0,0,0.5)"
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -107,8 +123,12 @@ export default class ConfirmItemModal extends Component {
     this.callDetermineClass = this.callDetermineClass.bind(this);
     this.callUnitModal = this.callUnitModal.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.originalIngredients = JSON.parse(JSON.stringify(this.props.route.params.originalIngredients));
-    this.modIngredients = JSON.parse(JSON.stringify(this.props.route.params.modIngredients));
+    this.originalIngredients = JSON.parse(
+      JSON.stringify(this.props.route.params.originalIngredients)
+    );
+    this.modIngredients = JSON.parse(
+      JSON.stringify(this.props.route.params.modIngredients)
+    );
     this.title = this.props.route.params.recipeTitle;
     this.url = this.props.route.params.recipeURL;
   }
@@ -116,7 +136,7 @@ export default class ConfirmItemModal extends Component {
   componentDidMount() {
     this.buildDataArray();
   }
-  componentWillUnmount() { }
+  componentWillUnmount() {}
   //Build the data list with alternating original ingredients and modded ingredients
   buildDataArray() {
     DATA = [];
@@ -131,7 +151,12 @@ export default class ConfirmItemModal extends Component {
         let originalItem = {};
         let modItem = {};
         let itemFound = false; //True when "and" is found
-        let commaRemovedString = this.originalIngredients[i].split(",", 1);
+        //Search for one or more blank spaces and replace with single blank space
+        let originalIngredient = this.originalIngredients[i].replace(
+          /\s+/g,
+          " "
+        );
+        let commaRemovedString = originalIngredient.split(",", 1);
         let searchArray = commaRemovedString.split(" ");
         for (let splitWord of searchArray) {
           if (splitWord === "And" || splitWord === "and") {
@@ -175,10 +200,9 @@ export default class ConfirmItemModal extends Component {
         this.editArray.push(modItem);
       }
     }
-
   }
   refreshPage() {
-    this.setState({ refresh: !this.state.refresh })
+    this.setState({ refresh: !this.state.refresh });
   }
   //Call function to get the unit details of the item
   callDetermineClass(unit) {
@@ -193,8 +217,8 @@ export default class ConfirmItemModal extends Component {
     this.refreshPage();
   }
   handleUnitUpdate(item, unit) {
-    if(unit === "No Units") {
-      unit = ""
+    if (unit === "No Units") {
+      unit = "";
     }
     item.ingredientDetails.unit = unit;
     this.refreshPage();
@@ -263,70 +287,72 @@ export default class ConfirmItemModal extends Component {
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={styles.editView}
+        //keyboardVerticalOffset={-200}
+        style={[styles.editView, styles.container]}
       >
-        <View style={styles.container}>
-          <View style={styles.headerBar}>
-            <View style={styles.rowView}>
+        <View style={styles.headerBar}>
+          <View style={styles.rowView}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => {
+                this.props.navigation.goBack();
+              }}
+            >
+              <MaterialCommunityIcons name="close" size={35} color="#CCC" />
+            </TouchableOpacity>
+            {this.state.showUndo ? (
               <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => {
-                  this.props.navigation.goBack();
-                }}
+                onPress={() => this.handleUndo()}
+                style={styles.undoButton}
               >
-                <MaterialCommunityIcons name="close" size={35} color="#CCC" />
+                {/* <MaterialIcons name="undo" size={35} color="dodgerblue" /> */}
+                <MaterialCommunityIcons
+                  name="undo-variant"
+                  size={35}
+                  color="dodgerblue"
+                />
               </TouchableOpacity>
-              {this.state.showUndo ? (
-                <TouchableOpacity
-                  onPress={() => this.handleUndo()}
-                  style={styles.undoButton}
-                >
-                  {/* <MaterialIcons name="undo" size={35} color="dodgerblue" /> */}
-                  <MaterialCommunityIcons
-                    name="undo-variant"
-                    size={35}
-                    color="dodgerblue"
-                  />
-                </TouchableOpacity>
-              ) : null}
-            </View>
-            <View style={styles.rowView}>
-              <Text style={styles.headerText}>Confirm Ingredients</Text>
-              <View style={{ marginTop: 3 }}>
-                <Ionicons name="ios-checkmark-circle" size={24} color="green" />
-              </View>
+            ) : null}
+          </View>
+          <View style={styles.rowView}>
+            <Text style={[styles.text, styles.headerText]}>Confirm Ingredients</Text>
+            <View style={{ marginTop: 3 }}>
+              <Ionicons name="ios-checkmark-circle" size={24} color="green" />
             </View>
           </View>
-          <FlatList
-            data={this.editArray}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <RenderItemCard
-                item={item}
-                index={index}
-                handlenameupdate={this.handleNameUpdate}
-                handlequantityupdate={this.handleQuantityUpdate}
-                selectUnitModal={this.callUnitModal}
-                calldetermineclass={this.callDetermineClass}
-                handledelete={this.handleDelete}
-              />
-            )}
-          />
-          <TouchableOpacity
+        </View>
+        <FlatList
+        style={{backgroundColor: "white"}}
+          data={this.editArray}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <RenderItemCard
+              item={item}
+              index={index}
+              handlenameupdate={this.handleNameUpdate}
+              handlequantityupdate={this.handleQuantityUpdate}
+              selectUnitModal={this.callUnitModal}
+              calldetermineclass={this.callDetermineClass}
+              handledelete={this.handleDelete}
+            />
+          )}
+          ListFooterComponent={
+            <Button
             style={styles.confirmButton}
             onPress={() => {
               this.handleSubmitButton();
               this.props.navigation.goBack();
             }}
-          >
-            <Text style={styles.buttonText}>Add +</Text>
-          </TouchableOpacity>
-          <UnitSelectModal
-            ref={"unitselectconfirm"}
-            unitUpdate={this.handleUnitUpdate}
+            text={`Add to grocery list`}
+            textStyle={styles.buttonText}
           />
-          <HashFunctions ref={"hashfunctions"} />
-        </View>
+          }
+        />
+        <UnitSelectModal
+          ref={"unitselectconfirm"}
+          unitUpdate={this.handleUnitUpdate}
+        />
+        <HashFunctions ref={"hashfunctions"} />
       </KeyboardAvoidingView>
     );
   }
@@ -337,7 +363,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 5,
     backgroundColor: "#F9F9F9",
-    //Temporary Margin - Remove when nav bar fixed
     flex: 1,
   },
   headerText: {
@@ -356,6 +381,7 @@ const styles = StyleSheet.create({
   },
   rowView: {
     flexDirection: "row",
+    alignContent: "center",
     alignItems: "center",
     alignSelf: "center",
   },
@@ -390,13 +416,14 @@ const styles = StyleSheet.create({
     height: 30,
     padding: 5,
     borderColor: "#CCC",
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderRadius: 5,
     backgroundColor: "white",
     marginHorizontal: 5,
   },
   unitBox: {
     width: 90,
+    borderWidth: 1,
   },
   confirmButton: {
     paddingVertical: 15,
@@ -405,7 +432,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "dodgerblue",
     height: 47,
-    width: 200,
+    width: 210,
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
@@ -421,4 +448,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     paddingHorizontal: 5,
   },
+  text: {
+    fontFamily: "SourceSansPro",
+  }
 });

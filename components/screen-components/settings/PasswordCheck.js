@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 import Modal from 'react-native-modalbox';
+import Button from "../../generic/Button"
 
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+
+import {reauthenticateUser} from "../../../config/Firebase/firebaseConfig"
 
 let screen = Dimensions.get('window');
 
@@ -14,6 +17,7 @@ export default class PasswordCheck extends Component {
             enteredPassword: "",
             hiddenText: true,
             incorrectPassword: "",
+            isPasswordVerifying: false,
         }
     }
     renderModal() {
@@ -28,10 +32,11 @@ export default class PasswordCheck extends Component {
         this.setState({ hiddenText: !this.state.hiddenText })
     }
     //Verify entered password with password on FireBase
-    verifyPassword() {
+    async verifyPassword () {
+        this.setState({isPasswordVerifying: true})
         //Testing Variable
-        
-        if (this.state.enteredPassword === userPassword) {
+        let reauthenticationResult = await reauthenticateUser(this.state.enteredPassword)
+        if (reauthenticationResult === true) {
             //Sends reply to profileEdit page
             this.props.verifyPassword(true);
             //Clear States
@@ -39,8 +44,10 @@ export default class PasswordCheck extends Component {
             this.setState({ incorrectPassword: "" })
             this.refs.passwordCheckModal.close();
         } else {
+            alert(reauthenticationResult)
             this.setState({ incorrectPassword: "Incorrect Password Entered" })
         }
+        this.setState({isPasswordVerifying: false})
     }
     render() {
         return (
@@ -79,7 +86,13 @@ export default class PasswordCheck extends Component {
                         style={styles.submitButton}
                         onPress={() => this.verifyPassword()}
                     >
-                        <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
+                        <Button 
+                            style={styles.submitButton}
+                            onPress={() => this.verifyPassword()}
+                            textStyle={[styles.text, styles.submitButtonText]}
+                            text={`Submit`}
+                            loading={this.state.isPasswordVerifying}
+                        />
                     </TouchableOpacity>
                 </View>
             </Modal>
@@ -131,6 +144,8 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         marginTop: 7,
+        backgroundColor: "dodgerblue",
+        borderRadius: 25,
         justifyContent: "center",
         alignItems: "center",
         alignSelf: "center",

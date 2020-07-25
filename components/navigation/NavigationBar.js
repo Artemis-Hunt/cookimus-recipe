@@ -184,6 +184,7 @@ class SettingsScreen extends React.Component {
         <SettingsStack.Screen
           name='Settings'
           component={Settings}
+          options={{header: () => null}}
         />
         <SettingsStack.Screen
           name="ProfileEdit"

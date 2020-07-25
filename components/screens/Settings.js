@@ -17,16 +17,17 @@ const Settings = () => {
   const navigation = useNavigation();
 
   const onLogOutPress = async () => {
-    setLoading(true)
-    if (user.isAnonymous) {
-      const usersRef = firebase.firestore().collection("users")
-      await usersRef.doc(user.uid).delete();
-      await user.delete();
-    }
-    else {
-      await firebase.auth().signOut();
-    }
-    setLoading(false)
+    // setLoading(true)
+    // if (user.isAnonymous) {
+    //   const usersRef = firebase.firestore().collection("users")
+    //   await usersRef.doc(user.uid).delete();
+    //   await user.delete();
+    // }
+    // else {
+    //   await firebase.auth().signOut();
+    // }
+    // setLoading(false)
+    alert(Object.entries(user))
   }
 
   return (
@@ -40,11 +41,7 @@ const Settings = () => {
       </View>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ProfileEdit", {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-          })
+          navigation.navigate("ProfileEdit")
         }}
       >
         <View style={styles.profileButton}>
@@ -78,7 +75,7 @@ const Settings = () => {
           <Text style={[styles.text, styles.menuText]}>Report An Issue</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => alert("LOGOUT")}
       >
         <View style={styles.profileButton}>
@@ -87,13 +84,14 @@ const Settings = () => {
           </View>
           <Text style={[styles.text, styles.menuText]}>Log Out</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={styles.buttonView}>
         <Button
           text={"Sign out"}
-          onPressHandle={onLogOutPress}
+          onPress={onLogOutPress}
           loading={loading}
-          style={styles.logOut}
+          style={styles.logOutButton}
+          textStyle={styles.logOutText}
         />
       </View>
     </View>
@@ -134,11 +132,15 @@ const styles = StyleSheet.create({
     fontSize: 28,
     padding: 3,
   },
-  logOut: {
+  logOutButton: {
     alignItems: "center",
-    backgroundColor: "#788eec",
+    backgroundColor: "dodgerblue",
+    borderRadius: 20,
     padding: 10,
     width: 100,
+  },
+  logOutText: {
+    fontSize: 17,
   },
   iconStyle: {
     paddingRight: 10,
