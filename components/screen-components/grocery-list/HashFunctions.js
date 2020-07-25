@@ -121,7 +121,7 @@ export default class HashFunctions extends Component {
         //Error Handling for blank strings
         if (newItem === "" || newItem === " ") {
           RecipeList[i].data[j].name = "No Name Found";
-          continue;
+          newItem = "No Name Found";
         }
         let splitName = newItem.split(" ");
         let newName = this.capitaliseString(splitName);

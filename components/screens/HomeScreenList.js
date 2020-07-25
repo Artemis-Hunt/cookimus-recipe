@@ -11,10 +11,7 @@ import {
 } from "react-native";
 import {
   Ionicons,
-  Entypo,
-  FontAwesome,
-  FontAwesome5,
-  MaterialCommunityIcons,
+  AntDesign
 } from "@expo/vector-icons";
 import Card from "../screen-components/homescreen-list/Card.js";
 import FlavorText from "../screen-components/homescreen-list/FlavorText.js";
@@ -25,6 +22,7 @@ import {
   getUserDataRef,
 } from "../../config/Firebase/firebaseConfig";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
+import { Row } from "native-base";
 
 const containerMarginHorizontal = 5;
 const Window = Dimensions.get("window");
@@ -40,16 +38,41 @@ class HomeScreenList extends React.Component {
       loading: true,
       cardData: [],
       timeSegment: "",
+
+      //sliderIndex: 0,
+      //maxSlider: 20,
     };
     this.user = "";
     this.timeoutID;
+    //this.scrollToIndex = this.scrollToIndex.bind(this);
   }
 
   //Fetch time-appropriate recipes
   componentDidMount() {
     this.getTime();
     this.fetchClockRecipe();
+
+    // //FUNCTIONS FOR SCROLLING
+    // setInterval(function() {
+    //   const { sliderIndex, maxSlider } = this.state
+    //   let nextIndex = 0
+ 
+    //   if (sliderIndex < maxSlider) {
+    //     nextIndex = sliderIndex + 1
+    //   }
+ 
+    //   this.scrollToIndex(nextIndex, true)
+    //   this.setState({sliderIndex: nextIndex})
+    // }.bind(this), 10000)
+    // //FUNCTIONS FOR SCROLLING
   }
+  // //FUNCTIONS FOR SCROLLING
+  // //Scroll flatlist
+  // scrollToIndex(index, animated) {
+  //   this.refs.timeList && this.refs.timeList.scrollToIndex({ index, animated })
+  // }
+  // // //FUNCTIONS FOR SCROLLING
+
   //Clean up timeouts to prevent memory leak
   componentWillUnmount() {
     clearTimeout(this.timeoutID)
@@ -125,30 +148,65 @@ class HomeScreenList extends React.Component {
     return (
       <View style={[styles.container, { width: Window.width - 10 }]}>
         {this.state.loading ? (
-          <LoadingIndicator size={"large"} />
+          <View style={styles.loadingView}>
+            <LoadingIndicator size={"large"} />
+          </View>
         ) : (
             <>
-              <FlavorText name={this.user} time={this.state.timeSegment} />
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={this.state.cardData}
-                //horizontal={true}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                  <Card
-                    name={item.name}
-                    url={item.recipeURL}
-                    image={item.recipeImageURL}
-                    index={index}
-                    Window={Window}
-                  />
-                )}
-
-                // renderSectionHeader={({ section }) => (
-                //   <Text style={styles.heading}>{section.heading}</Text>
-                // )}
-                ItemSeparatorComponent={ItemSeparator}
-              />
+              <View style={{ marginBottom: 5, }}>
+                <FlavorText name={this.user} time={this.state.timeSegment} />
+              </View>
+              <View style={{ marginBottom: 10, }}>
+                <View style={styles.subHeadingBar}>
+                  <Text style={styles.subHeadingText}>Based On The Time </Text>
+                  <Ionicons name="md-time" size={24} color="#778899" />
+                </View>
+                <FlatList
+                  //ref={"timeList"}
+                  showsHorizontalScrollIndicator={false}
+                  data={this.state.cardData}
+                  horizontal={true}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => (
+                    <Card
+                      name={item.name}
+                      url={item.recipeURL}
+                      image={item.recipeImageURL}
+                      index={index}
+                      Window={Window}
+                    />
+                  )}
+                  // renderSectionHeader={({ section }) => (
+                  //   <Text style={styles.heading}>{section.heading}</Text>
+                  // )}
+                  ItemSeparatorComponent={ItemSeparator}
+                />
+              </View>
+              <View style={{ marginBottom: 5, }}>
+                <View style={styles.subHeadingBar}>
+                  <Text style={styles.subHeadingText}>Recommended For You </Text>
+                  <AntDesign name="star" size={24} color="gold" />
+                </View>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  data={this.state.cardData}
+                  horizontal={true}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => (
+                    <Card
+                      name={item.name}
+                      url={item.recipeURL}
+                      image={item.recipeImageURL}
+                      index={index}
+                      Window={Window}
+                    />
+                  )}
+                  // renderSectionHeader={({ section }) => (
+                  //   <Text style={styles.heading}>{section.heading}</Text>
+                  // )}
+                  ItemSeparatorComponent={ItemSeparator}
+                />
+              </View>
             </>
           )}
       </View>
@@ -161,7 +219,7 @@ export default HomeScreenList;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     marginHorizontal: 15,
   },
   heading: {
@@ -173,4 +231,19 @@ const styles = StyleSheet.create({
   separator: {
     height: 15,
   },
+  loadingView: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    marginHorizontal: 15,
+    marginTop: (Window.height / 2) - 30,
+  },
+  subHeadingBar: {
+    paddingBottom: 5,
+    flexDirection: "row"
+  },
+  subHeadingText: {
+    fontSize: 22,
+    color: "dimgray"
+  }
 });
