@@ -11,7 +11,6 @@ const Multiplier = 37;
 export default class HashFunctions extends Component {
   constructor(props) {
     super(props);
-    this.updatedLength;
   }
   //Hashes the passed in string in item and returns the key
   hashFunction = (item) => {
@@ -240,12 +239,11 @@ export default class HashFunctions extends Component {
     //Remove Title from RecipeList
     if (RecipeList[recipeIndex].data.length === 0) {
       //Delete url from AddedToGroceryList
-      delete AddedToGroceryList[RecipeList[index].url];
+      delete AddedToGroceryList[RecipeList[recipeIndex].url];
       RecipeList.splice(recipeIndex, 1);
-      this.updatedLength = RecipeList.length;
       this.bulkGenerateKey(recipeIndex);
-      return this.updatedLength;
     }
+    return RecipeList.length
   };
 
   //Delete entire recipe at once
@@ -272,10 +270,9 @@ export default class HashFunctions extends Component {
     delete AddedToGroceryList[RecipeList[index].url];
 
     RecipeList.splice(index, 1);
-    this.updatedLength = RecipeList.length;
     this.bulkGenerateKey(index);
     this.props.rebuildList();
-    return this.updatedLength;
+    return RecipeList.length
   };
   //Deletes items from the hashtable to update combined list
   hashDelete = (recipeIndex, ingrIndex, rebuildFlag, classIndex) => {

@@ -11,14 +11,14 @@ const Button = (props) => {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      style={[styles.button,props.style]}
-      onPress={props.onPressHandle}
+      style={[styles.button, props.style]}
+      onPress={props.onPress}
       disabled={props.loading}
     >
-      {props.loading ? (
+      {props.loading === true ? (
         <ActivityIndicator color={"white"} />
       ) : (
-        <Text style={styles.text}>{props.text}</Text>
+        props.text === undefined ? props.children : <Text style={[styles.text, props.textStyle]}>{props.text}</Text>
       )}
     </TouchableOpacity>
   );
@@ -28,13 +28,14 @@ export default Button;
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 5,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    borderRadius: 20,
   },
   text: {
-    fontFamily: "SourceSansPro-SemiBold",
+    fontFamily: "SourceSansPro",
     color: "white",
   }
 });

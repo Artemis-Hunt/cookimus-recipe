@@ -252,7 +252,7 @@ export default class GroceryList extends Component {
       if (recipe.title === originalTitle) {
         //Update RecipeList title
         recipe.title = newTitle;
-        groceryListRecipeUpdate(originalTitle, newTitle, null, null, recipe)
+        groceryListRecipeUpdate(originalTitle, newTitle, null, null, recipe);
         break;
       }
     }
@@ -279,12 +279,10 @@ export default class GroceryList extends Component {
     this.refs.hashFunctions.handleSingleItem(name, index);
   };
   callDeleteItem = (key) => {
-    let newLength = this.refs.hashFunctions.deleteItem(key);
-    this.oldLength = newLength;
+    this.oldLength = this.refs.hashFunctions.deleteItem(key);
   };
   callDeleteSection = (title) => {
-    let newLength = this.refs.hashFunctions.deleteSection(title);
-    this.oldLength = newLength;
+    this.oldLength = this.refs.hashFunctions.deleteSection(title);
   };
   callClearHashTable = () => {
     this.refs.hashFunctions.clearHashTable();
@@ -541,29 +539,28 @@ export default class GroceryList extends Component {
               section: { title, portion, portionText },
             }) => (
               <View style={styles.titleCard}>
-                <Text
+                <TouchableOpacity
                   onPress={() => {
                     alert("Navigate to Recipe Page");
                   }}
                   onLongPress={() => {
                     this.showEditTitleModal(title);
                   }}
-                  style={[styles.header, styles.text]}
+                  delayLongPress={180}
+                  style={{flex:1}}
                 >
-                  {title}
+                  <Text style={[styles.header, styles.text]}>{title}</Text>
+                </TouchableOpacity>
+                <Text
+                  onPress={() => {
+                    this.sendPortion(portion, title);
+                    this.showModal();
+                  }}
+                  style={[styles.portionText, styles.text]}
+                >
+                  <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
+                  {portionText}
                 </Text>
-                {title === "Added to list" ? null : (
-                  <Text
-                    onPress={() => {
-                      this.sendPortion(portion, title);
-                      this.showModal();
-                    }}
-                    style={[styles.portionText, styles.text]}
-                  >
-                    <Entypo name="bowl" size={17} color="cornflowerblue" />:{" "}
-                    {portionText}
-                  </Text>
-                )}
               </View>
             )}
             renderHiddenItem={this.renderHiddenItem}

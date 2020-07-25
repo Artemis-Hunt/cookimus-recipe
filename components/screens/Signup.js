@@ -112,7 +112,7 @@ export default function Signup({ navigation }) {
         />
         <Button
           text={"Create account"}
-          onPressHandle={onSignupPress}
+          onPress={onSignupPress}
           loading={loading}
           style={styles.button}
         />
