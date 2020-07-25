@@ -35,44 +35,45 @@ const DropMenu = ({
       }}
     >
       {/* Some styles currently inline as only font size changed */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={styles.headerText}>
-          {" "}
-          Add New Recipe{" "} <Entypo name="add-to-list" size={24} color="gray" /> 
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 5, }}>
+        <Text style={[styles.text, styles.headerText]}>
+          Add New Recipe
         </Text>
         <TouchableOpacity onPress={close}>
-          <Text style={styles.menuText}>
-            {" "}
-            Close <FontAwesome
-              name="window-close"
-              size={18}
-              color="crimson"
-            />{" "}
-          </Text>
+        <Ionicons
+                style={styles.icon}
+                name="ios-close"
+                size={30}
+                color="rgba(0,0,0,0.5)"
+              />
         </TouchableOpacity>
       </View>
+      <View style={styles.separator}/>
+      <Text style={[styles.text, styles.subHeading]}>
+        Recipe name
+      </Text>
       <TextInput
-        style={styles.textInput}
+        style={[styles.text, styles.textInput]}
         placeholder=" Enter Recipe name"
         value={name}
         onChangeText={(text) => {
           handlename(text);
         }}
       />
-      <Text style={[styles.menuText, styles.subHeading]}>
-        Ingredient Quantity
+      <Text style={[styles.text, styles.subHeading]}>
+        Number of ingredients
       </Text>
       <View style={styles.quantityBox}>
         <TextInput
-          style={[styles.textInput, { width: 150 }]}
-          placeholder=" Enter quantity"
+          style={[styles.text, styles.textInput, { width: 125 }]}
+          placeholder=" Enter number"
           keyboardType={"numeric"}
           numeric
           value={`${quantity}`}
           onChangeText={(text) => handlequantity(text)}
         />
         <TouchableOpacity onPress={() => verifyinfo(name, quantity)}>
-          <Text style={styles.addButton}>Add New Recipe +</Text>
+          <Text style={[styles.text, styles.addButton]}>Add Recipe</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -86,16 +87,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     margin: 5,
   },
-  //Text on menu
-  menuText: {
-    fontSize: 18,
-    padding: 5,
-    color: "dimgray",
-  },
+  separator: {
+    backgroundColor: "#CCCCCC",
+    height: 1,
+  }, 
   //Outermost container
   dropMenu: {
     backgroundColor: "white",
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderBottomWidth: 2,
     borderBottomColor: "forestgreen",
   },
@@ -108,6 +108,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "white",
   },
+  //Close button
+  icon: {
+    marginHorizontal: 10,
+  },
   quantityBox: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -117,11 +121,12 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSansPro",
   },
   headerText: {
-    color: "dimgray",
-    fontSize: 24,
+    fontSize: 25,
   },
   subHeading: {
     fontSize: 20,
+    color: "dimgray",
+    marginVertical: 10, 
   }
 });
 

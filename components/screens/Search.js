@@ -8,14 +8,14 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import LoadingIndicator from "../generic/LoadingIndicator"
+import LoadingIndicator from "../generic/LoadingIndicator";
 
 import { firestoreDb, functions } from "../../config/Firebase/firebaseConfig";
 
 import SearchList from "../screen-components/search/SearchList";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
-import AlgoliaRecipesIndex from "../../config/Algolia/algoliaConfig"
+import AlgoliaRecipesIndex from "../../config/Algolia/algoliaConfig";
 
 export default class Search extends React.PureComponent {
   constructor(props) {
@@ -57,7 +57,7 @@ export default class Search extends React.PureComponent {
   //   });
 
   //   //Add additional data to context, set loading additional flag to false.
-  //   //Important: changeLoadingStatus must be called after changeAdditionalData, else 
+  //   //Important: changeLoadingStatus must be called after changeAdditionalData, else
   //   //it will screw up the rendering of Recipe.js
   //   this.context.changeAdditionalData(responseAdditional.data.data);
   //   this.context.changeLoadingStatus(false);
@@ -81,16 +81,16 @@ export default class Search extends React.PureComponent {
 
     let additionalData = [];
 
-    for(let item of this.state.cardData) {
+    for (let item of this.state.cardData) {
       additionalData.push({
         ingredient: item.ingredient,
         originalIngredient: item.originalIngredient,
         additionalInfo: item.additionalInfo,
-        prepInstructions: item.prepInstructions
-      })
+        prepInstructions: item.prepInstructions,
+      });
     }
     //Add additional data to context, set loading additional flag to false.
-    //Important: changeLoadingStatus must be called after changeAdditionalData, else 
+    //Important: changeLoadingStatus must be called after changeAdditionalData, else
     //it will screw up the rendering of Recipe.js
     this.context.changeAdditionalData(additionalData);
     this.context.changeLoadingStatus(false);
@@ -107,7 +107,12 @@ export default class Search extends React.PureComponent {
       <View style={styles.container}>
         {/* Search Bar */}
         <View style={styles.searchBar}>
-          <Ionicons style={styles.icon} name="ios-search" size={18} color={"rgba(0,0,0,0.6)"}/>
+          <Ionicons
+            style={styles.icon}
+            name="ios-search"
+            size={18}
+            color={"rgba(0,0,0,0.6)"}
+          />
           <TextInput
             style={[styles.input, styles.text]}
             onChangeText={(text) => {
@@ -135,7 +140,7 @@ export default class Search extends React.PureComponent {
               <Ionicons
                 style={styles.icon}
                 name="ios-close"
-                size={22}
+                size={30}
                 color="rgba(0,0,0,0.5)"
               />
             </TouchableWithoutFeedback>
@@ -150,7 +155,7 @@ export default class Search extends React.PureComponent {
         ) : this.state.cardData.length === 0 ? (
           <View style={styles.center}>
             <Text style={[styles.text, styles.searchHint]}>
-              Search by recipe or ingredient name
+              Search by recipe name or ingredients!
             </Text>
           </View>
         ) : (
@@ -172,7 +177,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  icon: {},
+  icon: {
+    padding: 8,
+  },
   input: {
     flex: 1,
     fontSize: 18,
@@ -184,9 +191,17 @@ const styles = StyleSheet.create({
   searchBar: {
     //size, color
     backgroundColor: "white",
-    borderColor: "#BBBBBB",
     borderRadius: 25,
-    borderWidth: 1,
+    //Android shadow
+    elevation: 2,
+    //iOS Shadow
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 3.84,
     height: 45,
     //flex
     flexDirection: "row",
@@ -198,5 +213,6 @@ const styles = StyleSheet.create({
   searchHint: {
     color: "#888888",
     fontSize: 22,
+    textAlign: "center",
   },
 });

@@ -6,6 +6,8 @@ import { AntDesign } from '@expo/vector-icons';
 import RecipeList from '../../../data/RecipeList.js'
 import HashTable from '../../../data/HashTable.js'
 
+import {groceryListRecipeUpdate} from "../../../config/Firebase/firebaseConfig";
+
 let screen = Dimensions.get('window');
 let previous = 0;
 let selected;
@@ -84,8 +86,15 @@ export default class PortionModal extends Component {
             let itemClass = item.unitDetails.class;
             this.updateHashValue(diff, newName, itemClass);
         }
+
+        RecipeList[recipeIndex].portion = selected;
+        RecipeList[recipeIndex].portionText = selectedText;
+        
+        groceryListRecipeUpdate(RecipeList[recipeIndex].title, RecipeList[recipeIndex].title, previous, selected, RecipeList[recipeIndex])
+
         this.props.rebuildList();
     }
+
     updateHashValue = (diff, newName, classFlag) => {
         let hashKey = this.hashFunction(newName);
         let collision = 0;
@@ -173,8 +182,6 @@ export default class PortionModal extends Component {
                     <Button
                         onPress={() => {
                             this.changePortion(selected, previous, recipeIndex);
-                            RecipeList[recipeIndex].portion = selected;
-                            RecipeList[recipeIndex].portionText = selectedText;
                             this.props.MainRefresh();
                             recipeIndex = 0;
                             this.refs.portionModal.close();

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import PasswordCheck from "./PasswordCheck.js"
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import UserContext from "../../context/UserContext.js";
 
 let selectedFirstName = false;
 let selectedLastName = false;
@@ -24,9 +25,9 @@ export default class ProfileEdit extends Component {
             newEmail: "",
             emailEditable: false,
         }
-        this.firstName = this.props.route.params.firstName;
-        this.lastName = this.props.route.params.lastName;
-        this.email = this.props.route.params.email;
+        this.firstName = this.context.firstName;
+        this.lastName = this.context.lastName;
+        this.email = this.context.email;
 
         this.renderPasswordCheckModal = this.renderPasswordCheckModal.bind(this);
         this.verifiedPassword = this.verifiedPassword.bind(this);
@@ -184,7 +185,7 @@ export default class ProfileEdit extends Component {
                         style={styles.updateButton}
                         onPress={() => this.verifyAndUpdate()}
                     >
-                        <Text style={styles.updateText}>Update Info</Text>
+                        <Text style={[styles.fontBody,styles.updateText]}>Update Info</Text>
                     </TouchableOpacity>
                 </View>
                 <PasswordCheck
@@ -195,6 +196,7 @@ export default class ProfileEdit extends Component {
         )
     }
 }
+ProfileEdit.contextType = UserContext;
 
 const styles = StyleSheet.create({
     container: {
@@ -218,11 +220,11 @@ const styles = StyleSheet.create({
     subHeading: {
         fontSize: 23,
         paddingTop: 20,
-        paddingBottom: 5,
+        paddingBottom: 10,
         color: "#778899"
     },
     editZone: {
-        paddingVertical: 5,
+        marginVertical: 5,
     },
     fontBody: {
         fontFamily: "SourceSansPro",

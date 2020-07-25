@@ -179,7 +179,6 @@ class SettingsScreen extends React.Component {
         screenOptions={{
           headerStatusBarHeight: 0,
           header: () => null,
-
         }}
       >
         <SettingsStack.Screen
@@ -213,6 +212,10 @@ const NavigationBar = () => {
   return (
     <NavBar.Navigator
       initialRouteName="Home"
+      tabBarOptions={{
+        keyboardHidesTabBar: true,
+        labelStyle: {fontFamily: "SourceSansPro"},
+      }}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;

@@ -30,7 +30,7 @@ export default class PasswordCheck extends Component {
     //Verify entered password with password on FireBase
     verifyPassword() {
         //Testing Variable
-        const userPassword = "Test"
+        
         if (this.state.enteredPassword === userPassword) {
             //Sends reply to profileEdit page
             this.props.verifyPassword(true);
@@ -52,15 +52,15 @@ export default class PasswordCheck extends Component {
             >
                 <View style={styles.viewContainer}>
                     <View style={{ flexDirection: "row", paddingBottom: 3, }}>
-                        <Text style={styles.headerStyle}>Verify Password</Text>
+                        <Text style={[styles.text, styles.headerStyle]}>Verify Password</Text>
                         <View style={styles.iconStyle}>
                             <FontAwesome5 name="key" size={18} color="#778899" />
                         </View>
                     </View>
-                    <Text style={{ fontSize: 13 }}>In order to make changes, please enter your Cookimus account password.</Text>
+                    <Text style={[styles.text, { fontSize: 15 }]}>Please enter your account password to proceed.</Text>
                     <View style={styles.passwordArea}>
                         <TextInput
-                            style={styles.textInput}
+                            style={[styles.text, styles.textInput]}
                             secureTextEntry={this.state.hiddenText}
                             placeholder={"Enter Password"}
                             value={this.state.enteredPassword}
@@ -79,7 +79,7 @@ export default class PasswordCheck extends Component {
                         style={styles.submitButton}
                         onPress={() => this.verifyPassword()}
                     >
-                        <Text style={styles.submitButtonText}>Submit</Text>
+                        <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         borderBottomWidth: 2,
         backgroundColor: "white",
-        borderBottomColor: "dimgray"
+        borderBottomColor: "#CCC",
     },
     passwordArea: {
         paddingTop: 10,
@@ -138,5 +138,8 @@ const styles = StyleSheet.create({
     submitButtonText: {
         fontSize: 18,
         color: "dodgerblue"
-    }
+    },
+    text: {
+        fontFamily: "SourceSansPro"
+    },
 })
