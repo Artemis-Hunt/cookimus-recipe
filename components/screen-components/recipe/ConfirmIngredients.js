@@ -131,7 +131,8 @@ export default class ConfirmItemModal extends Component {
         let originalItem = {};
         let modItem = {};
         let itemFound = false; //True when "and" is found
-        let searchArray = this.originalIngredients[i].split(" ");
+        let commaRemovedString = this.originalIngredients[i].split(",", 1);
+        let searchArray = commaRemovedString.split(" ");
         for (let splitWord of searchArray) {
           if (splitWord === "And" || splitWord === "and") {
             itemFound = true;
@@ -174,6 +175,7 @@ export default class ConfirmItemModal extends Component {
         this.editArray.push(modItem);
       }
     }
+
   }
   refreshPage() {
     this.setState({ refresh: !this.state.refresh })
@@ -191,6 +193,9 @@ export default class ConfirmItemModal extends Component {
     this.refreshPage();
   }
   handleUnitUpdate(item, unit) {
+    if(unit === "No Units") {
+      unit = ""
+    }
     item.ingredientDetails.unit = unit;
     this.refreshPage();
   }
@@ -314,7 +319,7 @@ export default class ConfirmItemModal extends Component {
               this.props.navigation.goBack();
             }}
           >
-            <Text style={styles.buttonText}>Confirm and Add+</Text>
+            <Text style={styles.buttonText}>Add +</Text>
           </TouchableOpacity>
           <UnitSelectModal
             ref={"unitselectconfirm"}

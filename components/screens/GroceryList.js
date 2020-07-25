@@ -31,8 +31,8 @@ import UserContext from "../context/UserContext";
 import {
   groceryListPush,
   groceryListDelete,
-  groceryListCustomPush,
-  getUserDataRef,
+  groceryListIngredientUpdate,
+  groceryListRecipeUpdate,
 } from "../../config/Firebase/firebaseConfig";
 
 //Size of hash table
@@ -170,21 +170,31 @@ export default class GroceryList extends Component {
           for (let j = RecipeList[i].data.length - 1; j >= 0; j--) {
             let ingredient = RecipeList[i].data[j];
             //Delete ingredients with blank name or are marked for deletion
-            if (
-              ingredient.name === "" ||
-              ingredient.toDelete === true
-            ) {
-              groceryListDelete(RecipeList[i].title, ingredient.name);
+            if (ingredient.name === "" || ingredient.toDelete === true) {
+              groceryListDelete(RecipeList[i].title, ingredient.originalName);
               RecipeList[i].data.splice(j, 1);
+              continue;
             }
 
-            if(ingredient.edited === true) {
-              
+            if (ingredient.edited === true) {
+              groceryListIngredientUpdate(
+                RecipeList[i].title,
+                ingredient.originalName,
+                ingredient.name,
+                {
+                  name: ingredient.name,
+                  amount: ingredient.amount,
+                  unit: ingredient.unit,
+                }
+              );
+              ingredient.originalName = ingredient.name;
             }
           }
+
           //Remove empty recipes
           if (RecipeList[i].data.length === 0) {
             delete AddedToGroceryList[RecipeList[i].url];
+            groceryListDelete(RecipeList[i].title);
             RecipeList.splice(i, 1);
           }
         }
@@ -238,10 +248,11 @@ export default class GroceryList extends Component {
   };
   //Handle Editing of Recipe Title
   handleChangeTitle = (newTitle, originalTitle) => {
-    for (let item of RecipeList) {
-      if (item.title === originalTitle) {
+    for (let recipe of RecipeList) {
+      if (recipe.title === originalTitle) {
         //Update RecipeList title
-        item.title = newTitle;
+        recipe.title = newTitle;
+        groceryListRecipeUpdate(originalTitle, newTitle, null, null, recipe)
         break;
       }
     }
@@ -319,9 +330,11 @@ export default class GroceryList extends Component {
       for (let i = 0; i < count; i++) {
         let defaultIngredientObject = {
           name: "",
+          originalName: "",
           amount: "",
           unit: "",
           unitDetails: { unit: "", class: 0 },
+          edited: true,
         };
         newRecipe.data.push(defaultIngredientObject);
       }

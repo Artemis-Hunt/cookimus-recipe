@@ -35,8 +35,8 @@ const Settings = () => {
         <View style={styles.iconStyle}>
           <FontAwesome name="user" size={28} color="cornflowerblue" />
         </View>
-        <Text style={[styles.headerText, { color: "black", fontWeight: "bold" }]}>Welcome,</Text>
-        <Text style={[styles.headerText, { color: "dimgray", fontWeight: "bold" }]}>{`${user.firstName}`}</Text>
+        <Text style={[styles.text, styles.headerText, { color: "black", fontWeight: "bold" }]}>Welcome,</Text>
+        <Text style={[styles.text, styles.headerText, { color: "dimgray", fontWeight: "bold" }]}>{`${user.firstName}`}</Text>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -51,7 +51,7 @@ const Settings = () => {
           <View style={styles.profileIcon}>
             <AntDesign name="profile" size={24} color="#778899" />
           </View>
-          <Text style={styles.menuText}>Profile</Text>
+          <Text style={[styles.text, styles.menuText]}>Profile</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity
@@ -63,7 +63,7 @@ const Settings = () => {
           <View style={styles.infoIcon}>
             <Foundation name="info" size={26} color="#778899" />
           </View>
-          <Text style={styles.menuText}>About Us</Text>
+          <Text style={[styles.text, styles.menuText]}>About Us</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity
@@ -75,7 +75,7 @@ const Settings = () => {
           <View style={styles.bugIcon}>
             <MaterialIcons name="bug-report" size={26} color="#778899" />
           </View>
-          <Text style={styles.menuText}>Report An Issue</Text>
+          <Text style={[styles.text, styles.menuText]}>Report An Issue</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity
@@ -85,7 +85,7 @@ const Settings = () => {
           <View style={styles.exitIcon}>
             <Entypo name="log-out" size={24} color="#778899" />
           </View>
-          <Text style={styles.menuText}>Log Out</Text>
+          <Text style={[styles.text, styles.menuText]}>Log Out</Text>
         </View>
       </TouchableOpacity>
       <View style={styles.buttonView}>
@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     flexDirection: "row",
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 13,
     alignItems: "center",
     justifyContent: "flex-start",
     backgroundColor: "white",
-    height: 60,
     borderBottomWidth: 4,
     borderBottomColor: "lightblue"
   },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSansPro",
   },
   menuText: {
-    fontSize: 23,
+    fontSize: 20,
     color: "#888888"
   },
   headerText: {
@@ -149,21 +149,18 @@ const styles = StyleSheet.create({
     paddingTop: 3
   },
   profileButton: {
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
     backgroundColor: "white",
     marginTop: 2,
     flexDirection: "row",
-    borderBottomWidth: 1.5,
-    borderBottomColor: "#CCC",
   },
   bugButton: {
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingLeft: 7,
     backgroundColor: "white",
     marginTop: 2,
     flexDirection: "row",
-    borderBottomWidth: 1.5,
-    borderBottomColor: "#CCC"
   },
   bugIcon: {
     paddingRight: 10,
@@ -172,13 +169,11 @@ const styles = StyleSheet.create({
     paddingRight: 13,
   },
   infoButton: {
-    paddingVertical: 10,
+    paddingVertical: 15,
     paddingLeft: 11,
     backgroundColor: "white",
     marginTop: 2,
     flexDirection: "row",
-    borderBottomWidth: 1.5,
-    borderBottomColor: "#CCC"
   },
   exitIcon: {
     paddingRight: 10,

@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 20,
         padding: 5,
+        textAlignVertical: "top",
     },
     submitButton: {
         paddingVertical: 5,

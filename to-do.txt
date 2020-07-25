@@ -1,5 +1,10 @@
 edit name
-delete whole recipe
+delete recipe
 
-edit ingredient name, qty, unit
+edit ingredient name, quantity, unit - if name changed vs name not changed
 delete ingredient
+add ingredient
+
+change portion
+
+add new recipe
