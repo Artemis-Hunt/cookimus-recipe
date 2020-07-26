@@ -17,17 +17,17 @@ const Settings = () => {
   const navigation = useNavigation();
 
   const onLogOutPress = async () => {
-    // setLoading(true)
-    // if (user.isAnonymous) {
-    //   const usersRef = firebase.firestore().collection("users")
-    //   await usersRef.doc(user.uid).delete();
-    //   await user.delete();
-    // }
-    // else {
-    //   await firebase.auth().signOut();
-    // }
-    // setLoading(false)
-    alert(Object.entries(user))
+    setLoading(true)
+    if (user.isAnonymous) {
+      const usersRef = firebase.firestore().collection("users")
+      await usersRef.doc(user.uid).delete();
+      await user.delete();
+    }
+    else {
+      await firebase.auth().signOut();
+    }
+    setLoading(false)
+    //alert(Object.entries(user))
   }
 
   return (
