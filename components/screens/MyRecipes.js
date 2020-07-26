@@ -30,20 +30,11 @@ export default class MyRecipes extends React.Component {
         prepInstructions: item.prepInstructions,
       });
     });
-    this.context.changeAdditionalData();
+    this.context.changeAdditionalData(additionalDataArray);
     this.context.changeLoadingStatus(false);
-
-    this.unsubscribeTabPress = this.props.navigation.addListener(
-      "tabPress",
-      (e) => {
-        this.forceUpdate();
-      }
-    );
   }
 
   componentWillUnmount() {
-    //Unsubscribe event handler
-    this.unsubscribeTabPress();
   }
 
   forceUpdate() {
@@ -76,6 +67,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
-    borderWidth: 1,
   },
 });

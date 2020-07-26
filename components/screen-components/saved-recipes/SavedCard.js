@@ -7,25 +7,54 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
 const roundedRadius = 10;
 
 const SavedCard = (props) => {
+  const Window = useWindowDimensions();
+  let imageSize = (Window.width - 80) / 2;
   const navigation = useNavigation();
   return (
-    <View>
+    // <View>
+    //   <TouchableOpacity
+    //     activeOpacity={1}
+    //     onPress={() => {
+    //       // navigation.navigate("Recipe", {
+    //       //   ...props,
+    //       // });
+    //       alert(props.image);
+    //     }}
+    //     style={[styles.card, {width: imageSize, height: imageSize + 50}]}
+    //   >
+    //     <Image style={[styles.image, {width: imageSize, height: imageSize}]} source={{ uri: `${props.image}` }} />
+    //     <Text>{props.name}</Text>
+    //     <Text></Text>
+    //   </TouchableOpacity>
+    // </View>
+    <View style={[styles.card]}>
       <TouchableOpacity
         activeOpacity={1}
-        onPress={() => {
-          navigation.navigate("Recipe", {
-            ...props,
-          });
-        }}
-        style={styles.card}
+        delayPressIn={5}
+        delayPressOut={5}
+        delayLongPress={5}
+        onPress={() => navigation.navigate("Recipe", { ...props })}
       >
-        <Image style={styles.image} source={{ uri: `${props.image}` }} />
-        <Text>{props.name}</Text>
+        <Image
+          style={[styles.image, { aspectRatio: 1, flex: 1/2 }]}
+          source={{
+            uri: `${props.image}`,
+          }}
+        />
+        <LinearGradient
+          colors={["transparent", "#00000088"]}
+          style={styles.overlay}
+          start={[0, 0.6]}
+        />
+        <View style={[styles.overlay, styles.details]}>
+          <Text style={styles.name}>{props.name}</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -37,12 +66,11 @@ const styles = StyleSheet.create({
     borderRadius: roundedRadius,
     backgroundColor: "white",
     flex: 1,
-    flexDirection: "row",
     marginVertical: 5,
     marginHorizontal: 5,
 
     //Android shadow
-    elevation: 5,
+    elevation: 2,
     //iOS Shadow
     shadowColor: "#000",
     shadowOffset: {
@@ -55,16 +83,34 @@ const styles = StyleSheet.create({
 
   //Image
   image: {
-    borderTopLeftRadius: roundedRadius,
-    borderBottomLeftRadius: roundedRadius,
-    aspectRatio: 1,
-    flex: 1 / 2,
-    height: 100,
+    borderRadius: roundedRadius,
   },
   text: {
     flex: 1,
     fontFamily: "SourceSansPro",
     textAlign: "center",
+  },
+  name: {
+    fontFamily: "SourceSansPro",
+    fontSize: 18,
+    margin: 10,
+    color: "white",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 5,
+    textShadowColor: "black",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: roundedRadius,
+  },
+  details: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
   },
 });
 

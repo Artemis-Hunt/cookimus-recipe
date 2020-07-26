@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     shadowRadius: 10,
     width: screen.width - 80,
-    height: 200,
+    height: 220,
     alignItems: "center",
   },
   viewContainer: {

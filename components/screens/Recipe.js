@@ -18,6 +18,7 @@ import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddedToGroceryList from "../../data/AddedToGroceryList.js";
 import SavedRecipes from "../../data/SavedRecipes";
+import {savedRecipesPush} from "../../config/Firebase/firebaseConfig";
 
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
@@ -99,7 +100,7 @@ const Recipe = () => {
                 {/*Store recipe locally*/}
                 <TouchableOpacity
                   onPress={() => {
-                    SavedRecipes.push({
+                    let recipeToSave = {
                       name: name,
                       url: url,
                       recipeImageURL: image,
@@ -108,7 +109,9 @@ const Recipe = () => {
                       ingredient: additionalData[index].ingredient,
                       additionalInfo: additionalData[index].additionalInfo,
                       prepInstructions: additionalData[index].prepInstructions,
-                    });
+                    }
+                    SavedRecipes.push(recipeToSave);
+                    savedRecipesPush(recipeToSave);
                   }}
                   style={styles.buttonBox}
                 >

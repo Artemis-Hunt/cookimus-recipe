@@ -57,9 +57,11 @@ const AuthNavigation = () => {
       AddedToGroceryList[url] = null;
     });
     RecipeList.sort((a, b) => b.timestamp - a.timestamp);
+
     savedList.forEach((item => {
-      SavedRecipes.push(item)
+      SavedRecipes.push(item.data())
     }))
+    SavedRecipes.sort((a, b) => b.timestamp.seconds - a.timestamp.seconds)
 
   }
 

@@ -109,6 +109,7 @@ export default function LoginScreen({ navigation }) {
           onPress={onLoginPress}
           loading={loading}
           style={styles.button}
+          textStyle={styles.loginText}
         />
         <View style={styles.footerView}>
           <Text style={[styles.footerText, styles.text]}>
@@ -129,6 +130,7 @@ export default function LoginScreen({ navigation }) {
           onPress={onAnonLoginPress}
           loading={anonLoading}
           style={styles.button}
+          textStyle={styles.loginText}
         />
       </KeyboardAwareScrollView>
     </View>
@@ -149,20 +151,19 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   input: {
-    height: 48,
-    borderRadius: 5,
+    borderBottomWidth: 1,
+    borderColor: "#CCCCCC",
     overflow: "hidden",
-    backgroundColor: "white",
-    marginTop: 10,
-    marginBottom: 10,
-    paddingLeft: 16,
+    marginVertical: 18,
     fontFamily: "SourceSansPro",
+    fontSize: 18,
+
   },
   button: {
     backgroundColor: "dodgerblue",
-    width: 200,
     marginTop: 20,
-    height: 48,
+    paddingHorizontal: 25,
+    paddingVertical: 8,
   },
   footerView: {
     flex: 1,
@@ -172,12 +173,15 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "SourceSansPro",
   },
+  loginText: {
+    fontSize: 18,
+  },
   footerText: {
     fontSize: 16,
     color: "#2e2e2d",
   },
   footerLink: {
-    color: "#788eec",
+    color: "dodgerblue",
     fontWeight: "bold",
     fontSize: 16,
   },

@@ -103,14 +103,14 @@ export default class PortionModal extends Component {
     RecipeList[recipeIndex].portion = selected;
     RecipeList[recipeIndex].portionText = selectedText;
 
-    // groceryListRecipeUpdate(
-    //   RecipeList[recipeIndex].title,
-    //   RecipeList[recipeIndex].title,
-    //   previous,
-    //   selected,
-    //   RecipeList[recipeIndex]
-    // );
-    alert(Object.entries(RecipeList[recipeIndex]))
+    groceryListRecipeUpdate(
+      RecipeList[recipeIndex].title,
+      RecipeList[recipeIndex].title,
+      previous,
+      selected,
+      RecipeList[recipeIndex]
+    );
+    //alert(Object.entries(RecipeList[recipeIndex]))
     this.props.rebuildList();
   };
 
