@@ -42,6 +42,8 @@ export default class ReportSubmitModal extends Component {
           </Text>
           <Text></Text>
           <Text style={styles.bodyText}>Thank you for your feedback!</Text>
+        </View>
+        <View style={{flex: 1, justifyContent: "center"}}>
           <Button
             style={styles.closeButton}
             onPress={() => this.refs.submittedModal.close()}
@@ -63,6 +65,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   viewContainer: {
+    flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
   },

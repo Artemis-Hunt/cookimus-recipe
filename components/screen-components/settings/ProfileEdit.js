@@ -232,7 +232,7 @@ export default class ProfileEdit extends Component {
         </View>
 
         {/* Just for the Lolz - Delete when necessary*/}
-        <Text style={[styles.subHeading, styles.fontBody]}>
+        {/* <Text style={[styles.subHeading, styles.fontBody]}>
           Payment Details
         </Text>
         <View styles={styles.editZone}>
@@ -242,7 +242,7 @@ export default class ProfileEdit extends Component {
           <Text style={{ fontSize: 16, color: "gray" }}>
             XXXX-XXXX-XXXX-0000 (VISA ending in 0000)
           </Text>
-        </View>
+        </View> */}
         {/* Just for the Lolz - Delete when necessary*/}
 
         <View style={styles.updateBox}>
