@@ -15,7 +15,7 @@ const roundedRadius = 10;
 const SearchCard = (props) => {
   const Window = useWindowDimensions();
   const navigation = useNavigation();
-  const scaledSize = sizeScaler(18, Window);
+  const scaledSize = sizeScaler(15, Window);
   const scaledHeight = Window.height / 7.5;
 
   return (
