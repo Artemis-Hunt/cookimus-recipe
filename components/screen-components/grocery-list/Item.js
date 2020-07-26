@@ -51,7 +51,7 @@ const Item = ({
     } else {
       final =
         fracArray[0].toString() +
-        '"' +
+        '  ' +
         fracArray[1].toString() +
         "/" +
         fracArray[2].toString();
@@ -156,7 +156,6 @@ const editCard = (
         //width={50}
         keyboardType={"numeric"}
         numeric
-        selection={{start: 0}}
         value={`${newValue}`}
         onChangeText={(text) => {
           //Remove any non-numeric values, excluding dot
@@ -165,7 +164,7 @@ const editCard = (
           item.edited = true;
           handlequantityupdate(item, text);
         }}
-        maxLength={8}
+        maxLength={6}
       />
       <TouchableOpacity onPress={() => showunitselectmodal(item)}>
         <View style={[styles.textInput, styles.unitBox]}>
@@ -175,7 +174,6 @@ const editCard = (
       <TextInput
         style={[styles.textInput, { flex: 6 }]}
         //width={140}
-        selection={{start: 0}}
         placeholder={title}
         value={newName}
         onChangeText={(text) => {
@@ -238,8 +236,7 @@ const styles = StyleSheet.create({
   //For each ingredient entry
   ingredientEntry: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     padding: 10,
     backgroundColor: "white",
     alignItems: "center",
@@ -252,7 +249,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   ingredientCard: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "flex-start",
   },

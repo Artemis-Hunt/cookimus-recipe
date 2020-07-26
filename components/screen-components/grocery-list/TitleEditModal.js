@@ -64,7 +64,7 @@ export default class TitleEditModal extends Component {
             </View> */}
           </View>
           <TextInput
-            style={[styles.text, styles.textInput, ]}
+            style={[styles.text, styles.textInput]}
             placeholder={this.state.recipeTitle}
             value={this.state.recipeTitle}
             onChangeText={(text) => {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRadius: 5,
     backgroundColor: "white",
-    width: 300,
+    width: screen.width - 100,
     fontSize: 18,
   },
   saveButton: {

@@ -169,9 +169,12 @@ export default class GroceryList extends Component {
         for (let i = RecipeList.length - 1; i >= 0; i--) {
           for (let j = RecipeList[i].data.length - 1; j >= 0; j--) {
             let ingredient = RecipeList[i].data[j];
+            ingredient.name = ingredient.name.trim();
             //Delete ingredients with blank name or are marked for deletion
             if (ingredient.name === "" || ingredient.toDelete === true) {
-              groceryListDelete(RecipeList[i].title, ingredient.originalName);
+              if (ingredient.originalName !== "") {
+                groceryListDelete(RecipeList[i].title, ingredient.originalName);
+              }
               RecipeList[i].data.splice(j, 1);
               continue;
             }
@@ -366,6 +369,9 @@ export default class GroceryList extends Component {
         CombinedList[0].data.push(HashTable[i]);
       }
     }
+    CombinedList[0].data.sort((a, b) => a.name.localeCompare(b.name));
+    //alert(`List rebuilt. Length: ${CombinedList[0].data.length}`)
+    //this.forceUpdate();
   };
 
   closeRow = (rowMap, rowKey) => {
@@ -457,7 +463,7 @@ export default class GroceryList extends Component {
               )}
               renderSectionHeader={({ section: { title } }) => (
                 <View style={[styles.combinedHeader, styles.editHeaderColor]}>
-                  <Text style={[styles.header]}>{title}</Text>
+                  <Text style={[styles.text, styles.header]}>{title}</Text>
                 </View>
               )}
               ItemSeparatorComponent={ItemSeparator}
@@ -547,7 +553,7 @@ export default class GroceryList extends Component {
                     this.showEditTitleModal(title);
                   }}
                   delayLongPress={180}
-                  style={{flex:1}}
+                  style={{ flex: 1 }}
                 >
                   <Text style={[styles.header, styles.text]}>{title}</Text>
                 </TouchableOpacity>

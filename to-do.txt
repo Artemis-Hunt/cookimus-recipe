@@ -1,10 +1,22 @@
-edit name
-delete recipe
+remove special characters and extra spaces from confirm ingredients
+warning for guests when log out
+disable edit profile for guests
+convert guest to actual account
+forgot password
 
-edit ingredient name, quantity, unit - if name changed vs name not changed
-delete ingredient
-add ingredient
+Recipe:
+	- Added to grocery list green text linked to AddedToGroceryList[url]
+confirmIngredients:
+	- Delete ingredient button too small (fixed??)
+	- Quantity input not working correctly on iOS (fixed??)
+	- Get rid of vertical scroll bar (fixed??)
+add empty item without name to existing recipe and then toggle out of edit mode, firebase error (fixed??)
+Portion modal:
+	-Fonts (fixed??)
+	-Save button change to Button (fixed??)
+TitleEditModal:
+	-Scale textinput to width instead of fixed width (fixed??)
+VerifyPassword modal:
+	- No button text (fixed??)
 
-change portion
 
-add new recipe

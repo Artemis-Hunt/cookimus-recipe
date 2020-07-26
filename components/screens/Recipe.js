@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -28,6 +28,11 @@ const Recipe = () => {
   const Window = useWindowDimensions();
 
   const [addedToList, setAddedToList] = useState(false);
+  const [existInList, setExistInList] = useState(false);
+
+  useEffect(() => {
+    setAddedToList(route.params.addedToList)
+  }, [route.params.addedToList])
 
   //Props from SearchList.js, passed through SearchCard.js
   const name = route.params.name;
@@ -52,7 +57,7 @@ const Recipe = () => {
                 {/* Extra info e.g. servings, preparation time*/}
                 <View style={styles.categoryBox}>
                   <View style={styles.subBox}>
-                    <Text style={[styles.text, styles.name]}>{name}</Text>
+                    <Text style={[styles.headerText, styles.name]}>{name}</Text>
                   </View>
                   <AdditionalInfo
                     additional={additionalData[index].additionalInfo}
@@ -68,8 +73,8 @@ const Recipe = () => {
                   onPress={() => {
                     if (url in AddedToGroceryList) {
                       //Recipe is Added
+                      setExistInList(true);
                     } else {
-                      setAddedToList(true);
                       navigation.navigate("ConfirmIngredients", {
                         originalIngredients:
                           additionalData[index].originalIngredient,
@@ -81,12 +86,12 @@ const Recipe = () => {
                   }}
                   style={styles.buttonBox}
                 >
-                  <Text style={styles.addButton}>Add to Grocery List </Text>
+                  <Text style={[styles.text, styles.addButton]}>Add to Grocery List  </Text>
                   <Entypo name="add-to-list" size={19} color="#1E90FF" />
                 </TouchableOpacity>
                 {addedToList ? (
                   <Text style={styles.addedText}>Added to Grocery list!</Text>
-                ) : null}
+                ) : existInList? <Text style={styles.addedText}>Recipe already in Grocery List!</Text> : null}
                 <PrepMethod
                   instructions={additionalData[index].prepInstructions}
                 />
@@ -107,7 +112,7 @@ const Recipe = () => {
                   }}
                   style={styles.buttonBox}
                 >
-                  <Text style={styles.addButton}>Save This Recipe </Text>
+                  <Text style={[styles.text, styles.addButton]}>Save This Recipe  </Text>
                   <Feather name="save" size={19} color="#1E90FF" />
                 </TouchableOpacity>
               </ScrollView>
@@ -136,8 +141,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: null,
   },
-  text: {
+  headerText: {
     fontFamily: "SourceSansPro-SemiBold",
+  },
+  text : {
+    fontFamily: "SourceSansPro"
   },
   name: {
     fontSize: 33,
@@ -155,7 +163,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F08080",
   },
   addButton: {
-    fontSize: 17,
+    fontSize: 18,
     color: "#1E90FF",
   },
   addedText: {
@@ -167,6 +175,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
+    alignItems:"center",
     margin: 8,
   },
 });

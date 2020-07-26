@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  Keyboard
 } from "react-native";
 import Button from "../../generic/Button"
 import PasswordCheck from "./PasswordCheck.js";
@@ -104,7 +105,9 @@ export default class ProfileEdit extends Component {
   }
   //Verify fields if valid and update name and email on Firebase
   async verifyAndUpdate() {
+    Keyboard.dismiss();
     this.setState({isUpdatingUserData: true});
+
     //After updating, need to ensure app is pulling new user info
     //Set states as updated to reflect change - has to repull from firebase
     let firstName = this.state.newFirstName;
@@ -127,6 +130,7 @@ export default class ProfileEdit extends Component {
       alert(err);
     }
     this.setState({isUpdatingUserData: false});
+    //this.props.navigation.goBack();
   }
   render() {
     return (
@@ -320,7 +324,6 @@ const styles = StyleSheet.create({
     backgroundColor: "dodgerblue",
     height: 47,
     width: 125,
-    borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",

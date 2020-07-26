@@ -262,7 +262,7 @@ export default class HashFunctions extends Component {
       this.hashDelete(
         index,
         j,
-        false,
+        true,
         RecipeList[index].data[j].unitDetails.class
       );
     }
@@ -271,7 +271,6 @@ export default class HashFunctions extends Component {
 
     RecipeList.splice(index, 1);
     this.bulkGenerateKey(index);
-    this.props.rebuildList();
     return RecipeList.length
   };
   //Deletes items from the hashtable to update combined list

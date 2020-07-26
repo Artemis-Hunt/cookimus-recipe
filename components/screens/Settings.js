@@ -75,17 +75,14 @@ const Settings = () => {
           <Text style={[styles.text, styles.menuText]}>Report An Issue</Text>
         </View>
       </TouchableOpacity>
-      {/* <TouchableOpacity
-        onPress={() => alert("LOGOUT")}
+      <TouchableOpacity
+        onPress={onLogOutPress}
       >
         <View style={styles.profileButton}>
-          <View style={styles.exitIcon}>
-            <Entypo name="log-out" size={24} color="#778899" />
-          </View>
-          <Text style={[styles.text, styles.menuText]}>Log Out</Text>
+          <Text style={[styles.text, styles.menuText, {color: "crimson"}]}>Log Out</Text>
         </View>
-      </TouchableOpacity> */}
-      <View style={styles.buttonView}>
+      </TouchableOpacity>
+      {/* <View style={styles.buttonView}>
         <Button
           text={"Sign out"}
           onPress={onLogOutPress}
@@ -93,7 +90,7 @@ const Settings = () => {
           style={styles.logOutButton}
           textStyle={styles.logOutText}
         />
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -126,7 +123,7 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 20,
-    color: "#888888"
+    color: "#222222"
   },
   headerText: {
     fontSize: 28,

@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     TextInput
 } from "react-native";
+import Button from "../../generic/Button"
 import ReportSubmitModal from "./ReportSubmitModal.js"
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -62,12 +63,12 @@ export default class ReportPage extends Component {
                     value={this.state.feedbackContent}
                     onChangeText={(text) => this.handleTextChange(text)}
                 />
-                <TouchableOpacity
+                <Button 
                     style={styles.submitButton}
                     onPress={() => this.submitReport()}
-                >
-                    <Text style={styles.buttonText}>Submit Report</Text>
-                </TouchableOpacity>
+                    text={`Submit Report`}
+                    textStyle={[styles.text, styles.buttonText]}
+                />
                 <ReportSubmitModal
                     ref={"confirmModal"}
                 />
@@ -96,6 +97,9 @@ const styles = StyleSheet.create({
     reportIcon: {
         justifyContent: "center",
         paddingTop: 1,
+    },
+    text: {
+        fontFamily: "SourceSansPro"
     },
     bodyText: {
         color: "dimgray",
