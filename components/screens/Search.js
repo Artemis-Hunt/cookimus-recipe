@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     //box
-    marginVertical: 5,
+    marginVertical: 10,
     paddingHorizontal: 10,
   },
   searchHint: {

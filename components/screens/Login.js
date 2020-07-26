@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     fontFamily: "SourceSansPro",
   },
   button: {
-    backgroundColor: "#788eec",
+    backgroundColor: "dodgerblue",
     width: 200,
     marginTop: 20,
     height: 48,

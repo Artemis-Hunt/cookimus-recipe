@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  Dimensions
 } from "react-native";
 import {
   Ionicons,
@@ -25,6 +26,7 @@ import HashFunctions from "../grocery-list/HashFunctions.js";
 import AddRecipe from "./AddRecipe.js";
 
 let DATA = [];
+let screen = Dimensions.get("window")
 
 //Render card for ingredients
 const RenderItemCard = ({
@@ -58,13 +60,13 @@ const RenderItemCard = ({
             style={[styles.textInput, { flex: 1.5 }]}
             keyboardType={"numeric"}
             numeric
-            selection={{ start: 0 }}
             value={`${item.ingredientDetails.amount}`}
             onChangeText={(text) => {
               //Remove any non-numeric values, excluding dot
               text = text.replace(/[^0-9\.]/g, "");
               handlequantityupdate(item, text);
             }}
+            maxLength={6}
           />
           <TouchableOpacity
             onPress={() => {
@@ -78,8 +80,6 @@ const RenderItemCard = ({
           </TouchableOpacity>
           <TextInput
             style={[styles.textInput, { flex: 6 }]}
-            selection={{ start: 0 }}
-            placeholder={item.ingredientDetails.name}
             value={item.ingredientDetails.name}
             onChangeText={(text) => {
               //Remove any non-alphanumeric and non-blank space character
@@ -88,17 +88,13 @@ const RenderItemCard = ({
               text = text.replace(/\s+/g, " ");
               handlenameupdate(item, text);
             }}
+            maxLength={40}
           />
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => handledelete(index)}
           >
-            <Ionicons
-              style={styles.icon}
-              name="ios-close"
-              size={30}
-              color="rgba(0,0,0,0.5)"
-            />
+            <Ionicons name="ios-close" size={32} color="rgba(0,0,0,0.5)" />
           </TouchableOpacity>
         </View>
       </View>
@@ -157,7 +153,7 @@ export default class ConfirmItemModal extends Component {
           " "
         );
         let commaRemovedString = originalIngredient.split(",", 1);
-        let searchArray = commaRemovedString.split(" ");
+        let searchArray = commaRemovedString[0].split(" ");
         for (let splitWord of searchArray) {
           if (splitWord === "And" || splitWord === "and") {
             itemFound = true;
@@ -291,7 +287,7 @@ export default class ConfirmItemModal extends Component {
         style={[styles.editView, styles.container]}
       >
         <View style={styles.headerBar}>
-          <View style={styles.rowView}>
+          <View style={styles.closeRowView}>
             <TouchableOpacity
               style={styles.closeButton}
               onPress={() => {
@@ -300,29 +296,32 @@ export default class ConfirmItemModal extends Component {
             >
               <MaterialCommunityIcons name="close" size={35} color="#CCC" />
             </TouchableOpacity>
-            {this.state.showUndo ? (
+            <View style={{width: screen.width - 110}}/>
               <TouchableOpacity
                 onPress={() => this.handleUndo()}
                 style={styles.undoButton}
+                disabled={!this.state.showUndo}
               >
                 {/* <MaterialIcons name="undo" size={35} color="dodgerblue" /> */}
                 <MaterialCommunityIcons
                   name="undo-variant"
                   size={35}
-                  color="dodgerblue"
+                  color={this.state.showUndo? "dodgerblue" : "transparent"}
                 />
               </TouchableOpacity>
-            ) : null}
           </View>
           <View style={styles.rowView}>
-            <Text style={[styles.text, styles.headerText]}>Confirm Ingredients</Text>
-            <View style={{ marginTop: 3 }}>
+            <Text style={[styles.text, styles.headerText]}>
+              Confirm Ingredients
+            </Text>
+            {/* <View style={{ marginTop: 3 }}>
               <Ionicons name="ios-checkmark-circle" size={24} color="green" />
-            </View>
+            </View> */}
           </View>
         </View>
         <FlatList
-        style={{backgroundColor: "white"}}
+          style={{ backgroundColor: "white" }}
+          showsVerticalScrollIndicator={false}
           data={this.editArray}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
@@ -338,14 +337,14 @@ export default class ConfirmItemModal extends Component {
           )}
           ListFooterComponent={
             <Button
-            style={styles.confirmButton}
-            onPress={() => {
-              this.handleSubmitButton();
-              this.props.navigation.goBack();
-            }}
-            text={`Add to grocery list`}
-            textStyle={styles.buttonText}
-          />
+              style={styles.confirmButton}
+              onPress={() => {
+                this.handleSubmitButton();
+                this.props.navigation.navigate("Recipe", {addedToList: true});
+              }}
+              text={`Add to grocery list`}
+              textStyle={styles.buttonText}
+            />
           }
         />
         <UnitSelectModal
@@ -372,12 +371,19 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     backgroundColor: "white",
+    justifyContent: "space-between",
   },
   bodyFontSize: {
     fontSize: 17,
   },
   originalCardText: {
     color: "#696969",
+  },
+  closeRowView: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    alignSelf: "center",
   },
   rowView: {
     flexDirection: "row",
@@ -387,8 +393,9 @@ const styles = StyleSheet.create({
   },
   originalCard: {
     flex: 1,
-    borderTopWidth: 1,
-    borderTopColor: "#E8E8E8",
+    // borderTopWidth: 1,
+    // borderTopColor: "#E8E8E8",
+    marginTop: 12,
     paddingVertical: 5,
     justifyContent: "flex-start",
     paddingLeft: 7,
@@ -398,19 +405,13 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   closeButton: {
-    flex: 1,
     marginHorizontal: 10,
     marginTop: 5,
-    justifyContent: "flex-end",
     alignSelf: "center",
-    alignItems: "flex-start",
   },
   undoButton: {
-    flex: 1,
     marginHorizontal: 10,
     marginTop: 5,
-    justifyContent: "flex-start",
-    alignItems: "flex-end",
   },
   textInput: {
     height: 30,
@@ -446,9 +447,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deleteButton: {
-    paddingHorizontal: 5,
+    paddingRight: 12,
   },
   text: {
     fontFamily: "SourceSansPro",
-  }
+  },
 });

@@ -24,7 +24,7 @@ const SearchCard = (props) => {
         activeOpacity={1}
         onPress={() => {
           navigation.navigate("Recipe", {
-            ...props
+            ...props,
           });
         }}
         style={styles.card}
@@ -42,12 +42,12 @@ const SearchCard = (props) => {
           </Text>
           <Text style={[styles.site, styles.text]}>AllRecipes.com</Text>
           <View style={styles.extraDetailsBox}>
-            <Text style={styles.rating}>Ratings: ({props.review})</Text>
             <Rating
               imageSize={scaledSize - 5}
               readonly={true}
               startingValue={props.rating}
             />
+            <Text style={[styles.text, styles.rating]}>({props.review})</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -94,15 +94,15 @@ const styles = StyleSheet.create({
   //Text
   descriptionBox: {
     flex: 1,
+    justifyContent: "space-between",
     margin: 8,
   },
   extraDetailsBox: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "baseline",
+    alignItems: "center",
   },
   text: {
-    flex: 1,
     fontFamily: "SourceSansPro",
     textAlign: "center",
   },
@@ -111,10 +111,13 @@ const styles = StyleSheet.create({
     color: "grey",
     fontSize: 13,
     fontStyle: "italic",
+    marginVertical: 10,
   },
   rating: {
     color: "grey",
     fontSize: 11,
     fontStyle: "italic",
+    flex: 0,
+    marginHorizontal: 5,
   },
 });

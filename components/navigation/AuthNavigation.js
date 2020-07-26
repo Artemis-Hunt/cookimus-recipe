@@ -40,19 +40,23 @@ const AuthNavigation = () => {
       let itemData = item.data();
 
       //Remove the extra information that is not supposed to be rendered in the list of ingredients
-      let { portion, portionText, url } = itemData;
+      let { portion, portionText, url, timestamp } = itemData;
       delete itemData.portion;
       delete itemData.portionText;
       delete itemData.url;
+      delete itemData.timestamp;
 
       RecipeList.push({
         title: item.id,
         data: Object.values(itemData),
         portion: portion,
         portionText: portionText,
+        url: url,
+        timestamp: timestamp.seconds,
       });
       AddedToGroceryList[url] = null;
     });
+    RecipeList.sort((a, b) => b.timestamp - a.timestamp);
     savedList.forEach((item => {
       SavedRecipes.push(item)
     }))
