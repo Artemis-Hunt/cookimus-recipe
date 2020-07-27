@@ -25,7 +25,7 @@ const AddRecipe = async (ingredient, name, url) => {
     await groceryListPush(recipeToAdd);
 
     //Keep track of saved recipes
-    AddedToGroceryList[url] = null;
+    AddedToGroceryList[name] = null;
     //alert("Added to grocery list");
 }
 

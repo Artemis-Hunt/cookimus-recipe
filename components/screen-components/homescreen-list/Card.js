@@ -24,7 +24,7 @@ const Card = (props) => {
         onPress={() => navigation.navigate("Recipe", { ...props })}
       >
         <Image
-          style={[styles.image, { height: props.Window.height / 4, width: props.Window.width - 60 }]}
+          style={[styles.image, { height: props.Window.height / 4, width: props.Window.width / 1.8 }]}
           source={{
             uri: `${props.image}`,
           }}
@@ -47,8 +47,8 @@ export default Card;
 const styles = StyleSheet.create({
   card: {
     borderRadius: roundedRadius,
-    marginRight: 20,
     backgroundColor: "white",
+    marginHorizontal: 10,
     //Android shadow
     elevation: 5,
     //iOS Shadow

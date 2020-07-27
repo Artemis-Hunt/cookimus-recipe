@@ -196,7 +196,7 @@ export default class GroceryList extends Component {
 
           //Remove empty recipes
           if (RecipeList[i].data.length === 0) {
-            delete AddedToGroceryList[RecipeList[i].url];
+            delete AddedToGroceryList[RecipeList[i].title];
             groceryListDelete(RecipeList[i].title);
             RecipeList.splice(i, 1);
           }
@@ -255,6 +255,8 @@ export default class GroceryList extends Component {
       if (recipe.title === originalTitle) {
         //Update RecipeList title
         recipe.title = newTitle;
+        AddedToGroceryList[newTitle] = null;
+        delete AddedToGroceryList[originalTitle];
         groceryListRecipeUpdate(originalTitle, newTitle, null, null, recipe);
         break;
       }

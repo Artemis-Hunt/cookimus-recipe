@@ -164,7 +164,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: screen.width - 100,
     fontSize: 18,
-  },
+    textAlign: "center",
+    },
   saveButton: {
     marginVertical: 10,
     backgroundColor: "dodgerblue",

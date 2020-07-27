@@ -17,8 +17,9 @@ import IngredientBox from "../screen-components/recipe/IngredientBox.js";
 import AdditionalInfo from "../screen-components/recipe/AdditionalInfo.js";
 import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddedToGroceryList from "../../data/AddedToGroceryList.js";
+import AddedToMyRecipes from "../../data/AddedToMyRecipes";
 import SavedRecipes from "../../data/SavedRecipes";
-import {savedRecipesPush} from "../../config/Firebase/firebaseConfig";
+import { savedRecipesPush } from "../../config/Firebase/firebaseConfig";
 
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 
@@ -30,16 +31,22 @@ const Recipe = () => {
 
   const [addedToList, setAddedToList] = useState(false);
   const [existInList, setExistInList] = useState(false);
+  const [addedToSaved, setAddedToSaved] = useState(false);
+  const [existInSaved, setExistInSaved] = useState(false);
 
   useEffect(() => {
-    setAddedToList(route.params.addedToList)
-  }, [route.params.addedToList])
+    setAddedToList(route.params.addedToList);
+  }, [route.params.addedToList]);
 
   //Props from SearchList.js, passed through SearchCard.js
   const name = route.params.name;
   const url = route.params.url;
   const image = route.params.image;
   const index = route.params.index;
+
+  const currentRoutes = navigation.dangerouslyGetState().routes;
+  //Get the parent screen which this Recipe screen was called from
+  const previousScreenName = currentRoutes[currentRoutes.length - 2].name;
 
   return (
     //Additional data for the recipe comes from the context
@@ -72,7 +79,7 @@ const Recipe = () => {
                 {/*Add to grocery list*/}
                 <TouchableOpacity
                   onPress={() => {
-                    if (url in AddedToGroceryList) {
+                    if (name in AddedToGroceryList) {
                       //Recipe is Added
                       setExistInList(true);
                     } else {
@@ -87,37 +94,66 @@ const Recipe = () => {
                   }}
                   style={styles.buttonBox}
                 >
-                  <Text style={[styles.text, styles.addButton]}>Add to Grocery List  </Text>
+                  <Text style={[styles.text, styles.addButton]}>
+                    Add to Grocery List{" "}
+                  </Text>
                   <Entypo name="add-to-list" size={19} color="#1E90FF" />
                 </TouchableOpacity>
-                {addedToList ? (
+                {existInList ? (
+                  <Text style={styles.addedText}>
+                    Recipe already in Grocery List!
+                  </Text>
+                ) : addedToList ? (
                   <Text style={styles.addedText}>Added to Grocery list!</Text>
-                ) : existInList? <Text style={styles.addedText}>Recipe already in Grocery List!</Text> : null}
+                ) : null}
                 <PrepMethod
                   instructions={additionalData[index].prepInstructions}
                 />
-                <View style={{ height: 50 }}></View>
                 {/*Store recipe locally*/}
-                <TouchableOpacity
-                  onPress={() => {
-                    let recipeToSave = {
-                      name: name,
-                      url: url,
-                      recipeImageURL: image,
-                      originalIngredient:
-                        additionalData[index].originalIngredient,
-                      ingredient: additionalData[index].ingredient,
-                      additionalInfo: additionalData[index].additionalInfo,
-                      prepInstructions: additionalData[index].prepInstructions,
-                    }
-                    SavedRecipes.push(recipeToSave);
-                    savedRecipesPush(recipeToSave);
-                  }}
-                  style={styles.buttonBox}
-                >
-                  <Text style={[styles.text, styles.addButton]}>Save This Recipe  </Text>
-                  <Feather name="save" size={19} color="#1E90FF" />
-                </TouchableOpacity>
+                {previousScreenName === "MyRecipes" ? null : (
+                  <>
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (name in AddedToMyRecipes) {
+                          setExistInSaved(true);
+                        } else {
+                          let recipeToSave = {
+                            name: name,
+                            recipeURL: url,
+                            recipeImageURL: image,
+                            originalIngredient:
+                              additionalData[index].originalIngredient,
+                            ingredient: additionalData[index].ingredient,
+                            additionalInfo:
+                              additionalData[index].additionalInfo,
+                            prepInstructions:
+                              additionalData[index].prepInstructions,
+                          };
+                          SavedRecipes.push(recipeToSave);
+                          savedRecipesPush(recipeToSave);
+                          AddedToMyRecipes[name] = null;
+                          setAddedToSaved(true);
+                        }
+                      }}
+                      style={styles.buttonBox}
+                    >
+                      <Text style={[styles.text, styles.addButton]}>
+                        Save This Recipe{" "}
+                      </Text>
+                      <Feather name="save" size={19} color="#1E90FF" />
+                    </TouchableOpacity>
+                    {existInSaved ? (
+                      <Text style={styles.addedText}>
+                        Already in My Recipes!
+                      </Text>
+                    ) : addedToSaved ? (
+                      <Text style={styles.addedText}>
+                        Added to My Recipes!
+                      </Text>
+                    ) : null}
+                  </>
+                )}
+                <View style={{ height: 30 }}></View>
               </ScrollView>
             </View>
           )}
@@ -147,8 +183,8 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: "SourceSansPro-SemiBold",
   },
-  text : {
-    fontFamily: "SourceSansPro"
+  text: {
+    fontFamily: "SourceSansPro",
   },
   name: {
     fontSize: 33,
@@ -178,7 +214,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
-    alignItems:"center",
-    margin: 8,
+    alignItems: "center",
+    margin: 20,
   },
 });
