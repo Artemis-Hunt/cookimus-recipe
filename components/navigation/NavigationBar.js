@@ -146,7 +146,7 @@ class SavedScreen extends React.Component {
           }}
         >
           <SavedStack.Screen
-            name="SavedPage"
+            name="MyRecipes"
             component={MyRecipes}
             options={{ header: () => null }}
           />
@@ -155,11 +155,11 @@ class SavedScreen extends React.Component {
             component={Recipe}
             options={({ route }) => ({ title: route.params.name })}
           />
-          {/* <SavedStack.Screen
+          <SavedStack.Screen
             name="ConfirmIngredients"
             component={ConfirmIngredients}
             options={{ header: () => null }}
-          /> */}
+          />
         </SavedStack.Navigator>
       </LoadingAdditionalContext.Provider>
     );

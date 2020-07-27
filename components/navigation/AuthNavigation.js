@@ -27,7 +27,8 @@ const AuthNavigation = () => {
   //Fetch grocery list from Firebase
   const getFirebaseList = async () => {
     //Clear RecipeList and AddedToGroceryList
-    RecipeList.splice(0, RecipeList.length)
+    RecipeList.splice(0, RecipeList.length);
+    SavedRecipes.splice(0, SavedRecipes.length);
     for(let property in AddedToGroceryList) {
       delete AddedToGroceryList[property]
     }

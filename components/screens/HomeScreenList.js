@@ -24,8 +24,9 @@ import {
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
 import AlgoliaRecipesIndex from "../../config/Algolia/algoliaConfig";
 
-const containerMarginHorizontal = 5;
+const containerMarginHorizontal = 10;
 const Window = Dimensions.get("window");
+const maxRecipesToFetch = 50;
 
 const ItemSeparator = () => {
   return <View style={styles.separator} />;
@@ -36,9 +37,10 @@ class HomeScreenList extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      cardData: [],
+      cardDataForTime: [],
+      cardDataForPopular: [],
       timeSegment: "",
-
+      databaseTag: "",
       //sliderIndex: 0,
       //maxSlider: 20,
     };
@@ -85,19 +87,19 @@ class HomeScreenList extends React.Component {
     let hours = time.getHours();
     let minutes = time.getMinutes();
     if (hours <= 4) {
-      this.setState({ timeSegment: "evening" });
+      this.setState({ timeSegment: "evening", databaseTag: "dinner" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 5))
     } else if (hours >= 5 && hours <= 10) {
-      this.setState({ timeSegment: "morning" });
+      this.setState({ timeSegment: "morning", databaseTag: "breakfast" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 11))
     } else if (hours >= 11 && hours <= 13) {
-      this.setState({ timeSegment: "noon" });
+      this.setState({ timeSegment: "noon", databaseTag: "lunch" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 14))
     } else if (hours >= 14 && hours <= 16) {
-      this.setState({ timeSegment: "afternoon" });
+      this.setState({ timeSegment: "afternoon", databaseTag: "dessert" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 17))
     } else if (hours >= 17) {
-      this.setState({ timeSegment: "evening" });
+      this.setState({ timeSegment: "evening", databaseTag: "dinner" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 29))
     }
   }
@@ -114,34 +116,48 @@ class HomeScreenList extends React.Component {
     }
     //this.state.loading is the flag for the card data
     //context stores flag for loading additional data and the actual additional data
-    // this.setState({ loading: true });
-    // this.context.changeLoadingStatus(true);
+    this.setState({ loading: true });
+    this.context.changeLoadingStatus(true);
+    
+    let queryResponseForTime = await AlgoliaRecipesIndex.search(this.state.databaseTag, {
+      hitsPerPage: 2000,
+      facets: ["tags"],
+      maxValuesPerFacet: maxRecipesToFetch
+    });
 
-    // let queryResponse = await AlgoliaRecipesIndex.search(text, {
-    //   hitsPerPage: 1000,
-    // });
-    // const response = await fetchCardData({ type: this.state.timeSegment });
-    // this.setState({
-    //   loading: false,
-    //   cardData: queryResponse.hits,
-    // });
+    let queryResponseForPopular = await AlgoliaRecipesIndex.search("", {
+      hitsPerPage: maxRecipesToFetch,
+    });
+    this.setState({
+      loading: false,
+      cardDataForTime: queryResponseForTime.hits,
+      cardDataForPopular: queryResponseForPopular.hits
+    });
 
-    // let additionalData = [];
+    let additionalData = [];
 
-    // for (let item of this.state.cardData) {
-    //   additionalData.push({
-    //     ingredient: item.ingredient,
-    //     originalIngredient: item.originalIngredient,
-    //     additionalInfo: item.additionalInfo,
-    //     prepInstructions: item.prepInstructions,
-    //   });
-    // }
+    for (let item of this.state.cardDataForTime) {
+      additionalData.push({
+        ingredient: item.ingredient,
+        originalIngredient: item.originalIngredient,
+        additionalInfo: item.additionalInfo,
+        prepInstructions: item.prepInstructions,
+      });
+    }
+    for (let item of this.state.cardDataForPopular) {
+      additionalData.push({
+        ingredient: item.ingredient,
+        originalIngredient: item.originalIngredient,
+        additionalInfo: item.additionalInfo,
+        prepInstructions: item.prepInstructions,
+      });
+    }
 
     //Add additional data to context, set loading additional flag to false.
     //Important: changeLoadingStatus must be called after changeAdditionalData, else
     //it will screw up the rendering of Recipe.js
-    // this.context.changeAdditionalData(additionalData);
-    // this.context.changeLoadingStatus(false);
+    this.context.changeAdditionalData(additionalData);
+    this.context.changeLoadingStatus(false);
   }
 
   render() {
@@ -153,18 +169,18 @@ class HomeScreenList extends React.Component {
           </View>
         ) : (
             <>
-              <View style={{ marginBottom: 5, }}>
+              <View style={{ marginBottom: 5, marginHorizontal: containerMarginHorizontal, }}>
                 <FlavorText name={this.user} time={this.state.timeSegment} />
               </View>
               <View style={{ marginBottom: 10, }}>
-                <View style={styles.subHeadingBar}>
-                  <Text style={styles.subHeadingText}>Based On The Time </Text>
+                <View style={[styles.subHeadingBar, {marginHorizontal: containerMarginHorizontal}]}>
+                  <Text style={[styles.heading, styles.subHeadingText]}>Based On The Time </Text>
                   <Ionicons name="md-time" size={24} color="#778899" />
                 </View>
                 <FlatList
                   //ref={"timeList"}
                   showsHorizontalScrollIndicator={false}
-                  data={this.state.cardData}
+                  data={this.state.cardDataForTime}
                   horizontal={true}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => (
@@ -182,14 +198,14 @@ class HomeScreenList extends React.Component {
                   ItemSeparatorComponent={ItemSeparator}
                 />
               </View>
-              <View style={{ marginBottom: 5, }}>
-                <View style={styles.subHeadingBar}>
-                  <Text style={styles.subHeadingText}>Recommended For You </Text>
+              <View style={{ marginBottom: 5,}}>
+                <View style={[styles.subHeadingBar, {marginHorizontal: containerMarginHorizontal}]}>
+                  <Text style={[styles.heading, styles.subHeadingText]}>Popular recipes </Text>
                   <AntDesign name="star" size={24} color="gold" />
                 </View>
                 <FlatList
                   showsHorizontalScrollIndicator={false}
-                  data={this.state.cardData}
+                  data={this.state.cardDataForPopular}
                   horizontal={true}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => (
@@ -197,7 +213,7 @@ class HomeScreenList extends React.Component {
                       name={item.name}
                       url={item.recipeURL}
                       image={item.recipeImageURL}
-                      index={index}
+                      index={index + maxRecipesToFetch}
                       Window={Window}
                     />
                   )}
@@ -220,7 +236,6 @@ export default HomeScreenList;
 const styles = StyleSheet.create({
   container: {
     //flex: 1,
-    marginHorizontal: 15,
   },
   heading: {
     fontFamily: "SourceSansPro-SemiBold",

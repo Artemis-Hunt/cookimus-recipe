@@ -33,16 +33,25 @@ const SavedCard = (props) => {
     //     <Text></Text>
     //   </TouchableOpacity>
     // </View>
-    <View style={[styles.card]}>
+    <View style={[styles.card, { flex: 1 / 2, aspectRatio: 1.5 }]}>
       <TouchableOpacity
-        activeOpacity={1}
+        activeOpacity={0.9}
         delayPressIn={5}
         delayPressOut={5}
         delayLongPress={5}
-        onPress={() => navigation.navigate("Recipe", { ...props })}
+        onPress={() =>
+          navigation.navigate("Recipe", {
+            name: props.name,
+            url: props.url,
+            image: props.image,
+            index: props.index,
+          })
+        }
+        onLongPress={() => props.rendertitleeditmodal(props.name)}
+        delayLongPress={180}
       >
         <Image
-          style={[styles.image, { aspectRatio: 1, flex: 1/2 }]}
+          style={[styles.image, { width: "100%", height: "100%" }]}
           source={{
             uri: `${props.image}`,
           }}
@@ -66,8 +75,8 @@ const styles = StyleSheet.create({
     borderRadius: roundedRadius,
     backgroundColor: "white",
     flex: 1,
-    marginVertical: 5,
-    marginHorizontal: 5,
+    marginHorizontal: 8,
+    marginVertical: 15,
 
     //Android shadow
     elevation: 2,

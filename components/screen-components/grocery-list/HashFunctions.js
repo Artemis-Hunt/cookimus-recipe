@@ -103,7 +103,8 @@ export default class HashFunctions extends Component {
   //Function to capitalise first letter of all leading words in string
   capitaliseString = (str) => {
     for (let k = 0; k < str.length; k++) {
-      str[k] = str[k][0].toUpperCase() + str[k].substr(1); //Appends everything else from index 1 onwards
+      let subString = str[k].substr(1).toLowerCase();
+      str[k] = str[k][0].toUpperCase() + subString; //Appends everything else from index 1 onwards
     }
     //Combine back
     return str.join(" ");
@@ -239,11 +240,11 @@ export default class HashFunctions extends Component {
     //Remove Title from RecipeList
     if (RecipeList[recipeIndex].data.length === 0) {
       //Delete url from AddedToGroceryList
-      delete AddedToGroceryList[RecipeList[recipeIndex].url];
+      delete AddedToGroceryList[RecipeList[recipeIndex].title];
       RecipeList.splice(recipeIndex, 1);
       this.bulkGenerateKey(recipeIndex);
     }
-    return RecipeList.length
+    return RecipeList.length;
   };
 
   //Delete entire recipe at once
@@ -267,11 +268,11 @@ export default class HashFunctions extends Component {
       );
     }
     //Delete url from AddedToGroceryList
-    delete AddedToGroceryList[RecipeList[index].url];
+    delete AddedToGroceryList[RecipeList[index].title];
 
     RecipeList.splice(index, 1);
     this.bulkGenerateKey(index);
-    return RecipeList.length
+    return RecipeList.length;
   };
   //Deletes items from the hashtable to update combined list
   hashDelete = (recipeIndex, ingrIndex, rebuildFlag, classIndex) => {
