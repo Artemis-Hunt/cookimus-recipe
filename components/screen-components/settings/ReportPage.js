@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import Button from "../../generic/Button"
 import ReportSubmitModal from "./ReportSubmitModal.js"
+import {sendFeedback} from "../../../config/Firebase/firebaseConfig"
 import { MaterialIcons } from '@expo/vector-icons';
 
 //Page to submit bug reports for the app
@@ -27,6 +28,7 @@ export default class ReportPage extends Component {
         let report = this.state.feedbackContent.trim();
         if (report !== "") {
             //Submit report
+            sendFeedback(report);
             this.refs.feedbackInput.blur();
             this.launchModal();
             this.setState({ feedbackContent: "" });

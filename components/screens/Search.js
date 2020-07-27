@@ -151,7 +151,7 @@ export default class Search extends React.PureComponent {
         If fetching card data from Firebase, show loading indicator.
         If searched empty string or on initial startup, display search hints*/}
         {this.state.loading ? (
-          <LoadingIndicator />
+          <LoadingIndicator size={"large"}/>
         ) : this.state.cardData.length === 0 ? (
           <View style={styles.center}>
             <Text style={[styles.text, styles.searchHint]}>

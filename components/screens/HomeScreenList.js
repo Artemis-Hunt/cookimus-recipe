@@ -118,7 +118,7 @@ class HomeScreenList extends React.Component {
     //context stores flag for loading additional data and the actual additional data
     this.setState({ loading: true });
     this.context.changeLoadingStatus(true);
-    
+
     let queryResponseForTime = await AlgoliaRecipesIndex.search(this.state.databaseTag, {
       hitsPerPage: 2000,
       facets: ["tags"],
@@ -255,7 +255,8 @@ const styles = StyleSheet.create({
   },
   subHeadingBar: {
     paddingBottom: 5,
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center",
   },
   subHeadingText: {
     fontSize: 22,
