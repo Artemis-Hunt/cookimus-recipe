@@ -11,7 +11,7 @@ import SavedCard from "../screen-components/saved-recipes/SavedCard";
 import SavedRecipes from "../../data/SavedRecipes";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
-import {savedListRecipeUpdate} from "../../config/Firebase/firebaseConfig"
+import {savedListRecipeUpdate, savedListDelete} from "../../config/Firebase/firebaseConfig"
 import AddedToMyRecipes from "../../data/AddedToMyRecipes";
 
 const RerenderFlatlist = ({ oldLength, updateLength }) => {
@@ -100,6 +100,7 @@ export default class MyRecipes extends React.Component {
         additionalData.splice(i, 1);
         this.context.changeAdditionalData(additionalData);
         this.context.changeLoadingStatus(false);
+        savedListDelete(title);
       }
     }
   }
@@ -117,6 +118,7 @@ export default class MyRecipes extends React.Component {
         />
         <View style={styles.container}>
           <FlatList
+            showsVerticalScrollIndicator={false}
             data={SavedRecipes}
             numColumns={2}
             keyExtractor={(item, index) => index.toString()}
