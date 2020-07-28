@@ -225,7 +225,12 @@ export default class ConfirmItemModal extends Component {
   handleSubmitButton() {
     let ingredientArray = [];
     for (let i = 1; i < this.editArray.length; i += 2) {
-      ingredientArray.push(this.editArray[i].ingredientDetails);
+      let ingredient = this.editArray[i]
+      ingredient.ingredientDetails.name = ingredient.ingredientDetails.name.trim();
+      if(ingredient.ingredientDetails.name === "") {
+        ingredient.ingredientDetails.name = "No name"
+      }
+      ingredientArray.push(ingredient.ingredientDetails);
     }
     AddRecipe(ingredientArray, this.title, this.url);
   }

@@ -87,19 +87,19 @@ class HomeScreenList extends React.Component {
     let hours = time.getHours();
     let minutes = time.getMinutes();
     if (hours <= 4) {
-      this.setState({ timeSegment: "evening", databaseTag: "dinner" });
+      this.setState({ timeSegment: "evening", databaseTag: "Dinner" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 5))
     } else if (hours >= 5 && hours <= 10) {
-      this.setState({ timeSegment: "morning", databaseTag: "breakfast" });
+      this.setState({ timeSegment: "morning", databaseTag: "Breakfast" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 11))
     } else if (hours >= 11 && hours <= 13) {
-      this.setState({ timeSegment: "noon", databaseTag: "lunch" });
+      this.setState({ timeSegment: "noon", databaseTag: "Lunch" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 14))
     } else if (hours >= 14 && hours <= 16) {
-      this.setState({ timeSegment: "afternoon", databaseTag: "dessert" });
+      this.setState({ timeSegment: "afternoon", databaseTag: "Dessert" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 17))
     } else if (hours >= 17) {
-      this.setState({ timeSegment: "evening", databaseTag: "dinner" });
+      this.setState({ timeSegment: "evening", databaseTag: "Dinner" });
       this.timeoutID = setTimeout(() => { this.getTime() }, this.calculateInterval(hours, minutes, 29))
     }
   }
@@ -119,10 +119,9 @@ class HomeScreenList extends React.Component {
     this.setState({ loading: true });
     this.context.changeLoadingStatus(true);
 
-    let queryResponseForTime = await AlgoliaRecipesIndex.search(this.state.databaseTag, {
-      hitsPerPage: 2000,
-      facets: ["tags"],
-      maxValuesPerFacet: maxRecipesToFetch
+    let queryResponseForTime = await AlgoliaRecipesIndex.search("", {
+      hitsPerPage: maxRecipesToFetch,
+      filters: `tags: ${this.state.databaseTag}`
     });
 
     let queryResponseForPopular = await AlgoliaRecipesIndex.search("", {

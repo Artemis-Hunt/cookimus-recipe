@@ -1,17 +1,15 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import TitleEditModal from "../screen-components/grocery-list/TitleEditModal";
 import SavedCard from "../screen-components/saved-recipes/SavedCard";
 import SavedRecipes from "../../data/SavedRecipes";
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext";
 
-import {savedListRecipeUpdate, savedListDelete} from "../../config/Firebase/firebaseConfig"
+import {
+  savedListRecipeUpdate,
+  savedListDelete,
+} from "../../config/Firebase/firebaseConfig";
 import AddedToMyRecipes from "../../data/AddedToMyRecipes";
 
 const RerenderFlatlist = ({ oldLength, updateLength }) => {
@@ -117,12 +115,21 @@ export default class MyRecipes extends React.Component {
           updateLength={(length) => this.updateLength(length)}
         />
         <View style={styles.container}>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={SavedRecipes}
-            numColumns={2}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
+          {this.state.oldLength === 0 ? (
+            <View
+              style={{ flex: 1, justifyContent: "center", alignContent: "center" }}
+            >
+              <Text style={styles.noRecipeText}>
+                Save some recipes you like!
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={SavedRecipes}
+              numColumns={2}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => (
                 <SavedCard
                   name={item.name}
                   url={item.recipeURL}
@@ -132,18 +139,19 @@ export default class MyRecipes extends React.Component {
                     this.refs.titleeditmodal.renderModal(name);
                   }}
                 />
-            )}
-          />
+              )}
+            />
+          )}
         </View>
         <TitleEditModal
-            ref={"titleeditmodal"}
-            saveChangeTitle={(newTitle, originalTitle) => {
-              this.handleChangeTitle(newTitle, originalTitle);
-            }}
-            titleDelete={(title) => {
-              this.handleDeleteTitle(title)
-            }}
-          />
+          ref={"titleeditmodal"}
+          saveChangeTitle={(newTitle, originalTitle) => {
+            this.handleChangeTitle(newTitle, originalTitle);
+          }}
+          titleDelete={(title) => {
+            this.handleDeleteTitle(title);
+          }}
+        />
       </>
     );
   }
@@ -154,5 +162,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
+  },
+  noRecipeText: {
+    color: "#888888",
+    fontSize: 22,
+    textAlign: "center",
+    fontFamily: "SourceSansPro"
   },
 });
