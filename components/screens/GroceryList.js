@@ -551,7 +551,7 @@ export default class GroceryList extends Component {
               <View style={styles.titleCard}>
                 <TouchableOpacity
                   onPress={() => {
-                    alert("Navigate to Recipe Page");
+                    //alert("Navigate to Recipe Page");
                   }}
                   onLongPress={() => {
                     this.showEditTitleModal(title);

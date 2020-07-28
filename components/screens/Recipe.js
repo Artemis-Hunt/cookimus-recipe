@@ -19,9 +19,29 @@ import PrepMethod from "../screen-components/recipe/PrepMethod.js";
 import AddedToGroceryList from "../../data/AddedToGroceryList.js";
 import AddedToMyRecipes from "../../data/AddedToMyRecipes";
 import SavedRecipes from "../../data/SavedRecipes";
+import CombinedList from "../../data/CombinedList";
+import TableFullModal from "../screens/TableFullModal"
 import { savedRecipesPush } from "../../config/Firebase/firebaseConfig";
 
 import LoadingAdditionalContext from "../context/LoadingAdditionalContext.js";
+
+const ArraySize = 200;
+//Check if hashtable is full
+const Hashslotcheck = (object) => {
+  let recipeCount = 0;
+  for (let item of object) {
+    recipeCount++;
+  }
+  let combinedCount = 0;
+  for (let item of CombinedList[0].data) {
+    combinedCount++;
+  }
+  alert(combinedCount);
+  if ((recipeCount + combinedCount) > ArraySize) {
+    return true;
+  }
+  return false;
+}
 
 //Render the individual recipe pages when clicked into from the search page
 const Recipe = () => {
@@ -56,107 +76,110 @@ const Recipe = () => {
           {loadingAdditional ? (
             <LoadingIndicator size={"large"} />
           ) : (
-            <View>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <Image
-                  style={[styles.image, { height: Window.height / 3 }]}
-                  source={{ uri: `${image}` }}
-                />
-                {/* Extra info e.g. servings, preparation time*/}
-                <View style={styles.categoryBox}>
-                  <View style={styles.subBox}>
-                    <Text style={[styles.headerText, styles.name]}>{name}</Text>
-                  </View>
-                  <AdditionalInfo
-                    additional={additionalData[index].additionalInfo}
+              <View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <Image
+                    style={[styles.image, { height: Window.height / 3 }]}
+                    source={{ uri: `${image}` }}
                   />
-                </View>
+                  {/* Extra info e.g. servings, preparation time*/}
+                  <View style={styles.categoryBox}>
+                    <View style={styles.subBox}>
+                      <Text style={[styles.headerText, styles.name]}>{name}</Text>
+                    </View>
+                    <AdditionalInfo
+                      additional={additionalData[index].additionalInfo}
+                    />
+                  </View>
 
-                <IngredientBox
-                  ingredients={additionalData[index].originalIngredient}
-                />
+                  <IngredientBox
+                    ingredients={additionalData[index].originalIngredient}
+                  />
 
-                {/*Add to grocery list*/}
-                <TouchableOpacity
-                  onPress={() => {
-                    if (name in AddedToGroceryList) {
-                      //Recipe is Added
-                      setExistInList(true);
-                    } else {
-                      navigation.navigate("ConfirmIngredients", {
-                        originalIngredients:
-                          additionalData[index].originalIngredient,
-                        modIngredients: additionalData[index].ingredient,
-                        recipeURL: url,
-                        recipeTitle: name,
-                      });
-                    }
-                  }}
-                  style={styles.buttonBox}
-                >
-                  <Text style={[styles.text, styles.addButton]}>
-                    Add to Grocery List{" "}
-                  </Text>
-                  <Entypo name="add-to-list" size={19} color="#1E90FF" />
-                </TouchableOpacity>
-                {existInList ? (
-                  <Text style={styles.addedText}>
-                    Recipe already in Grocery List!
-                  </Text>
-                ) : addedToList ? (
-                  <Text style={styles.addedText}>Added to Grocery list!</Text>
-                ) : null}
-                <PrepMethod
-                  instructions={additionalData[index].prepInstructions}
-                />
-                {/*Store recipe locally*/}
-                {previousScreenName === "MyRecipes" ? null : (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (name in AddedToMyRecipes) {
-                          setExistInSaved(true);
+                  {/*Add to grocery list*/}
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (Hashslotcheck(additionalData[index].ingredient)) {
+                        alert("Too many ingredients in Grocery List. Please delete items to add more ingredients")
+                      } else {
+                        if (name in AddedToGroceryList) {
+                          setExistInList(true);
                         } else {
-                          let recipeToSave = {
-                            name: name,
-                            recipeURL: url,
-                            recipeImageURL: image,
-                            originalIngredient:
+                          navigation.navigate("ConfirmIngredients", {
+                            originalIngredients:
                               additionalData[index].originalIngredient,
-                            ingredient: additionalData[index].ingredient,
-                            additionalInfo:
-                              additionalData[index].additionalInfo,
-                            prepInstructions:
-                              additionalData[index].prepInstructions,
-                          };
-                          SavedRecipes.push(recipeToSave);
-                          savedRecipesPush(recipeToSave);
-                          AddedToMyRecipes[name] = null;
-                          setAddedToSaved(true);
+                            modIngredients: additionalData[index].ingredient,
+                            recipeURL: url,
+                            recipeTitle: name,
+                          });
                         }
-                      }}
-                      style={styles.buttonBox}
-                    >
-                      <Text style={[styles.text, styles.addButton]}>
-                        Save This Recipe{" "}
-                      </Text>
-                      <Feather name="save" size={19} color="#1E90FF" />
-                    </TouchableOpacity>
-                    {existInSaved ? (
-                      <Text style={styles.addedText}>
-                        Already in My Recipes!
-                      </Text>
-                    ) : addedToSaved ? (
-                      <Text style={styles.addedText}>
-                        Added to My Recipes!
-                      </Text>
-                    ) : null}
-                  </>
-                )}
-                <View style={{ height: 30 }}></View>
-              </ScrollView>
-            </View>
-          )}
+                      }
+                    }}
+                    style={styles.buttonBox}
+                  >
+                    <Text style={[styles.text, styles.addButton]}>
+                      Add to Grocery List{" "}
+                    </Text>
+                    <Entypo name="add-to-list" size={19} color="#1E90FF" />
+                  </TouchableOpacity>
+                  {existInList ? (
+                    <Text style={styles.addedText}>
+                      Recipe already in Grocery List!
+                    </Text>
+                  ) : addedToList ? (
+                    <Text style={styles.addedText}>Added to Grocery list!</Text>
+                  ) : null}
+                  <PrepMethod
+                    instructions={additionalData[index].prepInstructions}
+                  />
+                  {/*Store recipe locally*/}
+                  {previousScreenName === "MyRecipes" ? null : (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (name in AddedToMyRecipes) {
+                            setExistInSaved(true);
+                          } else {
+                            let recipeToSave = {
+                              name: name,
+                              recipeURL: url,
+                              recipeImageURL: image,
+                              originalIngredient:
+                                additionalData[index].originalIngredient,
+                              ingredient: additionalData[index].ingredient,
+                              additionalInfo:
+                                additionalData[index].additionalInfo,
+                              prepInstructions:
+                                additionalData[index].prepInstructions,
+                            };
+                            SavedRecipes.push(recipeToSave);
+                            savedRecipesPush(recipeToSave);
+                            AddedToMyRecipes[name] = null;
+                            setAddedToSaved(true);
+                          }
+                        }}
+                        style={styles.buttonBox}
+                      >
+                        <Text style={[styles.text, styles.addButton]}>
+                          Save This Recipe{" "}
+                        </Text>
+                        <Feather name="save" size={19} color="#1E90FF" />
+                      </TouchableOpacity>
+                      {existInSaved ? (
+                        <Text style={styles.addedText}>
+                          Already in My Recipes!
+                        </Text>
+                      ) : addedToSaved ? (
+                        <Text style={styles.addedText}>
+                          Added to My Recipes!
+                        </Text>
+                      ) : null}
+                    </>
+                  )}
+                  <View style={{ height: 30 }}></View>
+                </ScrollView>
+              </View>
+            )}
         </View>
       )}
     </LoadingAdditionalContext.Consumer>
