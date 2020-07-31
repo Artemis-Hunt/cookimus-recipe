@@ -105,7 +105,7 @@ const Item = ({
 
 //Render normal item card
 const itemCard = (icon, checkStyle, title, final, units) => {
-  if (title === "No Name Found") {
+  if (title === "No name") {
     checkStyle = [styles.ingredientText, styles.text, styles.errorText];
   }
   return (

@@ -40,7 +40,7 @@ const SearchCard = (props) => {
           >
             {props.name}
           </Text>
-          <Text style={[styles.site, styles.text]}>AllRecipes.com</Text>
+          {/* <Text style={[styles.site, styles.text]}>AllRecipes.com</Text> */}
           <View style={styles.extraDetailsBox}>
             <Rating
               imageSize={scaledSize - 5}

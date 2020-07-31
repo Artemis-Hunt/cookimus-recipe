@@ -12,7 +12,7 @@ const Greetings = {
 };
 
 const timeGreeting = (name, time) => {
-  let newName = name === "Guest" ? "" : ", " + name;
+  let newName = name === "" ? "" : ", " + name;
   let icon, greeting;
   if (time === "morning") {
     greeting = Greetings.morning + newName + "!";

@@ -22,6 +22,7 @@ export default class Search extends React.PureComponent {
     super(props);
     this.state = {
       loading: false,
+      noResults: false,
       cardData: [],
       searchText: "",
     };
@@ -79,6 +80,11 @@ export default class Search extends React.PureComponent {
       cardData: queryResponse.hits,
     });
 
+    if (this.state.cardData.length === 0) {
+      this.setState({ noResults: true });
+    } else {
+      this.setState({ noResults: false });
+    }
     let additionalData = [];
 
     for (let item of this.state.cardData) {
@@ -151,7 +157,13 @@ export default class Search extends React.PureComponent {
         If fetching card data from Firebase, show loading indicator.
         If searched empty string or on initial startup, display search hints*/}
         {this.state.loading ? (
-          <LoadingIndicator size={"large"}/>
+          <LoadingIndicator size={"large"} />
+        ) : this.state.noResults ? (
+          <View style={styles.center}>
+            <Text style={[styles.text, styles.searchError]}>
+              No results found :(
+            </Text>
+          </View>
         ) : this.state.cardData.length === 0 ? (
           <View style={styles.center}>
             <Text style={[styles.text, styles.searchHint]}>
@@ -212,6 +224,11 @@ const styles = StyleSheet.create({
   },
   searchHint: {
     color: "#888888",
+    fontSize: 22,
+    textAlign: "center",
+  },
+  searchError: {
+    color: "rgba(150,0,0,0.8)",
     fontSize: 22,
     textAlign: "center",
   },

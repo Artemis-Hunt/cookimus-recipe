@@ -1,13 +1,25 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import UserContext from "../context/UserContext";
-import firebase, { getUserDataRef } from "../../config/Firebase/firebaseConfig";
-import Button from "../generic/Button"
+import { auth, userDataDelete } from "../../config/Firebase/firebaseConfig";
+import Button from "../generic/Button";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import { AntDesign, FontAwesome, Entypo, MaterialIcons, Foundation } from '@expo/vector-icons';
-
+import {
+  AntDesign,
+  FontAwesome,
+  Entypo,
+  MaterialIcons,
+  Foundation,
+} from "@expo/vector-icons";
 
 const Settings = () => {
   const user = useContext(UserContext);
@@ -16,19 +28,17 @@ const Settings = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
+  const isAnonymous = auth.currentUser.isAnonymous;
+
   const onLogOutPress = async () => {
-    setLoading(true)
-    if (user.isAnonymous) {
-      const usersRef = firebase.firestore().collection("users")
-      await usersRef.doc(user.uid).delete();
-      await user.delete();
-    }
-    else {
+    setLoading(true);
+    if (isAnonymous) {
+      userDataDelete();
+    } else {
       await firebase.auth().signOut();
     }
-    setLoading(false)
-    //alert(Object.entries(user))
-  }
+    setLoading(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -36,24 +46,40 @@ const Settings = () => {
         <View style={styles.iconStyle}>
           <FontAwesome name="user" size={28} color="cornflowerblue" />
         </View>
-        <Text style={[styles.text, styles.headerText, { color: "black", fontWeight: "bold" }]}>Welcome,</Text>
-        <Text style={[styles.text, styles.headerText, { color: "dimgray", fontWeight: "bold" }]}>{`${user.firstName}`}</Text>
+        <Text
+          style={[
+            styles.text,
+            styles.headerText,
+            { color: "black", fontWeight: "bold" },
+          ]}
+        >
+          Welcome,
+        </Text>
+        <Text
+          style={[
+            styles.text,
+            styles.headerText,
+            { color: "dimgray", fontWeight: "bold" },
+          ]}
+        >{`${user.firstName}`}</Text>
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("ProfileEdit")
-        }}
-      >
-        <View style={styles.profileButton}>
-          <View style={styles.profileIcon}>
-            <AntDesign name="profile" size={24} color="#778899" />
+      {isAnonymous ? null : (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("ProfileEdit");
+          }}
+        >
+          <View style={styles.profileButton}>
+            <View style={styles.profileIcon}>
+              <AntDesign name="profile" size={24} color="#778899" />
+            </View>
+            <Text style={[styles.text, styles.menuText]}>Profile</Text>
           </View>
-          <Text style={[styles.text, styles.menuText]}>Profile</Text>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("InfoPage")
+          navigation.navigate("InfoPage");
         }}
       >
         <View style={styles.infoButton}>
@@ -65,21 +91,30 @@ const Settings = () => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ReportPage")
+          navigation.navigate("ReportPage");
         }}
       >
         <View style={styles.bugButton}>
           <View style={styles.bugIcon}>
             <MaterialIcons name="bug-report" size={26} color="#778899" />
           </View>
-          <Text style={[styles.text, styles.menuText]}>Report An Issue</Text>
+          <Text style={[styles.text, styles.menuText]}>
+            Feedback / Report an issue
+          </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={onLogOutPress}
-      >
+      <TouchableOpacity onPress={onLogOutPress}>
         <View style={styles.profileButton}>
-          <Text style={[styles.text, styles.menuText, {color: "crimson"}]}>Log Out</Text>
+          <Text
+            style={[
+              styles.text,
+              styles.menuText,
+              { color: "crimson", marginRight: 10 },
+            ]}
+          >
+            Log Out
+          </Text>
+          {loading ? <ActivityIndicator /> : null}
         </View>
       </TouchableOpacity>
       {/* <View style={styles.buttonView}>
@@ -102,7 +137,7 @@ const styles = StyleSheet.create({
     //alignItems: "center",
     //justifyContent: "center",
     flex: 1,
-    backgroundColor: "#F9F9F9"
+    backgroundColor: "#F9F9F9",
   },
   headerBar: {
     flexDirection: "row",
@@ -112,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "white",
     borderBottomWidth: 4,
-    borderBottomColor: "lightblue"
+    borderBottomColor: "lightblue",
   },
   buttonView: {
     flex: 1,
@@ -123,7 +158,7 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 20,
-    color: "#222222"
+    color: "#222222",
   },
   headerText: {
     fontSize: 28,
@@ -145,7 +180,7 @@ const styles = StyleSheet.create({
   },
   profileIcon: {
     paddingRight: 10,
-    paddingTop: 3
+    paddingTop: 3,
   },
   profileButton: {
     paddingHorizontal: 10,
@@ -176,5 +211,5 @@ const styles = StyleSheet.create({
   },
   exitIcon: {
     paddingRight: 10,
-  }
+  },
 });

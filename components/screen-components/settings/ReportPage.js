@@ -47,14 +47,13 @@ export default class ReportPage extends Component {
                         <MaterialIcons name="report-problem" size={26} color="black" />
                     </View>
                 </View>
-                <Text style={styles.subHeading}>Bugs And Issues</Text>
                 <Text style={styles.bodyText}>
-                    We at Cookimus are sorry that you have run into issues with our app! Please leave
+                    We are sorry that you have run into issues with our app! Please leave
                     a description of the issue that you have faced with the app.
                 </Text>
                 <Text></Text>
                 <Text style={styles.bodyText}>
-                    Your feedback is valuable and appreciated in improving our app for all users.
+                    Your feedback is valuable and appreciated in improving our app.
                 </Text>
                 <TextInput
                     ref={"feedbackInput"}
