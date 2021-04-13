@@ -22,34 +22,41 @@ The **mobile app** will be the platform on which the user interacts to search fo
 
 The **backend** will store the profiles of the user (including usernames and passwords), as well as perform web-scraping and sorting functions.
 
-### Features to be completed by June
-* User Login
-  * Allow users to login and store their preferences
-  * Display personalized recommendations on the homepage
-* Grocery list: Phase 1
-  * User-inputted grocery list
-  * Can be combined into an overall list or split according to dishes/cuisine
-  * Conversion between non-standard units (e.g. cups/tablespoon), volume (ml), and mass (g)
-* Web-scraped recipes: Phase 1
-  * Pull recipes from a few popular recipe websites
-  * Display the picture and title in a card format
-  * Ingredients and preparation methods are shown when user clicks on a recipe
----
-### Features to be completed by July
-* Web-scraped recipes: Phase 2
-  * Enable users to search all aggregated sites or individual sites for recipes
-  * Users can save recipes to their device
-* Grocery list: Phase 2
-  * Users can add the ingredients from online recipes (web-scraped) to their grocery list
-  * Each ingredient in the online recipe is identified and classified. Users can combine ingredients that are similar into one entry, or leave them as separate items but under       the same category (e.g. skim milk vs full cream milk)
-
 ## How are we different from similar platforms
 As of now, while there exist many recipe websites that include their own search and sorting system, these sites usually feature their own or user submitted recipes. Our app is looking to combine the available information from multiple sites into one search platform allowing users to be able to access multiple sources in a single instance.
 
-## Current Features of App
+## Features of App
+### User Login
+#### User authentication with email and password, guest login
+#### In-app updating of email and name
+### Home page
+#### Recipes displayed based on time of day e.g. breakfast recipes in the morning
+#### Popular recipes displayed
+### Search page
+#### Pull recipes from 2 popular recipe websites, AllRecipes and Epicurious
+#### Display the picture, title, ratings in a card format
+### Recipes
+#### Ingredients and preparation methods are shown when user taps on a recipe
+#### Convenient importing of ingredients into grocery list
+#### Save recipes for reference later on
+### My Recipes
+#### Saved recipes displayed here
+#### View ingredients and preparation methods
+### Grocery list
+#### Combined grocery list / recipe-categorized list
+#### Add custom recipe
+#### Check off ingredients that have been purchased
+#### Scale recipe serving size
+#### Edit ingredient name, quantity and units
+### Cloud sync
+#### Saved recipes and grocery list synced to the cloud - accessible across multiple devices
+
+## Details of Features
 ### Authentication
 #### Front-end
 Users will first register with their email and password, after which they can login with the same email and password to retrieve user data on a separate device. Guest login without registration and without data syncing is also available.
+![Screenshot_20200629-162235437](https://user-images.githubusercontent.com/62279011/114505604-392edd00-9c63-11eb-95c3-c8be58056bee.jpg)![Screenshot_20200629-162125792](https://user-images.githubusercontent.com/62279011/114505626-4055eb00-9c63-11eb-8980-54293a15ed33.jpg)
+
 
 #### Back-end
 Firebase Authentication is used to authenticate users, with corresponding user data stored in the Cloud Firestore database. The Firestore security rules are configured such that the currently authenticated user is only able to modify their own data, and not other users’ data.
@@ -59,15 +66,20 @@ Firebase Authentication is used to authenticate users, with corresponding user d
 ### Home Screen
 #### Front-end
 Upon login or registration, users are first brought to the home screen in the app, where they are shown popular recipes as well as recommendations based on time of day *(e.g. breakfast recipes during morning, dinner recipes during evening).* 
+![Screenshot_20200629-162420540](https://user-images.githubusercontent.com/62279011/114505632-44820880-9c63-11eb-8795-69fa8a06c985.jpg)
+
 
 #### Back-end
 Recommendations are scraped from the recommended section in the recipe sites. For example, breakfast recipes are scraped from the breakfast section of the websites, and so on. Current implementation only scrapes from AllRecipes.com, however other recipe sites will be included in the final product.
+
 
 ---
 
 ### Search Function
 #### Front-end
 The search page allows users to search for recipes based on both recipe name and ingredients. For instance, searching “chicken” will bring up both recipes with “chicken” in the name as well as recipes which include “chicken” as one of the ingredients. The matching recipes are displayed in a card format with the image, name, source website, as well as ratings info.
+![Screenshot_20200629-162456411](https://user-images.githubusercontent.com/62279011/114505659-4ba91680-9c63-11eb-9340-c1329df4eca9.jpg)
+
 
 #### Back-end
 Search terms are run through the web scraper and recipe data is returned to construct the search cards in the app. Additional information not shown on the cards, such as list of ingredients and preparation methods, are asynchronously loaded in the background. 
@@ -80,6 +92,10 @@ Users can tap on any of the recipe cards, either on the home screen or on the se
 
 This information is presented in a visually consistent format regardless of the source website formatting. Unnecessary details such as long preambles and backstories are omitted.
 
+![Screenshot_20200629-162959498](https://user-images.githubusercontent.com/62279011/114505670-4f3c9d80-9c63-11eb-98a0-8d9dcc5a217a.jpg)
+![Screenshot_20200629-163102470](https://user-images.githubusercontent.com/62279011/114505674-52d02480-9c63-11eb-807c-1d238857e4e1.jpg)
+
+
 #### Back-end
 Information fetched from the individual recipe webpages are processed and sorted into categories which allows for a consistent and clean UI. Details can be found in the “Web scraper” section below.
 
@@ -89,6 +105,8 @@ Information fetched from the individual recipe webpages are processed and sorted
 #### Front-end
 Found in the detailed recipe view, users can tap on the “Add To Grocery List” button to add all ingredients in the recipe into the grocery list. Here, the ingredients are split into name/amount/unit and added into the list.
 
+![Screenshot_20200629-163116118](https://user-images.githubusercontent.com/62279011/114506747-cc1c4700-9c64-11eb-9737-8733bb904905.jpg)
+
 ---
 
 ### Grocery List
@@ -97,7 +115,8 @@ Ingredients from recipes are added here. Users have the option to add their own 
 
 On the top right, users can press the toggle button  to switch between the recipe categorised list, and the combined list which combines all items with the same name, allowing for convenient shopping.
 
-To delete items from the grocery list, users can either delete items individually, by swiping left on the ingredient and tapping the delete icon, or delete the entire recipe at once by tapping the recipe header *(To be changed in the future to long press to trigger)*. All amounts are automatically updated in the combined list.
+To delete items from the grocery list, users can either delete items individually, by swiping left on the ingredient and tapping the delete icon, or delete the entire recipe at once by tapping the recipe header. All amounts are automatically updated in the combined list.
+
 
 #### Back-end
 The grocery list is currently stored locally in a .js file - this will be migrated to the cloud in the future and stored under user data in Firestore. As such, the user will have access to the grocery list across devices.
