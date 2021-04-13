@@ -26,30 +26,30 @@ The **backend** will store the profiles of the user (including usernames and pas
 As of now, while there exist many recipe websites that include their own search and sorting system, these sites usually feature their own or user submitted recipes. Our app is looking to combine the available information from multiple sites into one search platform allowing users to be able to access multiple sources in a single instance.
 
 ## Features of App
-### User Login
-#### User authentication with email and password, guest login
-#### In-app updating of email and name
-### Home page
-#### Recipes displayed based on time of day e.g. breakfast recipes in the morning
-#### Popular recipes displayed
-### Search page
-#### Pull recipes from 2 popular recipe websites, AllRecipes and Epicurious
-#### Display the picture, title, ratings in a card format
-### Recipes
-#### Ingredients and preparation methods are shown when user taps on a recipe
-#### Convenient importing of ingredients into grocery list
-#### Save recipes for reference later on
-### My Recipes
-#### Saved recipes displayed here
-#### View ingredients and preparation methods
-### Grocery list
-#### Combined grocery list / recipe-categorized list
-#### Add custom recipe
-#### Check off ingredients that have been purchased
-#### Scale recipe serving size
-#### Edit ingredient name, quantity and units
-### Cloud sync
-#### Saved recipes and grocery list synced to the cloud - accessible across multiple devices
+* User Login
+  * User authentication with email and password, guest login
+  * In-app updating of email and name
+* Home page
+  * Recipes displayed based on time of day e.g. breakfast recipes in the morning
+  * Popular recipes displayed
+* Search page
+  * Pull recipes from 2 popular recipe websites, AllRecipes and Epicurious
+  * Display the picture, title, ratings in a card format
+* Recipes
+  * Ingredients and preparation methods are shown when user taps on a recipe
+  * Convenient importing of ingredients into grocery list
+  * Save recipes for reference later on
+* My Recipes
+  * Saved recipes displayed
+  * View ingredients and preparation methods
+* Grocery list
+  * Combined grocery list / recipe-categorized list
+  * Add custom recipe
+  * Check off ingredients that have been purchased
+  * Scale recipe serving size
+  * Edit ingredient name, quantity and units
+* Cloud sync
+  * Saved recipes and grocery list synced to the cloud - accessible across multiple devices
 
 ## Details of Features
 ### Authentication
