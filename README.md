@@ -55,7 +55,7 @@ As of now, while there exist many recipe websites that include their own search 
 ### Authentication
 #### Front-end
 Users will first register with their email and password, after which they can login with the same email and password to retrieve user data on a separate device. Guest login without registration and without data syncing is also available.
-![Screenshot_20200629-162235437](https://user-images.githubusercontent.com/62279011/114505604-392edd00-9c63-11eb-95c3-c8be58056bee.jpg)![Screenshot_20200629-162125792](https://user-images.githubusercontent.com/62279011/114505626-4055eb00-9c63-11eb-8980-54293a15ed33.jpg)
+![Screenshot_20200629-162235437](https://user-images.githubusercontent.com/62279011/114505604-392edd00-9c63-11eb-95c3-c8be58056bee.jpg)![Screenshot_20200629-162125792](https://user-images.githubusercontent.com/62279011/114505626-4055eb00-9c63-11eb-8980-54293a15ed33.jpg =400x)
 
 
 #### Back-end
@@ -66,7 +66,7 @@ Firebase Authentication is used to authenticate users, with corresponding user d
 ### Home Screen
 #### Front-end
 Upon login or registration, users are first brought to the home screen in the app, where they are shown popular recipes as well as recommendations based on time of day *(e.g. breakfast recipes during morning, dinner recipes during evening).* 
-![Screenshot_20200629-162420540](https://user-images.githubusercontent.com/62279011/114505632-44820880-9c63-11eb-8795-69fa8a06c985.jpg)
+![Screenshot_20200629-162420540](https://user-images.githubusercontent.com/62279011/114505632-44820880-9c63-11eb-8795-69fa8a06c985.jpg =400x)
 
 
 #### Back-end
@@ -78,7 +78,7 @@ Recommendations are scraped from the recommended section in the recipe sites. Fo
 ### Search Function
 #### Front-end
 The search page allows users to search for recipes based on both recipe name and ingredients. For instance, searching “chicken” will bring up both recipes with “chicken” in the name as well as recipes which include “chicken” as one of the ingredients. The matching recipes are displayed in a card format with the image, name, source website, as well as ratings info.
-![Screenshot_20200629-162456411](https://user-images.githubusercontent.com/62279011/114505659-4ba91680-9c63-11eb-9340-c1329df4eca9.jpg)
+![Screenshot_20200629-162456411](https://user-images.githubusercontent.com/62279011/114505659-4ba91680-9c63-11eb-9340-c1329df4eca9.jpg =400x)
 
 
 #### Back-end
@@ -92,8 +92,8 @@ Users can tap on any of the recipe cards, either on the home screen or on the se
 
 This information is presented in a visually consistent format regardless of the source website formatting. Unnecessary details such as long preambles and backstories are omitted.
 
-![Screenshot_20200629-162959498](https://user-images.githubusercontent.com/62279011/114505670-4f3c9d80-9c63-11eb-98a0-8d9dcc5a217a.jpg)
-![Screenshot_20200629-163102470](https://user-images.githubusercontent.com/62279011/114505674-52d02480-9c63-11eb-807c-1d238857e4e1.jpg)
+![Screenshot_20200629-162959498](https://user-images.githubusercontent.com/62279011/114505670-4f3c9d80-9c63-11eb-98a0-8d9dcc5a217a.jpg =400x)
+![Screenshot_20200629-163102470](https://user-images.githubusercontent.com/62279011/114505674-52d02480-9c63-11eb-807c-1d238857e4e1.jpg =400x)
 
 
 #### Back-end
@@ -105,7 +105,7 @@ Information fetched from the individual recipe webpages are processed and sorted
 #### Front-end
 Found in the detailed recipe view, users can tap on the “Add To Grocery List” button to add all ingredients in the recipe into the grocery list. Here, the ingredients are split into name/amount/unit and added into the list.
 
-![Screenshot_20200629-163116118](https://user-images.githubusercontent.com/62279011/114506747-cc1c4700-9c64-11eb-9737-8733bb904905.jpg)
+![Screenshot_20200629-163116118](https://user-images.githubusercontent.com/62279011/114506747-cc1c4700-9c64-11eb-9737-8733bb904905.jpg =400x)
 
 ---
 
