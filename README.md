@@ -1,4 +1,4 @@
-# Orbital 2020 Cookimus App
+# Cookimus
 
 ![Poster A1 Final](https://user-images.githubusercontent.com/62279011/120449318-e8657600-c3c1-11eb-8d40-819b8b201f70.png)
 
